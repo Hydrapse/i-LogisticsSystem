@@ -1,54 +1,350 @@
 {
-    "openapi":"3.0.2",
+    "openapi": "3.0.2",
     "info": {
-        "title":"物流配送管理系统 api",
-        "version":"1.0.0"
+        "title": "物流配送管理系统 api",
+        "description": "",
+        "version": "1.0.0"
     },
     "servers": [
-        {"url":"https://api.server.test/v1"}
+        {
+            "description": "test",
+            "url": "https://api.server.test/v1"
+        },
+        {
+            "description": "生产",
+            "url": ""
+        }
     ],
     "paths": {
-        "/user": {
+        "/goods/category": {
             "post": {
-                "description": "login to system",
-                "operationId": "login",
-                "parameters": [
-                    {
-                        "name": "username",
-                        "description": "用户名",
-                        "required": true,
-                        "schema":{
-                            "type": "string",
-                            "example":"test"
-                        }
-                    },
-                    {
-                        "name": "password",
-                        "description": "密码",
-                        "required": true,
-                        "schema":{
-                            "type": "string",
-                            "example":"test"
+                "description": "添加商品大类",
+                "operationId": "addCategory",
+                "requestBody": {
+                    "description": "添加的商品大类",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Category"
+                            }
                         }
                     }
-                ],
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "ERROR"
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除商品大类",
+                "operationId": "deleteCategory",
+                "requestBody": {
+                    "description": "删除的商品大类编号",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "大类id",
+                                        "example": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "ERROR"
+                    }
+                }
+            },
+            "put": {
+                "description": "修改商品大类",
+                "operationId": "modifyCategory",
+                "requestBody": {
+                    "description": "修改的商品大类",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Category"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "ERROR"
+                    }
+                }
+            },
+            "get": {
+                "description": "获取商品大类",
+                "operationId": "getCategory",
+                "requestBody": {
+                    "description": "获取的商品大类编号",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "大类id",
+                                        "example": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "OK",
                         "content": {
-                            "application/json":{
-                                "schema":{
-                                    "type": "object"
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Category"
                                 }
                             }
                         }
                     },
-                    "default":{
+                    "default": {
+                        "description": "ERROR"
+                    }
+                }
+            }
+        },
+        "/goods/subcategory": {
+            "post": {
+                "description": "添加商品小类",
+                "operationId": "addSubCategory",
+                "requestBody": {
+                    "description": "添加的商品小类",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubCategory"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "ERROR"
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除商品小类",
+                "operationId": "deleteSubCategory",
+                "requestBody": {
+                    "description": "删除的商品小类编号",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "小类id",
+                                        "example": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "ERROR"
+                    }
+                }
+            },
+            "put": {
+                "description": "修改商品小类",
+                "operationId": "modifySubCategory",
+                "requestBody": {
+                    "description": "修改的商品小类",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubCategory"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "ERROR"
+                    }
+                }
+            },
+            "get": {
+                "description": "获取商品小类",
+                "operationId": "getSubCategory",
+                "requestBody": {
+                    "description": "获取的商品小类编号",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "小类id",
+                                        "example": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubCategory"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
                         "description": "ERROR"
                     }
                 }
             }
         }
-        
+    },
+    "components": {
+        "schemas": {
+            "Category": {
+                "title": "Category",
+                "description": "商品大类",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "大类id",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "大类名称",
+                        "example": "Food"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "大类描述",
+                        "example": "吃"
+                    }
+                }
+            },
+            "SubCategory": {
+                "title": "SubCategory",
+                "description": "商品小类",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "小类id",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "小类名称",
+                        "example": "Rice"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "小类描述",
+                        "example": "大米"
+                    }
+                }
+            },
+            "Product": {
+                "title": "Product",
+                "description": "商品",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "商品id",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "商品名称",
+                        "example": "CocaCola_330_c"
+                    },
+                    "provider": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "供应商id",
+                        "example": 1
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "价格",
+                        "example": 3.0
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "商品描述",
+                        "example": "可口可乐 330ml 罐装"
+                    },
+                    "atrribute": {
+                        "type": "array",
+                        "default": "商品属性",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "红罐",
+                            "可口"
+                        ]
+                    }
+                }
+            }
+        }
     }
 }
