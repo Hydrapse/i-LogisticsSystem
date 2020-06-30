@@ -1,0 +1,54 @@
+{
+    "openapi":"3.0.2",
+    "info": {
+        "title":"物流配送管理系统 api",
+        "version":"1.0.0"
+    },
+    "servers": [
+        {"url":"https://api.server.test/v1"}
+    ],
+    "paths": {
+        "/user": {
+            "post": {
+                "description": "login to system",
+                "operationId": "login",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "description": "用户名",
+                        "required": true,
+                        "schema":{
+                            "type": "string",
+                            "example":"test"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "description": "密码",
+                        "required": true,
+                        "schema":{
+                            "type": "string",
+                            "example":"test"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "default":{
+                        "description": "ERROR"
+                    }
+                }
+            }
+        }
+        
+    }
+}
