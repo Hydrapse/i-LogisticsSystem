@@ -15,9 +15,18 @@
             "url": ""
         }
     ],
+    "tags": [
+        {
+            "name": "goods",
+            "description": "维护商品两级分类信息和商品信息"
+        }
+    ],
     "paths": {
         "/goods/category": {
             "post": {
+                "tags": [
+                    "goods"
+                ],
                 "description": "添加商品大类",
                 "operationId": "addCategory",
                 "requestBody": {
@@ -41,6 +50,9 @@
                 }
             },
             "delete": {
+                "tags": [
+                    "goods"
+                ],
                 "description": "删除商品大类",
                 "operationId": "deleteCategory",
                 "requestBody": {
@@ -72,6 +84,9 @@
                 }
             },
             "put": {
+                "tags": [
+                    "goods"
+                ],
                 "description": "修改商品大类",
                 "operationId": "modifyCategory",
                 "requestBody": {
@@ -95,6 +110,9 @@
                 }
             },
             "get": {
+                "tags": [
+                    "goods"
+                ],
                 "description": "获取商品大类",
                 "operationId": "getCategory",
                 "requestBody": {
@@ -135,6 +153,9 @@
         },
         "/goods/subcategory": {
             "post": {
+                "tags": [
+                    "goods"
+                ],
                 "description": "添加商品小类",
                 "operationId": "addSubCategory",
                 "requestBody": {
@@ -158,6 +179,9 @@
                 }
             },
             "delete": {
+                "tags": [
+                    "goods"
+                ],
                 "description": "删除商品小类",
                 "operationId": "deleteSubCategory",
                 "requestBody": {
@@ -189,6 +213,9 @@
                 }
             },
             "put": {
+                "tags": [
+                    "goods"
+                ],
                 "description": "修改商品小类",
                 "operationId": "modifySubCategory",
                 "requestBody": {
@@ -212,6 +239,9 @@
                 }
             },
             "get": {
+                "tags": [
+                    "goods"
+                ],
                 "description": "获取商品小类",
                 "operationId": "getSubCategory",
                 "requestBody": {
