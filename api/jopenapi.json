@@ -8,11 +8,11 @@
     "servers": [
         {
             "description": "test",
-            "url": "https://api.server.test/v1"
+            "url": "http://localhost:3000"
         },
         {
             "description": "生产",
-            "url": ""
+            "url": "https://api.server.com"
         }
     ],
     "tags": [
@@ -27,15 +27,22 @@
                 "tags": [
                     "goods"
                 ],
-                "description": "添加商品大类",
+                "description": "添加商品一级分类",
                 "operationId": "addCategory",
                 "requestBody": {
-                    "description": "添加的商品大类",
-                    "required": true,
+                    "description": "添加的商品一级分类",
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Category"
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/Category"
+                                    }
+                                ],
+                                "required": [
+                                    "categoryName",
+                                    "description"
+                                ]
                             }
                         }
                     }
@@ -53,27 +60,21 @@
                 "tags": [
                     "goods"
                 ],
-                "description": "删除商品大类",
+                "description": "删除商品一级分类",
                 "operationId": "deleteCategory",
-                "requestBody": {
-                    "description": "删除的商品大类编号",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "id": {
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "description": "大类id",
-                                        "example": 1
-                                    }
-                                }
-                            }
-                        }
+                "parameters": [
+                    {
+                        "name": "categoryId",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "一级分类id",
+                        "required": true,
+                        "example": 1
                     }
-                },
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -87,15 +88,24 @@
                 "tags": [
                     "goods"
                 ],
-                "description": "修改商品大类",
+                "description": "修改商品一级分类",
                 "operationId": "modifyCategory",
                 "requestBody": {
-                    "description": "修改的商品大类",
-                    "required": true,
+                    "description": "修改的商品一级分类",
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Category"
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/CategoryId"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/Category"
+                                    }
+                                ],
+                                "required": [
+                                    "categoryId"
+                                ]
                             }
                         }
                     }
@@ -113,34 +123,35 @@
                 "tags": [
                     "goods"
                 ],
-                "description": "获取商品大类",
+                "description": "获取商品一级分类",
                 "operationId": "getCategory",
-                "requestBody": {
-                    "description": "获取的商品大类编号",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "id": {
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "description": "大类id",
-                                        "example": 1
-                                    }
-                                }
-                            }
-                        }
+                "parameters": [
+                    {
+                        "name": "categoryId",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "一级分类id",
+                        "required": true,
+                        "example": 1
                     }
-                },
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Category"
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/CategoryId"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/Category"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -151,20 +162,73 @@
                 }
             }
         },
+        "/goods/category/{categoryId}/subcategory": {
+            "get": {
+                "tags": [
+                    "goods"
+                ],
+                "description": "获得一级分类下的二级分类",
+                "operationId": "getSubCategoriesByCategoryId (response Id or Object)",
+                "parameters": [
+                    {
+                        "name": "categoryId",
+                        "in": "path",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "一级分类id",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "description": "二级分类对象列表",
+                                    "items": {
+                                        "allOf": [
+                                            {
+                                                "$ref": "#/components/schemas/SubCategoryId"
+                                            },
+                                            {
+                                                "$ref": "#/components/schemas/SubCategory"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/goods/subcategory": {
             "post": {
                 "tags": [
                     "goods"
                 ],
-                "description": "添加商品小类",
+                "description": "添加商品二级分类",
                 "operationId": "addSubCategory",
                 "requestBody": {
-                    "description": "添加的商品小类",
-                    "required": true,
+                    "description": "添加的商品二级分类",
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/SubCategory"
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/SubCategory"
+                                    }
+                                ],
+                                "required": [
+                                    "categoryId",
+                                    "subCategoryName",
+                                    "description"
+                                ]
                             }
                         }
                     }
@@ -182,27 +246,21 @@
                 "tags": [
                     "goods"
                 ],
-                "description": "删除商品小类",
+                "description": "删除商品二级分类",
                 "operationId": "deleteSubCategory",
-                "requestBody": {
-                    "description": "删除的商品小类编号",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "id": {
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "description": "小类id",
-                                        "example": 1
-                                    }
-                                }
-                            }
-                        }
+                "parameters": [
+                    {
+                        "name": "subCategoryId",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "二级分类id",
+                        "required": true,
+                        "example": 1
                     }
-                },
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -216,15 +274,24 @@
                 "tags": [
                     "goods"
                 ],
-                "description": "修改商品小类",
+                "description": "修改商品二级分类",
                 "operationId": "modifySubCategory",
                 "requestBody": {
-                    "description": "修改的商品小类",
-                    "required": true,
+                    "description": "修改的商品二级分类",
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/SubCategory"
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/SubCategoryId"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/SubCategory"
+                                    }
+                                ],
+                                "required": [
+                                    "subCategoryId"
+                                ]
                             }
                         }
                     }
@@ -242,34 +309,268 @@
                 "tags": [
                     "goods"
                 ],
-                "description": "获取商品小类",
+                "description": "获取商品二级分类",
                 "operationId": "getSubCategory",
-                "requestBody": {
-                    "description": "获取的商品小类编号",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "id": {
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "description": "小类id",
-                                        "example": 1
-                                    }
-                                }
-                            }
-                        }
+                "parameters": [
+                    {
+                        "name": "subCategoryId",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "二级分类id",
+                        "required": true,
+                        "example": 1
                     }
-                },
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/SubCategory"
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SubCategoryId"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/SubCategory"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "ERROR"
+                    }
+                }
+            }
+        },
+        "/goods/subcategory/{subCategoryId}/category": {
+            "get": {
+                "tags": [
+                    "goods"
+                ],
+                "description": "获得二级分类对象的一级分类",
+                "operationId": "getCategoryBySubCategoryId (response Id or Object)",
+                "parameters": [
+                    {
+                        "name": "subCategoryId",
+                        "in": "path",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "二级分类id",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "一级分类对象",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/CategoryId"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/Category"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/goods/subcategory/{subCategoryId}/item": {
+            "get": {
+                "tags": [
+                    "goods"
+                ],
+                "description": "获得二级分类下的商品",
+                "operationId": "getItemsBySubCategoryId (response Id or Object)",
+                "parameters": [
+                    {
+                        "name": "subCategoryId",
+                        "in": "path",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "二级分类id",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "description": "商品对象列表",
+                                    "items": {
+                                        "allOf": [
+                                            {
+                                                "$ref": "#/components/schemas/ItemId"
+                                            },
+                                            {
+                                                "$ref": "#/components/schemas/Item"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/goods/item": {
+            "post": {
+                "tags": [
+                    "goods"
+                ],
+                "description": "添加商品",
+                "operationId": "addItem",
+                "requestBody": {
+                    "description": "添加的商品",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/Item"
+                                    }
+                                ],
+                                "required": [
+                                    "ItemName",
+                                    "subCategoryId",
+                                    "providerId",
+                                    "ItemOriginalprice",
+                                    "Itemprice",
+                                    "ItemDescription",
+                                    "ItemPicture",
+                                    "ItemStatus"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "ERROR"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "goods"
+                ],
+                "description": "删除商品",
+                "operationId": "deleteItem",
+                "parameters": [
+                    {
+                        "name": "itemId",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "商品id",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "ERROR"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "goods"
+                ],
+                "description": "修改商品",
+                "operationId": "modifyItem",
+                "requestBody": {
+                    "description": "修改的商品",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ItemId"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/Item"
+                                    }
+                                ],
+                                "required": [
+                                    "itemId"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "ERROR"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "goods"
+                ],
+                "description": "获取商品",
+                "operationId": "getItem",
+                "parameters": [
+                    {
+                        "name": "itemId",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "商品id",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ItemId"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/Item"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -283,95 +584,130 @@
     },
     "components": {
         "schemas": {
-            "Category": {
-                "title": "Category",
-                "description": "商品大类",
+            "CategoryId": {
+                "title": "CategoryId",
                 "type": "object",
                 "properties": {
-                    "id": {
+                    "categoryId": {
                         "type": "integer",
                         "format": "int64",
-                        "description": "大类id",
+                        "description": "一级分类id",
                         "example": 1
-                    },
-                    "name": {
+                    }
+                }
+            },
+            "Category": {
+                "title": "Category",
+                "description": "商品一级分类",
+                "type": "object",
+                "properties": {
+                    "categoryName": {
                         "type": "string",
-                        "description": "大类名称",
+                        "description": "一级分类名称",
                         "example": "Food"
                     },
                     "description": {
                         "type": "string",
-                        "description": "大类描述",
+                        "description": "一级分类描述",
                         "example": "吃"
+                    }
+                }
+            },
+            "SubCategoryId": {
+                "title": "SubCategoryId",
+                "type": "object",
+                "properties": {
+                    "subCategoryId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "二级分类id",
+                        "example": 1
                     }
                 }
             },
             "SubCategory": {
                 "title": "SubCategory",
-                "description": "商品小类",
+                "description": "商品二级分类",
                 "type": "object",
                 "properties": {
-                    "id": {
+                    "subCategoryName": {
+                        "type": "string",
+                        "description": "二级分类名称",
+                        "example": "Rice"
+                    },
+                    "categoryId": {
                         "type": "integer",
                         "format": "int64",
-                        "description": "小类id",
+                        "description": "一级分类id",
                         "example": 1
-                    },
-                    "name": {
-                        "type": "string",
-                        "description": "小类名称",
-                        "example": "Rice"
                     },
                     "description": {
                         "type": "string",
-                        "description": "小类描述",
+                        "description": "二级分类描述",
                         "example": "大米"
                     }
                 }
             },
-            "Product": {
-                "title": "Product",
-                "description": "商品",
+            "ItemId": {
+                "title": "ItemId",
                 "type": "object",
                 "properties": {
-                    "id": {
+                    "itemId": {
                         "type": "integer",
                         "format": "int64",
                         "description": "商品id",
                         "example": 1
-                    },
-                    "name": {
+                    }
+                }
+            },
+            "Item": {
+                "title": "Item",
+                "description": "商品",
+                "type": "object",
+                "properties": {
+                    "ItemName": {
                         "type": "string",
                         "description": "商品名称",
-                        "example": "CocaCola_330_c"
+                        "example": "可口可乐 330ml 罐装"
                     },
-                    "provider": {
+                    "subCategoryId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "二级分类id",
+                        "example": 1
+                    },
+                    "providerId": {
                         "type": "integer",
                         "format": "int64",
                         "description": "供应商id",
                         "example": 1
                     },
-                    "price": {
+                    "ItemOriginalprice": {
                         "type": "number",
                         "format": "double",
-                        "description": "价格",
+                        "description": "原价",
                         "example": 3.0
                     },
-                    "description": {
-                        "type": "string",
-                        "description": "商品描述",
-                        "example": "可口可乐 330ml 罐装"
+                    "Itemprice": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "售价",
+                        "example": 3.0
                     },
-                    "atrribute": {
-                        "type": "array",
-                        "default": "商品属性",
-                        "items": {
-                            "type": "string"
-                        },
-                        "example": [
-                            "红罐",
-                            "可口"
-                        ]
+                    "ItemDescription": {
+                        "type": "string",
+                        "description": "文字描述",
+                        "example": "易拉罐 红罐 可乐 可口可乐"
+                    },
+                    "ItemPicture": {
+                        "type": "string",
+                        "description": "商品图片url",
+                        "example": "http://baidu.com/1.png"
+                    },
+                    "ItemStatus": {
+                        "type": "string",
+                        "default": "商品状态",
+                        "example": "in stock"
                     }
                 }
             }
