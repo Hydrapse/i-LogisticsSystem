@@ -17,11 +17,449 @@
     ],
     "tags": [
         {
+            "name": "user",
+            "description": "维护客户信息和供应商信息"
+        },
+        {
+            "name": "order",
+            "description": "维护订单信息"
+        },
+        {
             "name": "goods",
             "description": "维护商品两级分类信息和商品信息"
+        },
+        {
+            "name": "warehouse",
+            "description": "维护库房基本信息"
         }
     ],
     "paths": {
+        "/user/customer": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "添加客户",
+                "operationId": "addCustomer",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Customer"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "user"
+                ],
+                "description": "删除客户",
+                "operationId": "deleteCustomer",
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "客户id",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "user"
+                ],
+                "description": "修改客户信息",
+                "operationId": "modifyCustomer",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/CustomerId"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/Customer"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "description": "获取客户信息",
+                "operationId": "getCustomer",
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "客户id",
+                        "example": 1
+                    },
+                    {
+                        "name": "all",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "description": "是否获取全部客户信息",
+                        "example": false
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "allOf": [
+                                            {
+                                                "$ref": "#/components/schemas/CustomerId"
+                                            },
+                                            {
+                                                "$ref": "#/components/schemas/Customer"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/supplier": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "添加供应商",
+                "operationId": "addSupplier",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Supplier"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "user"
+                ],
+                "description": "删除供应商",
+                "operationId": "deleteSupplier",
+                "parameters": [
+                    {
+                        "name": "supplierId",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "供应商id",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "user"
+                ],
+                "description": "修改供应商信息",
+                "operationId": "modifySupplier",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/SupplierId"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/Supplier"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "description": "获取供应商信息",
+                "operationId": "getSupplier",
+                "parameters": [
+                    {
+                        "name": "supplierId",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "供应商id",
+                        "example": 1
+                    },
+                    {
+                        "name": "all",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "description": "是否获取全部供应商信息",
+                        "example": false
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "allOf": [
+                                            {
+                                                "$ref": "#/components/schemas/SupplierId"
+                                            },
+                                            {
+                                                "$ref": "#/components/schemas/Supplier"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ordser/{userId}": {
+            "post": {
+                "tags": [
+                    "order"
+                ],
+                "description": "新增用户订单",
+                "operationId": "addUserOrder",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "用户id",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Order"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "order"
+                ],
+                "description": "删除用户订单",
+                "operationId": "deleteUserOrder",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "用户id",
+                        "required": true,
+                        "example": 1
+                    },
+                    {
+                        "name": "orderId",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "订单id",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "order"
+                ],
+                "description": "用户退换货",
+                "operationId": "returnOrExchangeUserOrder",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "用户id",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/OrderId"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/Order"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "order"
+                ],
+                "description": "获取用户订单",
+                "operationId": "getUserOrder",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "用户id",
+                        "required": true,
+                        "example": 1
+                    },
+                    {
+                        "name": "orderId",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "订单id",
+                        "example": 1
+                    },
+                    {
+                        "name": "all",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "description": "是否获取全部订单",
+                        "example": false
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "allOf": [
+                                            {
+                                                "$ref": "#/components/schemas/OrderId"
+                                            },
+                                            {
+                                                "$ref": "#/components/schemas/Order"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/goods/category": {
             "post": {
                 "tags": [
@@ -455,7 +893,7 @@
                                 "required": [
                                     "ItemName",
                                     "subCategoryId",
-                                    "providerId",
+                                    "supplierId",
                                     "ItemOriginalprice",
                                     "Itemprice",
                                     "ItemDescription",
@@ -580,10 +1018,353 @@
                     }
                 }
             }
+        },
+        "/warehouse": {
+            "post": {
+                "tags": [
+                    "warehouse"
+                ],
+                "description": "添加库房",
+                "operationId": "addWarehouse",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "warehouse"
+                ],
+                "description": "删除库房",
+                "operationId": "deleteWarehouse",
+                "parameters": [],
+                "responses": {
+                    "default": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "warehouse"
+                ],
+                "description": "修改库房信息",
+                "operationId": "modifyWarehouse",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "warehouse"
+                ],
+                "description": "获取库房信息",
+                "operationId": "getWarehouse",
+                "parameters": [],
+                "responses": {
+                    "default": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/{warehouseId}/inventory": {
+            "post": {
+                "tags": [
+                    "warehouse"
+                ],
+                "description": "新添库存",
+                "operationId": "addWarehouseInventory",
+                "parameters": [
+                    {
+                        "name": "warehouseId",
+                        "in": "path",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "库房id",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "warehouse"
+                ],
+                "description": "加减库存",
+                "operationId": "modifyWarehouseInventory",
+                "parameters": [
+                    {
+                        "name": "warehouseId",
+                        "in": "path",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "库房id",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "warehouse"
+                ],
+                "description": "获取库存",
+                "operationId": "getWarehouseInventory",
+                "parameters": [
+                    {
+                        "name": "warehouseId",
+                        "in": "path",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "description": "库房id",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
+            "CustomerId": {
+                "type": "object",
+                "required": [
+                    "customerId"
+                ],
+                "properties": {
+                    "customerId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "客户id",
+                        "example": 1
+                    }
+                }
+            },
+            "Customer": {
+                "title": "Customer",
+                "description": "客户",
+                "type": "object",
+                "required": [
+                    "customerName",
+                    "customerPhone",
+                    "customerEmail",
+                    "customerAddress"
+                ],
+                "properties": {
+                    "customerName": {
+                        "type": "string",
+                        "description": "客户姓名",
+                        "example": "张三"
+                    },
+                    "customerPhone": {
+                        "type": "string",
+                        "description": "客户电话",
+                        "example": "10086"
+                    },
+                    "customerEmail": {
+                        "type": "string",
+                        "description": "客户邮箱",
+                        "example": "10001@qq.com"
+                    },
+                    "customerAddress": {
+                        "type": "string",
+                        "description": "客户地址",
+                        "example": "北京市东城区王府井大街1号"
+                    }
+                }
+            },
+            "SupplierId": {
+                "type": "object",
+                "required": [
+                    "supplierId"
+                ],
+                "properties": {
+                    "supplierId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "供应商id",
+                        "example": 1
+                    }
+                }
+            },
+            "Supplier": {
+                "title": "Supplier",
+                "description": "供应商",
+                "type": "object",
+                "required": [
+                    "supplierName",
+                    "contactName",
+                    "contactPhone",
+                    "supplierProvince",
+                    "supplierCity",
+                    "supplierAddress"
+                ],
+                "properties": {
+                    "supplierName": {
+                        "type": "string",
+                        "description": "供应商名称",
+                        "example": "可口可乐"
+                    },
+                    "contactName": {
+                        "type": "string",
+                        "description": "联系人姓名",
+                        "example": "李四"
+                    },
+                    "contactPhone": {
+                        "type": "string",
+                        "description": "联系人电话",
+                        "example": "10000"
+                    },
+                    "supplierProvince": {
+                        "type": "string",
+                        "description": "北京市"
+                    },
+                    "supplierCity": {
+                        "type": "string",
+                        "description": "北京市"
+                    },
+                    "supplierAddress": {
+                        "type": "string",
+                        "description": "供应商具体地址"
+                    }
+                }
+            },
+            "OrderId": {
+                "type": "object",
+                "required": [
+                    "orderId"
+                ],
+                "properties": {
+                    "orderId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "订单id",
+                        "example": 1
+                    }
+                }
+            },
+            "Order": {
+                "title": "Order",
+                "description": "订单",
+                "type": "object",
+                "required": [],
+                "properties": {
+                    "createTime": {
+                        "type": "string",
+                        "description": "创建时间",
+                        "example": "2020-07-05 12:00:00.000"
+                    },
+                    "paymentTime": {
+                        "type": "string",
+                        "description": "付款时间",
+                        "example": "2020-07-05 12:00:00.000"
+                    },
+                    "paymentAmount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "付款金额",
+                        "example": 100.00
+                    },
+                    "freight": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "运费",
+                        "example": 6.00
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "状态",
+                        "example": "已付款"
+                    },
+                    "paymentMethod": {
+                        "type": "string",
+                        "description": "付款方式",
+                        "example": "支付宝"
+                    },
+                    "receiver": {
+                        "type": "string",
+                        "description": "收件人",
+                        "example": "王五"
+                    },
+                    "receiverPhone": {
+                        "type": "string",
+                        "description": "收件电话"
+                    },
+                    "receiverAddress": {
+                        "type": "string",
+                        "description": "收件地址",
+                        "example": "北京市"
+                    },
+                    "remarks": {
+                        "type": "string",
+                        "description": "备注",
+                        "example": "别放丰巢"
+                    }
+                }
+            },
             "CategoryId": {
                 "title": "CategoryId",
                 "type": "object",
@@ -676,7 +1457,7 @@
                         "description": "二级分类id",
                         "example": 1
                     },
-                    "providerId": {
+                    "supplierId": {
                         "type": "integer",
                         "format": "int64",
                         "description": "供应商id",
