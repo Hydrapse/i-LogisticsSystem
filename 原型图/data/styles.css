@@ -22,6 +22,9 @@
 }
 .line {
 }
+.link_button {
+  color:#169BD5;
+}
 .shape {
 }
 .text_field {
@@ -291,6 +294,9 @@
   color:#FFFFFF;
 }
 .checkbox {
+  text-align:left;
+}
+.radio_button {
   text-align:left;
 }
 .label1 {
