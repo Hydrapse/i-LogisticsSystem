@@ -1067,7 +1067,7 @@
   position:absolute;
   left:0px;
   top:0px;
-  width:96px;
+  width:68px;
   height:40px;
   background:inherit;
   background-color:rgba(64, 158, 255, 1);
@@ -1084,8 +1084,8 @@
   border-width:0px;
   position:absolute;
   left:994px;
-  top:248px;
-  width:96px;
+  top:253px;
+  width:68px;
   height:40px;
   display:flex;
 }
@@ -1101,7 +1101,7 @@
   position:absolute;
   left:0px;
   top:0px;
-  width:96px;
+  width:68px;
   height:40px;
   background:inherit;
   background-color:rgba(0, 153, 255, 0.0980392156862745);
