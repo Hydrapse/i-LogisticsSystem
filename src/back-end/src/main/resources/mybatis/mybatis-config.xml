@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!--核心配置文件-->
+<configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+
+        <!--如果只查询主表数据而不进行使用，级联表的数据不会被查询；如果使用了主表数据，即使级联表的数据没有使用，也会查询-->
+        <setting name="lazyLoadingEnabled" value="false"/>
+    </settings>
+    
+    <typeAliases>
+        <package name="com.tcsquad.ilogistics.domain"/>
+    </typeAliases>
+
+    <!--
+        plugins在配置文件中的位置必须符合要求，否则会报错，顺序如下:
+        properties?, settings?,
+        typeAliases?, typeHandlers?,
+        objectFactory?,objectWrapperFactory?,
+        plugins?,
+        environments?, databaseIdProvider?, mappers?
+    -->
+    <plugins>
+        <!-- com.github.pagehelper为PageHelper类所在包名 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- 使用下面的方式配置参数，后面会有所有的参数介绍 -->
+            <property name="reasonable" value="true"/>
+            <property name="helperDialect" value="mysql"/>
+        </plugin>
+    </plugins>
+
+</configuration>
+

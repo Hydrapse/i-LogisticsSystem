@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tcsquad.ilogistics.mapper.TestMapper">
+
+    <!--统一规范, parameterType不用写, resultType必须写-->
+    <!--表名全部小写-->
+    <select id="getTestNameByTestId" resultType="String">
+    SELECT
+          testname
+    FROM test
+    WHERE testId = #{testId}
+    </select>
+
+
+</mapper>
