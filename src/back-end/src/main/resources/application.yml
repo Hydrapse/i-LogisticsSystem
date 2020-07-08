@@ -1,46 +1,10 @@
+#端口
 server:
   port: 8233
-
-spring:
-  datasource:
-    username: Ikalos
-    password: 123456
-    url: jdbc:mysql://localhost:3307/i_logistics_system?characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-    #指定数据源
-    type: com.alibaba.druid.pool.DruidDataSource
-    #数据源其他配置, DataSourceProperties中没有相关属性,默认无法绑定
-    initialSize: 8
-    minIdle: 5
-    maxActive: 20
-    maxWait: 60000
-    timeBetweenEvictionRunsMillis: 60000
-    minEvictableIdleTimeMillis: 300000
-    validationQuery: SELECT 1 FROM DUAL
-    testWhileIdle: true
-    testOnBorrow: false
-    testOnReturn: false
-    poolPreparedStatements: true
-    # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
-    filters: stat,wall,slf4j
-    maxPoolPreparedStatementPerConnectionSize: 25
-    useGlobalDataSourceStat: true
-    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
-
-# SSH连接配置
-sshconfig:
-  local-port: 3307 #本地通信端口
-  remote-port: 3306 #远程连接端口
-  ssh:
-    user: tcsquad #SSH用户名
-    password: 123456 #SSH密码
-    remote-port: 22 #SSH通信端口
-    remote-server: 47.96.153.136 #远程A服务器跳板机IP
-  mysql:
-    remote-server: localhost # 远程Mysql服务
 
 #Mybatis配置
 mybatis:
   mapper-locations: classpath:mybatis/mapper/*.xml #映射配置文件
   config-location: classpath:mybatis/mybatis-config.xml #核心配置文件
+
+
