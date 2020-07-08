@@ -1,0 +1,10 @@
+#端口
+server:
+  port: 8233
+
+#Mybatis配置
+mybatis:
+  mapper-locations: classpath:mybatis/mapper/*.xml #映射配置文件
+  config-location: classpath:mybatis/mybatis-config.xml #核心配置文件
+
+
