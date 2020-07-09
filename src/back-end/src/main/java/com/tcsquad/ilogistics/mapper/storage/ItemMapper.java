@@ -1,4 +1,4 @@
-package com.tcsquad.ilogistics.mapper;
+package com.tcsquad.ilogistics.mapper.storage;
 
 import com.tcsquad.ilogistics.domain.storage.Item;
 import org.apache.ibatis.annotations.Param;

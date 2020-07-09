@@ -1,4 +1,4 @@
-package com.tcsquad.ilogistics.mapper;
+package com.tcsquad.ilogistics.mapper.delivery;
 
 import com.tcsquad.ilogistics.domain.delivery.Courier;
 import org.springframework.stereotype.Repository;

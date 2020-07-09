@@ -1,4 +1,4 @@
-package com.tcsquad.ilogistics.mapper;
+package com.tcsquad.ilogistics.mapper.clientele;
 
 import com.tcsquad.ilogistics.domain.clientele.Supplier;
 import org.springframework.stereotype.Repository;
