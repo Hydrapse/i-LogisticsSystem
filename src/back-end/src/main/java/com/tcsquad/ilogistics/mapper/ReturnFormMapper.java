@@ -1,6 +1,6 @@
 package com.tcsquad.ilogistics.mapper;
 
-import com.tcsquad.ilogistics.domain.ReturnForm;
+import com.tcsquad.ilogistics.domain.order.ReturnForm;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
