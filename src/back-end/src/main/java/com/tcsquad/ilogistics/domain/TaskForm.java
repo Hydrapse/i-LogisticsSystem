@@ -1,5 +1,7 @@
 package com.tcsquad.ilogistics.domain;
 
+import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

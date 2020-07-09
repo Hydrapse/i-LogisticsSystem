@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcsquad.ilogistics.mapper.SupplierMapper">
+    <select id="getSuppliers" resultType="Supplier">
+        select
+             sid as supplierId,
+             brandname,
+             manager,
+             tel,
+             email,
+             province,
+             city,
+             region,
+             addr
+        from supplier
+    </select>
+    <insert id="insertSupplier" parameterType="Supplier">
+        insert into supplier(sid, brandname, manager, tel, email, province, city, region, addr)
+        values
+            (#{supplierId}, #{brandname}, #{manager}, #{tel}, #{email}, #{province}, #{city},
+             #{rehion}, #{addr})
+    </insert>
+    <update id="updateSupplier" parameterType="Supplier">
+        update supplier
+        set
+           manager = #{manager},
+           brandname = #{brandname},
+           tel = #{tel},
+           email = #{email},
+           province = #{city},
+           region = #{region},
+           addr = #{addr}
+        where sid = #{supplierId}
+    </update>
+
+    <delete id="deleteSupplier">
+        delete from supplier
+        where sid = #{supplierId}
+    </delete>
+</mapper>

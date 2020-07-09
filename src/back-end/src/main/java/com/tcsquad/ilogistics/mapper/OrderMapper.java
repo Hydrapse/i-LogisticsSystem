@@ -11,17 +11,13 @@ public interface OrderMapper {
 
     Order getOrder(int orderId);
 
-    //void insertOrder(Order order);
+    void insertOrder(Order order);
 
     void updateOrderStatus(String status,int orderId);//这里的status是指processstatus
 
     void updateOrder(Order order);
 
     void deleteOrderByOrderId(int orderId);
-
-
-
-
 
 
 }

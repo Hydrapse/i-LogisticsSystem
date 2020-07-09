@@ -23,6 +23,54 @@
             status,
             note
         from taskfrom
+        where orderid = #{orderId}
     </select>
-    <
+    <select id="getTaskForm" resultType="TaskForm">
+        select
+            taskid,
+            orderid,
+            subsiteid,
+            shipname,
+            shiptel,
+            shippro,
+            shipcity,
+            shipdis,
+            billname,
+            billtel,
+            billpro,
+            billcity,
+            billdis,
+            courier,
+            totalprice,
+            status,
+            note
+        from taskfrom
+        where taskid = #{taskId}
+    </select>
+
+    <insert id="insertTaskForm" parameterType="TaskForm">
+        insert into taskform
+           (taskid, orderid, subsiteid, shipname, shiptel, shippro, shipcity, shipdis, billname, billtel,
+            billpro, billcity, billdis, courier, totalprice, status, note)
+        values
+           (#{taskid}, #{orderId}, #{subsiteId}, #{shipname}, #{shiptel}, #{shippro}, #{shipcity},
+            #{shipdis}, #{billname}, #{billtel}, #{billpro}, #{billcity}, #{billdis}, #{courier},
+            #{totalprice}, #{status}, #{note})
+    </insert>
+
+    <update id="updateTaskFormStatus">
+        update taskform
+        set status = #{status}
+        where taskid = #{taskId}
+    </update>
+
+    <delete id="deleteTaskForm">
+        delete from taskform
+        where taskid = #{taskId}
+    </delete>
+    <delete id="deleteTaskFormsByOrderId">
+        delete from taskform
+        where orderid = #{orderId}
+    </delete>
+
 </mapper>
