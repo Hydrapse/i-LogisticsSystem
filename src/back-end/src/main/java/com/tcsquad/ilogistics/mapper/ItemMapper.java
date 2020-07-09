@@ -1,11 +1,10 @@
 package com.tcsquad.ilogistics.mapper;
 
-import com.tcsquad.ilogistics.domain.Item;
+import com.tcsquad.ilogistics.domain.storage.Item;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public interface ItemMapper {

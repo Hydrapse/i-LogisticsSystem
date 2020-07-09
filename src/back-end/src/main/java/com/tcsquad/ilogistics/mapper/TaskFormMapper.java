@@ -1,6 +1,6 @@
 package com.tcsquad.ilogistics.mapper;
 
-import com.tcsquad.ilogistics.domain.TaskForm;
+import com.tcsquad.ilogistics.domain.order.TaskForm;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

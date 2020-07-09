@@ -1,6 +1,6 @@
 package com.tcsquad.ilogistics.mapper;
 
-import com.tcsquad.ilogistics.domain.Order;
+import com.tcsquad.ilogistics.domain.order.Order;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
