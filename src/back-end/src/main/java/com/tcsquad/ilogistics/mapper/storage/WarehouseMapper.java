@@ -3,10 +3,12 @@ package com.tcsquad.ilogistics.mapper.storage;
 import com.tcsquad.ilogistics.domain.storage.Item;
 import com.tcsquad.ilogistics.domain.storage.WarehouseResp;
 import org.apache.ibatis.annotations.MapKey;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
 
+@Repository
 public interface WarehouseMapper {
     //根据主站编号获取库房列表
     List<WarehouseResp> getWarehouseRespByMainSiteId(String mainSiteId);

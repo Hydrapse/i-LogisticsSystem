@@ -4,6 +4,7 @@ import com.tcsquad.ilogistics.domain.clientele.Customer;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
 @Repository
 public interface CustomerMapper {
     List<Customer> getCustomers();//买家列表
