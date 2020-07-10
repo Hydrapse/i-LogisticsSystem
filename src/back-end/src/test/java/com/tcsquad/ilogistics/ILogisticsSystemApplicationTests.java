@@ -10,7 +10,6 @@ class ILogisticsSystemApplicationTests {
 
     @Test
     void test() {
-
     }
 
 }
