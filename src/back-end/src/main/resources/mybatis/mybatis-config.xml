@@ -13,7 +13,11 @@
     </settings>
     
     <typeAliases>
-        <package name="com.tcsquad.ilogistics.domain"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.clientele.Customer"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.order.ReturnForm"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.clientele.Supplier"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.order.TaskForm"/>
+<!--        <package name="com.tcsquad.ilogistics.domain"/>-->
     </typeAliases>
 
     <!--
