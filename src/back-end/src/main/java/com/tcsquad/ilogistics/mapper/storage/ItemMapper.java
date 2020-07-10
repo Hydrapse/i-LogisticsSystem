@@ -20,6 +20,9 @@ public interface ItemMapper {
     Item getItem(String itemId);
 
     //上架
+    void updateItemStatus(String status);
+
+    //新增
     void insertItem(Item item);
 
     //删除

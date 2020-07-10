@@ -10,7 +10,7 @@ public class WarehouseDetailResp {
     private Category category;
     private List<Item> itemList = new ArrayList<Item>();;
     private String mainSiteName;
-    private Map<String,Integer> inventory = new HashMap<String,Integer>();
+    private Map<String,Integer> inventory = new HashMap<String,Integer>();   //键为ItemId，值为库存数量
 
     /**
      * Default constructor
