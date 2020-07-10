@@ -1,6 +1,6 @@
-package com.tcsquad.ilogistics.mapper;
+package com.tcsquad.ilogistics.mapper.clientele;
 
-import com.tcsquad.ilogistics.domain.Customer;
+import com.tcsquad.ilogistics.domain.clientele.Customer;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 public interface CustomerMapper {
     List<Customer> getCustomers();//买家列表
 
-    Customer getCustomer();//单买家详细信息查询
+    Customer getCustomerByCustomerId();//单买家详细信息查询
 
     void updateCustomer(Customer customer);
 }

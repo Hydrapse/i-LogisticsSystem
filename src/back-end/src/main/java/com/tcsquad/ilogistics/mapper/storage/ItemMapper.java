@@ -1,11 +1,10 @@
-package com.tcsquad.ilogistics.mapper;
+package com.tcsquad.ilogistics.mapper.storage;
 
-import com.tcsquad.ilogistics.domain.Item;
+import com.tcsquad.ilogistics.domain.storage.Item;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public interface ItemMapper {
@@ -16,11 +15,14 @@ public interface ItemMapper {
     void updateInventory(@Param("itemId")String itemId,@Param("increment")int increment,@Param("warehouseId")String warehouseId);
 
     //通过二级商品编号获取item列表信息
-    List<Item> getItemListBySubcategoryId(String subcategoryId);
+    List<Item> getItemListByCategoryId(String categoryId);
 
     Item getItem(String itemId);
 
     //上架
+    void updateItemStatus(String status);
+
+    //新增
     void insertItem(Item item);
 
     //删除

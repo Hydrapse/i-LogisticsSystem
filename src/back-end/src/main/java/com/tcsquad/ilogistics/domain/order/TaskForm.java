@@ -1,4 +1,9 @@
-package com.tcsquad.ilogistics.domain;
+package com.tcsquad.ilogistics.domain.order;
+
+import com.tcsquad.ilogistics.domain.order.OrderItem;
+import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
+
+import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,19 +16,46 @@ public class TaskForm {
     private String subsiteId;
     private String courier;
     private String status;
+    private DateTimeLiteralExpression.DateTime deliveryDateTime;
     private String shipName;
     private String shipTel;
     private String shipPro;
     private String shipCity;
     private String shipDis;
+    private String shipAddr;
     private String billName;
     private String billTel;
     private String billPro;
     private String billCity;
     private String billDis;
+    private String billAddr;
     private BigDecimal totalPrice;//任务单付款信息
     private String note;//备注
-    private List<OrderItem> orderItems = new ArrayList<OrderItem>();
+    private List<OrderItem> orderItems = new ArrayList<>();
+
+    public DateTimeLiteralExpression.DateTime getDeliveryDateTime() {
+        return deliveryDateTime;
+    }
+
+    public void setDeliveryDateTime(DateTimeLiteralExpression.DateTime deliveryDateTime) {
+        this.deliveryDateTime = deliveryDateTime;
+    }
+
+    public String getShipAddr() {
+        return shipAddr;
+    }
+
+    public void setShipAddr(String shipAddr) {
+        this.shipAddr = shipAddr;
+    }
+
+    public String getBillAddr() {
+        return billAddr;
+    }
+
+    public void setBillAddr(String billAddr) {
+        this.billAddr = billAddr;
+    }
 
     public int getTaskId() {
         return taskId;
