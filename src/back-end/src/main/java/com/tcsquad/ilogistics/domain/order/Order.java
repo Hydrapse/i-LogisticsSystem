@@ -9,14 +9,14 @@ public class Order {
     private String processStatus;
     private DateTimeLiteralExpression.DateTime createDateTime;
     private DateTimeLiteralExpression.DateTime payDateTime;
-    private DateTimeLiteralExpression.DateTime deliveryDateTime;
+    private DateTimeLiteralExpression.DateTime deliveryDateTime;//订单发货时间
     private String billName;
     private String billPro;
     private String billCity;
     private String billDistrict;
     private String billAddr;
     private double totalPrice;
-    private double shippingCost;
+    private double shippingCost;//运费
     private String payMethod = "支付宝";
     private String note;
 

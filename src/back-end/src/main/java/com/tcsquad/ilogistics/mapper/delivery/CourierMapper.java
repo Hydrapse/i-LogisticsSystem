@@ -9,10 +9,12 @@ import java.util.List;
 public interface CourierMapper {
     List<Courier> getCouriersBySubsiteId(String subsiteId);
 
+    Courier getCourierByCourierId(long courierId);
+
     void insertCourier(Courier courier);
 
     void updateCourier(Courier courier);
 
-    void deleteCourierByCourierId(String courierId);
+    void deleteCourierByCourierId(long courierId);
 
 }

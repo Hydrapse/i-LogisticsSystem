@@ -9,8 +9,8 @@ import java.math.BigDecimal;
  * 
  */
 public class ReturnForm {
-    private int formId;
-    private int orderId;
+    private long formId;
+    private long orderId;
     private int isChange;
     private Item item;
     private int itemNum;
@@ -20,19 +20,19 @@ public class ReturnForm {
     private String processStatus;
     private String reason;
 
-    public int getFormId() {
+    public long getFormId() {
         return formId;
     }
 
-    public void setFormId(int formId) {
+    public void setFormId(long formId) {
         this.formId = formId;
     }
 
-    public int getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(int orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 

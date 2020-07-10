@@ -9,15 +9,17 @@ import java.util.List;
 public interface OrderMapper {
     List<Order> getOrders();
 
-    Order getOrder(int orderId);
+    Order getOrder(long orderId);
 
     void insertOrder(Order order);
 
-    void updateOrderStatus(String status,int orderId);//这里的status是指processstatus
+    void insertOrderStatus(Order order);
+    //更新订单处理状态:processStatus
+    void updateOrderStatus(Order order);
 
-    void updateOrder(Order order);
+    //void updateOrder(Order order);
 
-    void deleteOrderByOrderId(int orderId);
+    void deleteOrderByOrderId(long orderId);
 
 
 }

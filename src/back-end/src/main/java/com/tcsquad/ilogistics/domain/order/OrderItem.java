@@ -7,11 +7,10 @@ import java.math.BigDecimal;
 public class OrderItem {
     private long orderId;
     private long taskId;
-    private int lineNumber;
-    private int quantity;
+    private int itemId;
+    private int itemNum;
     private String status;
-    private BigDecimal unitPrice;
-    private BigDecimal totalPrice;
+    private BigDecimal total;
     private Item item;
 
     public long getOrderId() {
@@ -30,20 +29,20 @@ public class OrderItem {
         this.taskId = taskId;
     }
 
-    public int getLineNumber() {
-        return lineNumber;
+    public int getItemId() {
+        return itemId;
     }
 
-    public void setLineNumber(int lineNumber) {
-        this.lineNumber = lineNumber;
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getItemNum() {
+        return itemNum;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setItemNum(int itemNum) {
+        this.itemNum = itemNum;
     }
 
     public String getStatus() {
@@ -54,20 +53,12 @@ public class OrderItem {
         this.status = status;
     }
 
-    public BigDecimal getUnitPrice() {
-        return unitPrice;
+    public BigDecimal getTotal() {
+        return total;
     }
 
-    public void setUnitPrice(BigDecimal unitPrice) {
-        this.unitPrice = unitPrice;
-    }
-
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
+    public void setTotal(BigDecimal totalPrice) {
+        this.total = total;
     }
 
     public Item getItem() {

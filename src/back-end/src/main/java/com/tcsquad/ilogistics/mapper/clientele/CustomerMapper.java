@@ -8,7 +8,7 @@ import java.util.List;
 public interface CustomerMapper {
     List<Customer> getCustomers();//买家列表
 
-    Customer getCustomerByCustomerId();//单买家详细信息查询
+    Customer getCustomerByCustomerId(long customerId);//单买家详细信息查询
 
     void updateCustomer(Customer customer);
 }

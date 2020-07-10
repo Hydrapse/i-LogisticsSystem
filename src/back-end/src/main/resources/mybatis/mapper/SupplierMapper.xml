@@ -16,6 +16,21 @@
              addr
         from supplier
     </select>
+
+    <select id="getSupplierBySupplierId" resultType="Supplier">
+        select
+             sid as supplierId,
+             brandname,
+             manager,
+             tel,
+             email,
+             province,
+             city,
+             region,
+             addr
+        from supplier
+        where sid = #{supplierId}
+    </select>
     <insert id="insertSupplier" parameterType="Supplier">
         insert into supplier(sid, brandname, manager, tel, email, province, city, region, addr)
         values

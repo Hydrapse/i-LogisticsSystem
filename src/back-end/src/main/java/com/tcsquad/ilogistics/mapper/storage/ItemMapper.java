@@ -15,7 +15,7 @@ public interface ItemMapper {
     void updateInventory(@Param("itemId")String itemId,@Param("increment")int increment,@Param("warehouseId")String warehouseId);
 
     //通过二级商品编号获取item列表信息
-    List<Item> getItemListBySubcategoryId(String subcategoryId);
+    List<Item> getItemListByCategoryId(String categoryId);
 
     Item getItem(String itemId);
 

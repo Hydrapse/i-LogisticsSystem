@@ -9,6 +9,8 @@ import java.util.List;
 public interface SupplierMapper {
     List<Supplier> getSuppliers();
 
+    Supplier getSupplierBySupplierId();
+
     void insertSupplier(Supplier supplier);
 
     void updateSupplier(Supplier supplier);

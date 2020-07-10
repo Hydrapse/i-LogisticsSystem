@@ -9,20 +9,20 @@ import java.util.List;
 public interface TaskFormMapper {
 
     //通过订单Id查询该订单对应的任务单
-    List<TaskForm> getTaskFormsByOrderId(int orderId);
+    List<TaskForm> getTaskFormsByOrderId(long orderId);
 
     //List<TaskForm> getTaskForms();
 
     //根据任务单编号查询任务单
-    TaskForm getTaskForm(int taskId);
+    TaskForm getTaskForm(long taskId);
 
     void insertTaskForm(TaskForm taskForm);
 
-    void updateTaskFormStatus(String status,int taskId);
+    void updateTaskFormStatus(String status,long taskId);
 
-    void deleteTaskForm(int taskId);
+    void deleteTaskForm(long taskId);
 
     //删除某一订单对应的任务单
-    void deleteTaskFormsByOrderId(int orderId);
+    void deleteTaskFormsByOrderId(long orderId);
 
 }

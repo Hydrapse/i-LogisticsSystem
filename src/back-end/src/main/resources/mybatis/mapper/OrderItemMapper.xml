@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcsquad.ilogistics.mapper.order.OrderItemMapper">
+    <insert id="insertOrderItem" parameterType="OrderItem">
+        insert into orderitem
+            (orderid, itemid, taskid, itemnum, status, total)
+        values
+            (#{orderId}, #{itemId}, #{taskId}, #{itemNum}, #{status}, #{total})
+    </insert>
+
+    <select id="getOrderItemsByOrderId" resultType="OrderItem">
+        select
+            orderid, itemid, taskid, itemnum, status, total
+        from orderitem
+        where orderid = #{orderId}
+    </select>
+
+    <update id="updateOrderItemStatus" parameterType="OrderItem">
+        update orderitem
+        set
+            status = #{status}
+        where orderid = #{orderId} and itemid = #{itemId}
+    </update>
+</mapper>

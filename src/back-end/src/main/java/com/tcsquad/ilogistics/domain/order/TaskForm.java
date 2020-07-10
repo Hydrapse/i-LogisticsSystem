@@ -11,9 +11,9 @@ import java.util.List;
 
 public class TaskForm {
 
-    private int taskId;
-    private int orderId;
-    private String subsiteId;
+    private long taskId;
+    private long orderId;
+    private String subSiteId;
     private String courier;
     private String status;
     private DateTimeLiteralExpression.DateTime deliveryDateTime;
@@ -57,28 +57,28 @@ public class TaskForm {
         this.billAddr = billAddr;
     }
 
-    public int getTaskId() {
+    public long getTaskId() {
         return taskId;
     }
 
-    public void setTaskId(int taskId) {
+    public void setTaskId(long taskId) {
         this.taskId = taskId;
     }
 
-    public int getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(int orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
-    public String getSubsiteId() {
-        return subsiteId;
+    public String getSubSiteId() {
+        return subSiteId;
     }
 
-    public void setSubsiteId(String subsiteId) {
-        this.subsiteId = subsiteId;
+    public void setSubSiteId(String subSiteId) {
+        this.subSiteId = subSiteId;
     }
 
     public String getCourier() {

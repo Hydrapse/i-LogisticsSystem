@@ -5,12 +5,12 @@
 <mapper namespace="com.tcsquad.ilogistics.mapper.clientele.CustomerMapper">
     <select id="getCustomers" resultType="Customer">
         select
-             customerid, cname, email, tel, addr, district, city, province
+             customerid as customerId, cname, email, tel, addr, district, city, province
         from customer
     </select>
     <select id="getCustomerByCustomerId" resultType="Customer">
         select
-             customerid as customerId, cname, email, tel, addr, district, city, province
+             cname, email, tel, addr, district, city, province
         from customer
         where customerid = #{customerId}
     </select>

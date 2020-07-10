@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcsquad.ilogistics.mapper.order.OrderMapper">
+    <select id="getOrders" resultType="Order">
+         select
+            orderid,
+            customerid,
+            createdate as createDateTime,
+            billname,
+            billpro,
+            billcity,
+            billdis as billDistrict,
+            billaddr,
+            totalprice,
+            shippingcost,
+            paymethod,
+            note,
+            status
+        from orders,orderstatus
+        where orders.orderid = orderstatus.orderid
+        order by createdate
+    </select>
+    <select id="getOrder" resultType="Order">
+        select
+            orderid,
+            customerid,
+            createdate as createDateTime,
+            billname,
+            billpro,
+            billcity,
+            billdis as billDistrict,
+            billaddr,
+            totalprice,
+            shippingcost,
+            paymethod,
+            note,
+            status
+        from orders,orderstatus
+        where orders.orderid = orderstatus.orderid and orderid = #{orderId}
+        order by createdate
+    </select>
+
+    <insert id="insertOrder" parameterType="Order">
+        insert into orders
+            (orderid, customerid, createdate, paydate, deliverydate,billname,billpro,billcity,billdis,
+            billaddr, totalprice, shippingcost, paymethod, note)
+        values
+            (#{orderId}, #{customerId}, #{createDate}, #{payDate}, #{deliveryDate}, #{billName}, #{billPro}, 
+             #{billCity}, #{billDistrict}, #{billAddr}, #{totalPrice}, #{shippingCost}, #{payMethod},#{note})
+    </insert>
+    
+    <insert id="insertOrderStatus" parameterType="Order">
+        insert into orderstatus
+            (orderid, linenum, createtime, status)
+        values
+            (#{orderId}, #{lineNum}, #{createTime}, #{status})
+    </insert>
+    <update id="updateOrderStatus" parameterType="Order">
+        update orderstatus
+        set
+            processstatus = #{processStatus}
+        where orderid = #{orderId}
+    </update>
+    <delete id="deleteOrderByOrderId">
+        delete from orders,orderstatus
+        where orderid = #{orderId}
+    </delete>
+</mapper>

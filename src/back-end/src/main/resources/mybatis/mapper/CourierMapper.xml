@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcsquad.ilogistics.mapper.delivery.CourierMapper">
+    <select id="getCouriersBySubsiteId" parameterType="String" resultType="Courier">
+        select
+             crid as courierId,
+             cname as name,
+             subsiteid,
+             tel,
+             commentlevel
+        from courier
+        where subsiteid = #{subSiteId}
+    </select>
+
+    <select id="getCourierByCourierId" resultType="Courier">
+        select
+             crid as courierId,
+             cname as name,
+             subsiteid,
+             tel,
+             commentlevel
+        from courier
+        where crid = #{courierId}
+    </select>
+
+    <insert id="insertCourier" parameterType="Courier">
+        insert into courier(crid, cname, subsiteid, tel, commentlevel)
+        values
+              (#{courierId}, #{name}, #{subSiteId}, #{tel}, #{commentLevel})
+    </insert>
+
+    <update id="updateCourier" parameterType="Courier">
+        update courier
+        set
+            subsiteid = {subSiteId},
+            tel = #{tel},
+            commentlevel = #{commentLevel}
+        where crid = #{courierId}
+    </update>
+
+    <delete id="deleteCourierByCourierId">
+        delete from courier
+        where crid = #{courierId}
+    </delete>
+</mapper>
