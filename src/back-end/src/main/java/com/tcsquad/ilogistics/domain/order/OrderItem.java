@@ -5,9 +5,9 @@ import com.tcsquad.ilogistics.domain.storage.Item;
 import java.math.BigDecimal;
 
 public class OrderItem {
-    private long orderId;
-    private long taskId;
-    private int quantity;
+    private Long orderId;
+    private Long taskId;
+    private Integer quantity;
     private String status;
     private BigDecimal totalPrice;
     private Item item;
