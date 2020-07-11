@@ -1,4 +1,7 @@
-package com.tcsquad.ilogistics.domain.storage;
+package com.tcsquad.ilogistics.domain.response;
+import com.tcsquad.ilogistics.domain.storage.Category;
+import com.tcsquad.ilogistics.domain.storage.Item;
+
 import java.util.*;
 
 /**
@@ -8,9 +11,9 @@ public class WarehouseDetailResp {
     private String warehouseId;
     private String mainSiteId;
     private Category category;
-    private List<Item> itemList = new ArrayList<Item>();;
+    private List<ItemInventoryResp> itemList = new ArrayList<ItemInventoryResp>();;
     private String mainSiteName;
-    private Map<String,Integer> inventory = new HashMap<String,Integer>();   //键为ItemId，值为库存数量
+    //private Map<String,Integer> inventory = new HashMap<String,Integer>();   //键为ItemId，值为库存数量
 
     /**
      * Default constructor
@@ -42,11 +45,11 @@ public class WarehouseDetailResp {
         this.category = category;
     }
 
-    public List<Item> getItemList() {
+    public List<ItemInventoryResp> getItemList() {
         return itemList;
     }
 
-    public void setItemList(List<Item> itemList) {
+    public void setItemList(List<ItemInventoryResp> itemList) {
         this.itemList = itemList;
     }
 
@@ -56,13 +59,5 @@ public class WarehouseDetailResp {
 
     public void setMainSiteName(String mainSiteName) {
         this.mainSiteName = mainSiteName;
-    }
-
-    public Map<String, Integer> getInventory() {
-        return inventory;
-    }
-
-    public void setInventory(Map<String, Integer> inventory) {
-        this.inventory = inventory;
     }
 }

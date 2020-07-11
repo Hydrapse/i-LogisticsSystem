@@ -1,4 +1,6 @@
-package com.tcsquad.ilogistics.domain.storage;
+package com.tcsquad.ilogistics.domain.response;
+
+import com.tcsquad.ilogistics.domain.storage.Category;
 
 /**
  * 
