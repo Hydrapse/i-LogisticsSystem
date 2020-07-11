@@ -38,7 +38,8 @@ dependencies {
     compile group: 'com.alibaba', name: 'druid', version: '1.1.12'
     compile group: 'com.jcraft', name: 'jsch', version: '0.1.55'
 
-    compile group: 'org.apache.rocketmq', name: 'rocketmq-spring-boot-starter', version: '2.1.0'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    testImplementation 'org.springframework.amqp:spring-rabbit-test'
 }
 
 test {

@@ -7,7 +7,3 @@ mybatis:
   mapper-locations: classpath:mybatis/mapper/*.xml #映射配置文件
   config-location: classpath:mybatis/mybatis-config.xml #核心配置文件
 
-rocketmq:
-  name-server: 120.79.43.59:9876
-  producer:
-    group: my-group
