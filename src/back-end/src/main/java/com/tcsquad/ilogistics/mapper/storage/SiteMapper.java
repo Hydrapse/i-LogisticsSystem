@@ -2,9 +2,11 @@ package com.tcsquad.ilogistics.mapper.storage;
 
 import com.tcsquad.ilogistics.domain.storage.MainSite;
 import com.tcsquad.ilogistics.domain.storage.SubSite;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface SiteMapper {
     //获取主站信息
     MainSite getMainSiteById(String mainSiteId);
