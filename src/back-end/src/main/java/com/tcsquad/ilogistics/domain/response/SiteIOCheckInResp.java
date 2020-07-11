@@ -11,7 +11,7 @@ public class SiteIOCheckInResp {
     private Item item;
     private Integer itemNum;
     private Integer type;           //1表示补货，2表示调货，3表示退货，4表示换货
-    private String typeDescn;       //对type属性的描述，如“补货”
+    private String typeDesc;       //对type属性的描述，如“补货”
     private Long formId;            //相关表单编号
     private String itemDest;        //货物来源，例如：用户名
     private String approvalStatus;
@@ -65,12 +65,12 @@ public class SiteIOCheckInResp {
         this.type = type;
     }
 
-    public String getTypeDescn() {
-        return typeDescn;
+    public String getTypeDesc() {
+        return typeDesc;
     }
 
-    public void setTypeDescn(String typeDescn) {
-        this.typeDescn = typeDescn;
+    public void setTypeDesc(String typeDesc) {
+        this.typeDesc = typeDesc;
     }
 
     public Long getFormId() {

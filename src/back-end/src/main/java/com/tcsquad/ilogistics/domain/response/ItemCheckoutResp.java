@@ -2,7 +2,7 @@ package com.tcsquad.ilogistics.domain.response;
 
 public class ItemCheckoutResp {
     Integer type;           //1：退货给供应商，2：调货出库，3：发货出库
-    String typeDescn;       //对type属性的描述
+    String typeDesc;       //对type属性的描述
     Long formId;            //例如：调货的调货单编号
     String itemId;
     Integer itemNum;
@@ -16,12 +16,12 @@ public class ItemCheckoutResp {
         this.type = type;
     }
 
-    public String getTypeDescn() {
-        return typeDescn;
+    public String getTypeDesc() {
+        return typeDesc;
     }
 
-    public void setTypeDescn(String typeDescn) {
-        this.typeDescn = typeDescn;
+    public void setTypeDesc(String typeDesc) {
+        this.typeDesc = typeDesc;
     }
 
     public Long getFormId() {
