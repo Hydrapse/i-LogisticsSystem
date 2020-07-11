@@ -1,7 +1,7 @@
 package com.tcsquad.ilogistics.domain.order;
 
 import com.tcsquad.ilogistics.domain.storage.Item;
-import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
+import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
 
@@ -15,8 +15,8 @@ public class ReturnForm {
     private Item item;
     private int itemNum;
     private BigDecimal returnMoney;
-    private DateTimeLiteralExpression.DateTime applyTime;
-    private DateTimeLiteralExpression.DateTime processTime;
+    private DateTime applyTime;
+    private DateTime processTime;
     private String processStatus;
     private String reason;
 
@@ -52,19 +52,19 @@ public class ReturnForm {
         this.itemNum = itemNum;
     }
 
-    public DateTimeLiteralExpression.DateTime getApplyTime() {
+    public DateTime getApplyTime() {
         return applyTime;
     }
 
-    public void setApplyTime(DateTimeLiteralExpression.DateTime applyTime) {
+    public void setApplyTime(DateTime applyTime) {
         this.applyTime = applyTime;
     }
 
-    public DateTimeLiteralExpression.DateTime getProcessTime() {
+    public DateTime getProcessTime() {
         return processTime;
     }
 
-    public void setProcessTime(DateTimeLiteralExpression.DateTime processTime) {
+    public void setProcessTime(DateTime processTime) {
         this.processTime = processTime;
     }
 

@@ -7,9 +7,9 @@ public class WarehouseResp {
     private String siteId;
     private String warehouseId;
     private Category category;
-    private int kindsOfItem;
+    private int kindNumOfItem;  //！！----修改
     private int totalSize;
-    private int MaxSize;
+    private int maxSize;
 
     /**
      * Default constructor
@@ -41,12 +41,12 @@ public class WarehouseResp {
         this.category = category;
     }
 
-    public int getKindsOfItem() {
-        return kindsOfItem;
+    public int getKindNumOfItem() {
+        return kindNumOfItem;
     }
 
-    public void setKindsOfItem(int kindsOfItem) {
-        this.kindsOfItem = kindsOfItem;
+    public void setKindNumOfItem(int kindNumOfItem) {
+        this.kindNumOfItem = kindNumOfItem;
     }
 
     public int getTotalSize() {
@@ -58,10 +58,10 @@ public class WarehouseResp {
     }
 
     public int getMaxSize() {
-        return MaxSize;
+        return maxSize;
     }
 
     public void setMaxSize(int maxSize) {
-        MaxSize = maxSize;
+        this.maxSize = maxSize;
     }
 }

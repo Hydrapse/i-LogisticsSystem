@@ -1,6 +1,6 @@
 package com.tcsquad.ilogistics.domain.clientele;
 
-import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
+import org.joda.time.DateTime;
 
 /**
  * 
@@ -11,7 +11,7 @@ public class SupplyIO {
     private String mainSiteId;
     private String itemId;
     private int qty;
-    private DateTimeLiteralExpression.DateTime timeStamp;
+    private DateTime timeStamp;
 
     public long getRecordId() {
         return recordId;
@@ -53,11 +53,11 @@ public class SupplyIO {
         this.qty = qty;
     }
 
-    public DateTimeLiteralExpression.DateTime getTimeStamp() {
+    public DateTime getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(DateTimeLiteralExpression.DateTime timeStamp) {
+    public void setTimeStamp(DateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
 }

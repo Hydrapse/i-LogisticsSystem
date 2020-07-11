@@ -1,15 +1,16 @@
 package com.tcsquad.ilogistics.domain.order;
 
 import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
+import org.joda.time.DateTime;
 
 public class Order {
     private long orderId;
     private String customerId;
     private String payStatus;
     private String processStatus;
-    private DateTimeLiteralExpression.DateTime createDateTime;
-    private DateTimeLiteralExpression.DateTime payDateTime;
-    private DateTimeLiteralExpression.DateTime deliveryDateTime;
+    private DateTime createDateTime;
+    private DateTime payDateTime;
+    private DateTime deliveryDateTime;
     private String billName;
     private String billPro;
     private String billCity;
@@ -50,30 +51,6 @@ public class Order {
 
     public void setProcessStatus(String processStatus) {
         this.processStatus = processStatus;
-    }
-
-    public DateTimeLiteralExpression.DateTime getCreateDateTime() {
-        return createDateTime;
-    }
-
-    public void setCreateDateTime(DateTimeLiteralExpression.DateTime createDateTime) {
-        this.createDateTime = createDateTime;
-    }
-
-    public DateTimeLiteralExpression.DateTime getPayDateTime() {
-        return payDateTime;
-    }
-
-    public void setPayDateTime(DateTimeLiteralExpression.DateTime payDateTime) {
-        this.payDateTime = payDateTime;
-    }
-
-    public DateTimeLiteralExpression.DateTime getDeliveryDateTime() {
-        return deliveryDateTime;
-    }
-
-    public void setDeliveryDateTime(DateTimeLiteralExpression.DateTime deliveryDateTime) {
-        this.deliveryDateTime = deliveryDateTime;
     }
 
     public String getBillName() {
@@ -146,5 +123,29 @@ public class Order {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public DateTime getCreateDateTime() {
+        return createDateTime;
+    }
+
+    public void setCreateDateTime(DateTime createDateTime) {
+        this.createDateTime = createDateTime;
+    }
+
+    public DateTime getPayDateTime() {
+        return payDateTime;
+    }
+
+    public void setPayDateTime(DateTime payDateTime) {
+        this.payDateTime = payDateTime;
+    }
+
+    public DateTime getDeliveryDateTime() {
+        return deliveryDateTime;
+    }
+
+    public void setDeliveryDateTime(DateTime deliveryDateTime) {
+        this.deliveryDateTime = deliveryDateTime;
     }
 }

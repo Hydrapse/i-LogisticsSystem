@@ -1,9 +1,6 @@
 package com.tcsquad.ilogistics.domain.order;
 
-import com.tcsquad.ilogistics.domain.order.OrderItem;
-import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
-
-import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
+import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,7 +13,7 @@ public class TaskForm {
     private String subsiteId;
     private String courier;
     private String status;
-    private DateTimeLiteralExpression.DateTime deliveryDateTime;
+    private DateTime deliveryDateTime;
     private String shipName;
     private String shipTel;
     private String shipPro;
@@ -33,11 +30,11 @@ public class TaskForm {
     private String note;//备注
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    public DateTimeLiteralExpression.DateTime getDeliveryDateTime() {
+    public DateTime getDeliveryDateTime() {
         return deliveryDateTime;
     }
 
-    public void setDeliveryDateTime(DateTimeLiteralExpression.DateTime deliveryDateTime) {
+    public void setDeliveryDateTime(DateTime deliveryDateTime) {
         this.deliveryDateTime = deliveryDateTime;
     }
 
