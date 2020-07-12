@@ -8,27 +8,19 @@ import java.util.List;
 
 @Repository
 public interface ItemMapper {
-    //获取当前item的库存
-    //int getInventoryByWarehouseIdAndItemID(@Param("itemId")String itemId);
 
-    //更新主站库房库存：待修改
-    void updateInventory(@Param("itemId")String itemId,@Param("increment")int increment,@Param("warehouseId")String warehouseId);
-
-    //通过二级商品编号获取item列表信息
+    //通过商品编号获取item列表信息
     List<Item> getItemListByCategoryId(String categoryId);
 
     Item getItem(String itemId);
 
-    //上架
-    void updateItemStatus(String status);
-
     //新增
     void insertItem(Item item);
 
-    //删除
-    void deleteItemByItemId(String itemId);
+    //更新商品状态（上架/下架）
+    void updateItemStatus(Item item);
 
-    //更新 oldItemId是修改前Item的id
-    void updateItem(String oldItemId,Item item);
+    //更新
+    void updateItem(Item item);
 
 }

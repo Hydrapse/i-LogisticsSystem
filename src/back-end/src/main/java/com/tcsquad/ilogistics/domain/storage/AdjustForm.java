@@ -3,8 +3,9 @@ package com.tcsquad.ilogistics.domain.storage;
 /**
  * 
  */
-public class AdjustFrom {
+public class AdjustForm {
     private long adjustId;           //调货单编号
+    private String itemId;
     private Item item;               //调货商品
     private int itemNum;             //调货数量
     private String toMainSiteId;     //处理调货主站编号
@@ -26,6 +27,14 @@ public class AdjustFrom {
 
     public void setItem(Item item) {
         this.item = item;
+    }
+
+    public String getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 
     public int getItemNum() {

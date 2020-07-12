@@ -1,0 +1,35 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcsquad.ilogistics.mapper.storage.ItemMapper">
+    <select id="getItemListByCategoryId" parameterType="String" resultType="Item">
+        select itemid, cid as categoryId, name, unitcost, listprice, descn, img as imgUrl, status
+        from item
+        where cid = #{categoryId}
+    </select>
+    <select id="getItem" parameterType="String" resultType="Item">
+        select itemid, cid as categoryId, name, unitcost, listprice, descn, img as imgUrl, status
+        from item
+        where itemid = #{itemId}
+    </select>
+    <insert id="insertItem" parameterType="Item">
+        insert into item(itemid, cid, name, unitcost, listprice, descn, img, status)
+        values
+            (#{itemId} #{categoryId}, #{name}, #{unitcost}, #{listprice}, #{descn}, #{imgUrl}, #{status})
+    </insert>
+
+    <update id="updateItemStatus">
+        update item
+        set status = #{status}
+        where itemid = #{itemId}
+    </update>
+
+    <update id="updateItem">
+        update item
+        set
+           listprice = #{listPrice},
+           descn = #{descn},
+           img = #{imgUrl}
+        where itemid = #{itemId}
+    </update>
+</mapper>

@@ -1,0 +1,34 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcsquad.ilogistics.mapper.clientele.SupplyIOMapper">
+    <select id="getSupplyIOByRecordId" resultType="SupplyIO">
+        select recordid, supplierid, mainid as mainSiteId, itemid, qty, timestamp
+        from supplyio
+        where recordid = #{recordId}
+    </select>
+
+    <select id="getSupplyIOListBySupplierId" resultType="SupplyIO">
+        select recordid, supplierid, mainid as mainSiteId, itemid, qty, timestamp
+        from supplyio
+        where supplierid = #{supplierId}
+    </select>
+
+    <select id="getSupplyIOListByMainId" resultType="SupplyIO">
+        select recordid, supplierid, mainid as mainSiteId, itemid, qty, timestamp
+        from supplyio
+        where mainid = #{mainSiteId}
+    </select>
+
+    <select id="getSupplyIOListByItemId" resultType="SupplyIO">
+        select recordid, supplierid, mainid as mainSiteId, itemid, qty, timestamp
+        from supplyio
+        where itemid = #{itemId}
+    </select>
+
+    <insert id="insertSupplyIO" parameterType="SupplyIO">
+        insert into supplyio(recordid, supplierid, mainid, itemid, qty, timestamp)
+        values
+              (#{recordId}, #{supplierId}, #{mainSiteId}, #{itemId}, #{qty}, #{timeStamp})
+    </insert>
+</mapper>

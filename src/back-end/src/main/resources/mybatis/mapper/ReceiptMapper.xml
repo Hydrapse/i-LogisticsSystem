@@ -1,0 +1,22 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcsquad.ilogistics.mapper.delivery.ReceiptMapper">
+    <select id="getReceiptsByResponsible" resultType="Receipt">
+        select taskid, responsible, tel, signatureurl
+        from receipt
+        where responsible = #{responsible}
+    </select>
+
+    <select id="getReceiptsBytaskId" resultType="Receipt">
+        select taskid, responsible, tel, signatureurl
+        from receipt
+        where taskid = #{taskId}
+    </select>
+
+    <insert id="insertReceipt" parameterType="Receipt">
+        insert into receipt(taskid, responsible, tel, signatureurl)
+        values
+              (#{taskId}, #{responsible}, #{tel}, #{signatureUrl})
+    </insert>
+</mapper>

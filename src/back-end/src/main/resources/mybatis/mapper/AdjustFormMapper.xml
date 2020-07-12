@@ -1,0 +1,37 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcsquad.ilogistics.mapper.storage.AdjustFormMapper">
+    <select id="getAdjustFormsByFromId" parameterType="String" resultType="AdjustForm">
+        select adjustid, itemid, itemnum, fromid as fromMainSiteId, toid as toMainSiteId,
+               ajstatus as adjustStatus
+        from adjustform
+        where fromid = #{fromMainSiteId}
+    </select>
+
+    <select id="getAdjustFormByItemId" parameterType="String" resultType="AdjustForm">
+        select adjustid, itemid, itemnum, fromid as fromMainSiteId, toid as toMainSiteId,
+               ajstatus as adjustStatus
+        from adjustform
+        where itemid = #{itemId}
+    </select>
+
+    <select id="getAdjustForm" resultType="AdjustForm">
+        select adjustid, itemid, itemnum, fromid as fromMainSiteId, toid as toMainSiteId,
+               ajstatus as adjustStatus
+        from adjustform
+        where adjustid = #{adjustId}
+    </select>
+
+    <insert id="insertAdjustForm" parameterType="AdjustForm">
+        insert into adjustform(adjustid,itemid,itemnum,fromid,toid,ajstatus)
+        values (#{adjustId}, #{itemId}, #{itemNum}, #{fromMainSiteId}, #{toMainSiteId},
+                #{adjustStatus})
+    </insert>
+    
+    <update id="updateAdjustFormStatus" parameterType="AdjustForm">
+        update adjustform
+        set ajstatus = #{adjustStatus}
+        where adjustid = #{adjustId}
+    </update>
+</mapper>

@@ -1,0 +1,47 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcsquad.ilogistics.mapper.storage.SiteMapper">
+    <select id="getAllMainSite" resultType="MainSite">
+        select mainsid as mainSiteId,
+               province,
+               city,
+               district
+        from mainsite
+    </select>
+
+    <select id="getMainSiteById" resultType="MainSite">
+        select mainsid as mainSiteId,
+               province,
+               city,
+               district
+        from mainsite
+        where mainsid = #{mainSiteId}
+    </select>
+
+    <select id="getSubSiteById" resultType="SubSite">
+        select subsid as subSiteId,
+               mainsid as mainSiteId,
+               district
+        from subsite
+        where subsid = #{subSiteId}
+    </select>
+
+    <select id="getSubSiteListByMainSiteId" resultType="SubSite">
+        select subsid as subSiteId,
+               mainsid as mainSiteId,
+               district
+        from subsite
+        where mainsid = #{mainSiteId}
+    </select>
+
+    <insert id="insertSubSite" parameterType="SubSite">
+        insert into subsite(subsid,mainsid,district)
+        values  (#{subSiteId}, #{mainSiteId}, #{district})
+    </insert>
+
+    <delete id="deleteSubSite" parameterType="SubSite">
+        delete from subsite
+        where subsid = #{subSiteId}
+    </delete>
+</mapper>

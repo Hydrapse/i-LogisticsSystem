@@ -4,17 +4,17 @@ package com.tcsquad.ilogistics.domain.storage;
  * 
  */
 public class MainSite {
-    private String mainsiteId;
+    private String mainSiteId;
     private String province;
     private String city;
     private String district;
 
-    public String getMainsiteId() {
-        return mainsiteId;
+    public String getMainSiteId() {
+        return mainSiteId;
     }
 
-    public void setMainsiteId(String mainsiteId) {
-        this.mainsiteId = mainsiteId;
+    public void setMainSiteId(String mainSiteId) {
+        this.mainSiteId = mainSiteId;
     }
 
     public String getProvince() {

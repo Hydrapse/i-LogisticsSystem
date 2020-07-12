@@ -6,6 +6,7 @@ package com.tcsquad.ilogistics.domain.storage;
 public class WarehouseResp {
     private String siteId;
     private String warehouseId;
+    private String categoryId;
     private Category category;
     private int kindsOfItem;
     private int totalSize;
@@ -31,6 +32,14 @@ public class WarehouseResp {
 
     public void setWarehouseId(String warehouseId) {
         this.warehouseId = warehouseId;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 
     public Category getCategory() {
