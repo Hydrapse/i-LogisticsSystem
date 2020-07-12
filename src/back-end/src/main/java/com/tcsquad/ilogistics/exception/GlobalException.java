@@ -6,7 +6,7 @@ package com.tcsquad.ilogistics.exception;
  * @description:
  */
 
-public class GlobalException extends Exception {
+public class GlobalException extends RuntimeException {
 
     private int code;
 

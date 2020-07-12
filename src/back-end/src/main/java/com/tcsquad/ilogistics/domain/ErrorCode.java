@@ -15,6 +15,11 @@ public enum ErrorCode {
     ORDER_ALREADY_SUBMIT(40001),
 
     /**
+     * 缺少参数
+     */
+    MISS_PARAMS(40002),
+
+    /**
      *用户权限不足, 无法调用接口
      */
     USER_FORBIDDEN_ACCESS(40301),
