@@ -3,7 +3,7 @@ package com.tcsquad.ilogistics.domain.storage;
 /**
  * 
  */
-public class AdjustFrom {
+public class AdjustForm {
     private long adjustId;           //调货单编号
     private Item item;               //调货商品
     private int itemNum;             //调货数量
