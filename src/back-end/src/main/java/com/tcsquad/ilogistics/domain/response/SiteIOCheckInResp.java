@@ -7,7 +7,7 @@ import java.util.Date;
 public class SiteIOCheckInResp {
     private Long recordId;
     private Date timeStamp;
-    private String warehouseId;
+    private String warehouseId;     //Todo:应该为可供入库的库房编号列表
     private Item item;
     private Integer itemNum;
     private Integer type;           //1表示补货，2表示调货，3表示退货，4表示换货

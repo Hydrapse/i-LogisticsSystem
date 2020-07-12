@@ -26,4 +26,13 @@
         where warehouseid = #{warehouseId}
     </select>
 
+    <select id="getWarehouseIdsByItemAndMainsite" resultType="String">
+        select warehouseid as warehouseId
+        from warehouse,item
+        where
+                item.itemid = #{itemId}
+            and item.cid = warehouse.categoryid
+            and mainsiteid = #{warehouseId}
+    </select>
+
 </mapper>

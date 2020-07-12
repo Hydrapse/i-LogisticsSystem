@@ -27,4 +27,7 @@ public interface WarehouseMapper {
     //更新库房库存
     void updateInventoryByWarehouseIdAndItemId(@Param("warehouseId")String warehouseId, @Param("itemId")String itemId);
 
+    //根据主站编号和商品编号获取商品所在的库房
+    List<String> getWarehouseIdsByItemAndMainsite(String itemId,String mainsiteId);
+
 }
