@@ -28,6 +28,7 @@ dependencies {
     }
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '2.3.1.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: '2.3.1.RELEASE'
 
     compile group: 'com.alibaba', name: 'fastjson', version: '1.2.72'
@@ -36,6 +37,7 @@ dependencies {
     compile group: 'com.github.pagehelper', name: 'pagehelper', version: '5.1.11'
     compile group: 'com.alibaba', name: 'druid', version: '1.1.12'
     compile group: 'com.jcraft', name: 'jsch', version: '0.1.55'
+    compile group: 'com.aliyun.oss', name: 'aliyun-sdk-oss', version: '3.10.2'
 
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     testImplementation 'org.springframework.amqp:spring-rabbit-test'

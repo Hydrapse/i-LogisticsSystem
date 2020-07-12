@@ -6,7 +6,7 @@ build/
 !**/src/test/**
 
 ### STS ###
-.apt_generated
+.apt_generate
 .classpath
 .factorypath
 .project
@@ -32,3 +32,4 @@ out/
 .vscode/
 /src/main/resources/application-datasource.yml
 /src/main/resources/application-messagequeue.yml
+/src/main/resources/application-oss.yml

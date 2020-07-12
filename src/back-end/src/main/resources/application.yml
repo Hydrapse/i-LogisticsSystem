@@ -11,3 +11,7 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+
+  #关闭模板缓存，仅测试专用！热启动
+  thymeleaf:
+    cache: false

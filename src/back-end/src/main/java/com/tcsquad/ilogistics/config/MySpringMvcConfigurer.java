@@ -21,7 +21,6 @@ public class MySpringMvcConfigurer{
             @Override
             public void addViewControllers(ViewControllerRegistry registry) {
                 registry.addViewController("/").setViewName("index");
-
             }
 
             //注册拦截器
