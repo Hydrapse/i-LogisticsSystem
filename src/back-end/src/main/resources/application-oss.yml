@@ -1,9 +1,0 @@
-#阿里云OSS
-aliyun-oss:
-  #bucket名称
-  bucketName: i-petstore
-  domainUrl: https://i-petstore.oss-cn-shenzhen.aliyuncs.com/
-  region: oss-cn-shenzhen
-  endpoint : https://oss-cn-shenzhen.aliyuncs.com
-  accessKeyId: LTAI4G9Nh4fdTkCAu3YMHJN6
-  accessKeySecret: MzziS0eWfPWaB8aJM4H8PkpjjPVT9k
