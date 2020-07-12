@@ -1,9 +1,9 @@
 package com.tcsquad.ilogistics.domain.order;
 
 import com.tcsquad.ilogistics.domain.storage.Item;
-import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 
@@ -15,8 +15,8 @@ public class ReturnForm {
     private Item item;
     private int itemNum;
     private BigDecimal returnMoney;
-    private DateTime applyTime;
-    private DateTime processTime;
+    private Date applyTime;
+    private Date processTime;
     private String processStatus;
     private String reason;
 
@@ -52,19 +52,19 @@ public class ReturnForm {
         this.itemNum = itemNum;
     }
 
-    public DateTime getApplyTime() {
+    public Date getApplyTime() {
         return applyTime;
     }
 
-    public void setApplyTime(DateTime applyTime) {
+    public void setApplyTime(Date applyTime) {
         this.applyTime = applyTime;
     }
 
-    public DateTime getProcessTime() {
+    public Date getProcessTime() {
         return processTime;
     }
 
-    public void setProcessTime(DateTime processTime) {
+    public void setProcessTime(Date processTime) {
         this.processTime = processTime;
     }
 
