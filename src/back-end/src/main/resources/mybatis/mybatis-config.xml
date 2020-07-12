@@ -13,13 +13,21 @@
     </settings>
     
     <typeAliases>
-        <package name="com.tcsquad.ilogistics.domain.delivery.Courier"/>
-        <package name="com.tcsquad.ilogistics.domain.order.OrderItem"/>
-        <package name="com.tcsquad.ilogistics.domain.order.Order"/>
-        <package name="com.tcsquad.ilogistics.domain.order.ReturnForm"/>
-        <package name="com.tcsquad.ilogistics.domain.order.TaskForm"/>
-        <package name="com.tcsquad.ilogistics.domain.clientele.Customer"/>
-        <package name="com.tcsquad.ilogistics.domain.clientele.Supplier"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.delivery.Courier" alias="Courier"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.delivery.Receipt" alias="Receipt"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.clientele.Customer" alias="Customer"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.clientele.Supplier" alias="Supplier"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.clientele.SupplyIO" alias="SupplyIO"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.order.OrderItem" alias="OrderItem"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.order.Order" alias="Order"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.order.ReturnForm" alias="ReturnForm"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.order.TaskForm" alias="TaskForm"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.storage.AdjustForm" alias="AdjustForm"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.storage.Category" alias="Category"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.storage.Item" alias="Item"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.storage.MainSite" alias="MainSite"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.storage.SubSite" alias="SubSite"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.response.WarehouseResp" alias="WarehouseResp"/>
     </typeAliases>
 
     <!--
