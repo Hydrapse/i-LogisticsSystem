@@ -1,6 +1,6 @@
 package com.tcsquad.ilogistics.domain.storage;
 
-import org.joda.time.DateTime;
+import java.util.Date;
 
 /**
  *
@@ -19,7 +19,7 @@ public class SiteIO {
     public static String SHIP_OUT   = "OUT-03";
 
     private long recordId;
-    private DateTime timeStamp;
+    private Date timeStamp;
     private String siteId;
     private Item item;
     private int qty;
@@ -35,11 +35,11 @@ public class SiteIO {
         this.recordId = recordId;
     }
 
-    public DateTime getTimeStamp() {
+    public Date getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(DateTime timeStamp) {
+    public void setTimeStamp(Date timeStamp) {
         this.timeStamp = timeStamp;
     }
 

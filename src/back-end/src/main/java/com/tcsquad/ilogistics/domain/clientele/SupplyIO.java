@@ -1,6 +1,6 @@
 package com.tcsquad.ilogistics.domain.clientele;
 
-import org.joda.time.DateTime;
+import java.util.Date;
 
 /**
  * 
@@ -11,7 +11,7 @@ public class SupplyIO {
     private String mainSiteId;
     private String itemId;
     private int qty;
-    private DateTime timeStamp;
+    private Date timeStamp;
 
     public long getRecordId() {
         return recordId;
@@ -53,11 +53,11 @@ public class SupplyIO {
         this.qty = qty;
     }
 
-    public DateTime getTimeStamp() {
+    public Date getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(DateTime timeStamp) {
+    public void setTimeStamp(Date timeStamp) {
         this.timeStamp = timeStamp;
     }
 }

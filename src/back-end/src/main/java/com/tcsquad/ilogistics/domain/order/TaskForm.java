@@ -1,9 +1,8 @@
 package com.tcsquad.ilogistics.domain.order;
 
-import org.joda.time.DateTime;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class TaskForm {
@@ -13,7 +12,7 @@ public class TaskForm {
     private String subSiteId;
     private String courier;
     private String status;
-    private DateTime deliveryDateTime;
+    private Date deliveryDateTime;
     private String shipName;
     private String shipTel;
     private String shipPro;
@@ -30,11 +29,11 @@ public class TaskForm {
     private String note;//备注
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    public DateTime getDeliveryDateTime() {
+    public Date getDeliveryDateTime() {
         return deliveryDateTime;
     }
 
-    public void setDeliveryDateTime(DateTime deliveryDateTime) {
+    public void setDeliveryDateTime(Date deliveryDateTime) {
         this.deliveryDateTime = deliveryDateTime;
     }
 
