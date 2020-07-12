@@ -33,3 +33,10 @@ out/
 /src/main/resources/application-datasource.yml
 /src/main/resources/application-messagequeue.yml
 /src/main/resources/application-oss.yml
+
+## .DS_store
+*.DS_Store
+.DS_Store
+.DS_Store?
+*.swp
+*.swo
