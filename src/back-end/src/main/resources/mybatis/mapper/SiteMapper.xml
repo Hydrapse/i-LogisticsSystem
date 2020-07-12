@@ -3,45 +3,57 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tcsquad.ilogistics.mapper.storage.SiteMapper">
     <select id="getAllMainSite" resultType="MainSite">
-        select mainsid as mainSiteId,
+        select mainsid as mainsiteId,
                province,
                city,
-               district
+               district,
+               addr,
+               longitude,
+               latitude
         from mainsite
     </select>
 
     <select id="getMainSiteById" resultType="MainSite">
-        select mainsid as mainSiteId,
+        select mainsid as mainsiteId,
                province,
                city,
-               district
+               district,
+               addr,
+               longitude,
+               latitude
         from mainsite
-        where mainsid = #{mainSiteId}
+        where mainsid = #{mainsiteId}
     </select>
 
     <select id="getSubSiteById" resultType="SubSite">
-        select subsid as subSiteId,
-               mainsid as mainSiteId,
-               district
+        select subsid as subsiteId,
+               mainsid as mainsiteId,
+               district,
+               addr,
+               longitude,
+               latitude
         from subsite
-        where subsid = #{subSiteId}
+        where subsid = #{subsiteId}
     </select>
 
     <select id="getSubSiteListByMainSiteId" resultType="SubSite">
-        select subsid as subSiteId,
-               mainsid as mainSiteId,
-               district
+        select subsid as subsiteId,
+               mainsid as mainsiteId,
+               district,
+               addr,
+               longitude,
+               latitude
         from subsite
-        where mainsid = #{mainSiteId}
+        where mainsid = #{mainsiteId}
     </select>
 
     <insert id="insertSubSite" parameterType="SubSite">
-        insert into subsite(subsid,mainsid,district)
-        values  (#{subSiteId}, #{mainSiteId}, #{district})
+        insert into subsite(subsid,mainsid,district,addr,longitude,latitude)
+        values  (#{subsiteId}, #{mainsiteId}, #{district},#{addr},#{longitude},#{latitude})
     </insert>
 
     <delete id="deleteSubSite" parameterType="SubSite">
         delete from subsite
-        where subsid = #{subSiteId}
+        where subsid = #{subsiteId}
     </delete>
 </mapper>
