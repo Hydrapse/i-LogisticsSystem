@@ -5,6 +5,8 @@ import com.tcsquad.ilogistics.service.TaskFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/subsites") //url为小写site
 public class SubSiteController {
@@ -12,8 +14,8 @@ public class SubSiteController {
     TaskFormService taskFormService;
 
     @GetMapping("/{subSiteId}/taskforms")
-    public TaskForm[] getTaskForms(@PathVariable Long subSiteId) {
-        return taskFormService.getTaskFormBySubSiteId(subSiteId);
+    public List<TaskForm> getTaskForms(@PathVariable Long subSiteId) {
+        return taskFormService.getTaskFormsBySubSiteId(subSiteId);
     }
 
     @DeleteMapping("/{subSiteId}/inventory/items")

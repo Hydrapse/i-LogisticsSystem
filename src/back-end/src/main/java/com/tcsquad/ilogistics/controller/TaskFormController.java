@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/taskforms")
 public class TaskFormController {
@@ -20,13 +23,13 @@ public class TaskFormController {
     private TaskFormService taskFormService;
 
     @GetMapping("")
-    public TaskForm[] getTaskFrom(TaskFormReq taskFormReq) { // no @RequestParam
+    public List<TaskForm> getTaskFrom(TaskFormReq taskFormReq) { // no @RequestParam
         if (taskFormReq.getTaskFormId() != null) {
-            return new TaskForm[]{taskFormService.getTaskForm(taskFormReq.getTaskFormId())};
+            return List.of(taskFormService.getTaskForm(taskFormReq.getTaskFormId()));
         } else if (taskFormReq.getQ() != null) {//TO DO 分页
             return taskFormService.searchTaskForms(taskFormReq.getQ());
         } else {//TO DO 分页
-            return taskFormService.getAllTaskForm();
+            return taskFormService.getAllTaskForms();
         }
     }
 
@@ -37,7 +40,7 @@ public class TaskFormController {
 
     @GetMapping("/status")
     public Object getStatusOfAllTaskForm() {
-        return taskFormService.getStatusOfAllTaskForm();
+        return taskFormService.getStatusOfAllTaskForms();
     }
 
     @GetMapping("/{taskFormId}/route")

@@ -11,7 +11,14 @@ public interface TaskFormMapper {
     //通过订单Id查询该订单对应的任务单
     List<TaskForm> getTaskFormsByOrderId(long orderId);
 
-    //List<TaskForm> getTaskForms();
+    //通过配送站Id查询该订单对应的任务单
+    List<TaskForm> getTaskFormsBySubSiteId(long subSiteId); //TO DO
+
+    //获取所有任务单
+    List<TaskForm> getTaskForms(); //TO DO
+
+    //按关键词搜索任务单
+    List<TaskForm> searchTaskForms(String keyword); //TO DO
 
     //根据任务单编号查询任务单
     TaskForm getTaskForm(long taskId);
