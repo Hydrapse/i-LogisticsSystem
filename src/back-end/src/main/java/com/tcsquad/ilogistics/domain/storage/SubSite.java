@@ -4,24 +4,24 @@ package com.tcsquad.ilogistics.domain.storage;
  * 
  */
 public class SubSite {
-    private String subSiteId;
-    private String mainSiteId;
+    private String subsiteId;
+    private String mainsiteId;
     private String district;
 
-    public String getSubSiteId() {
-        return subSiteId;
+    public String getsubsiteId() {
+        return subsiteId;
     }
 
-    public void setSubSiteId(String subSiteId) {
-        this.subSiteId = subSiteId;
+    public void setsubsiteId(String subsiteId) {
+        this.subsiteId = subsiteId;
     }
 
-    public String getMainSiteId() {
-        return mainSiteId;
+    public String getmainsiteId() {
+        return mainsiteId;
     }
 
-    public void setMainSiteId(String mainSiteId) {
-        this.mainSiteId = mainSiteId;
+    public void setmainsiteId(String mainsiteId) {
+        this.mainsiteId = mainsiteId;
     }
 
     public String getDistrict() {
