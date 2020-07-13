@@ -2,16 +2,21 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tcsquad.ilogistics.mapper.storage.WarehouseMapper">
-    <select id="getWarehouseRespByMainSiteId" resultType="WarehouseResp">
-        select warehouseid, mainsiteid as siteId, categoryid, maxsize,
-        from warehouse
-        where mainsiteid = #{mainSiteId}
+    <select id="getWarehouseInfoListByMainsiteId" resultType="WarehouseResp">
+        select  inventory.warehouseid as warehouseId,
+                count(itemid) as kindNumOfItem,
+                sum(num) as totalSize,
+                avg(maxsize) as maxSize
+        from inventory,warehouse
+        where   inventory.warehouseid = warehouse.warehouseid
+            and warehouse.mainsiteid = #{mainsiteid}
+        group by inventory.warehouseid
     </select>
 
-    <select id="getWarehouseRespByWarehouseId" resultType="WarehouseResp">
-        select count(itemid) as kindOfItem, sum(num) as totalSize
-        from inventory
-        where warehouseid = #{warehouseId}
+    <select id="getCategoryByWarehouseId" resultType="Category">
+        select  cid as categoryId,name,descn
+        from warehouse,category
+        where warehouseid = #{warehouseId} and warehouse.categoryid=category.cid
     </select>
 
     <select id="getItemListByWarehouseId" resultType="Item">

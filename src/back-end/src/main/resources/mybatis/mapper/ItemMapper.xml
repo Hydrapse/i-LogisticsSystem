@@ -7,6 +7,21 @@
         from item
         where cid = #{categoryId}
     </select>
+
+    <select id="getItemInventoryByWarehouseId" resultType="ItemInventoryResp">
+        select  item.itemid      as "item.itemId",
+                cid         as "item.categoryId",
+                name        as "item.name",
+                unitcost    as "item.unitCost",
+                listprice   as "item.listPrice",
+                descn       as "item.descn",
+                img         as "item.imgUrl",
+                status      as "item.status",
+                num         as inventory
+        from item,inventory
+        where item.itemid = inventory.itemid and warehouseid=#{warehouseId}
+    </select>
+
     <select id="getItem" parameterType="String" resultType="Item">
         select itemid, cid as categoryId, name, unitcost, listprice, descn, img as imgUrl, status
         from item

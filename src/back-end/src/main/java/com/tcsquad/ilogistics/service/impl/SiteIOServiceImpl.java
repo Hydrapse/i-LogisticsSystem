@@ -19,9 +19,10 @@ import com.tcsquad.ilogistics.mapper.storage.AdjustFormMapper;
 import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.mapper.storage.SiteIOMapper;
 import com.tcsquad.ilogistics.mapper.storage.WarehouseMapper;
-import com.tcsquad.ilogistics.service.SiteIOService;
+import com.tcsquad.ilogistics.service.interf.SiteIOService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -30,32 +31,28 @@ import java.util.List;
 public class SiteIOServiceImpl implements SiteIOService {
     @Autowired
     SiteIOMapper siteIOMapper;
-
     @Autowired
     WarehouseMapper warehouseMapper;
-
     @Autowired
     ItemMapper itemMapper;
-
     @Autowired
     SupplyIOMapper supplyIOMapper;
-
     @Autowired
     AdjustFormMapper adjustFormMapper;
-
     @Autowired
     ReturnFormMapper returnFormMapper;
-
     @Autowired
     OrderMapper orderMapper;
 
     @Override
+    @Transactional
     public void cancelSiteIOStatus(Long recordId) {
         //Todo:取消入库对其他模块的影响？？？
         siteIOMapper.updateSiteIOStatus(recordId, StatusString.INVALID.getValue());
     }
 
     @Override
+    @Transactional
     public void confirmSiteIORecord(Long recordId) {
         //Todo:确认入库对其他模块的影响？？？
         siteIOMapper.updateSiteIOStatus(recordId,StatusString.CONFIRM.getValue());
@@ -63,6 +60,7 @@ public class SiteIOServiceImpl implements SiteIOService {
 
     //1表示补货，2表示调货，3表示退货，4表示换货
     @Override
+    @Transactional
     public Long insertCheckinRecord(SiteIOAddReq siteIOAddReq) {
         SiteIO siteIO = new SiteIO();
         String typeValue = "";
@@ -170,12 +168,14 @@ public class SiteIOServiceImpl implements SiteIOService {
     }
 
     @Override
+    @Transactional
     public void updateWarehouseToCheckin(Long recordId, String warehouseId) {
         siteIOMapper.updateSiteIOWarehouseId(recordId,warehouseId);
     }
 
 
     @Override
+    @Transactional
     public void insertCheckOutRecord(SiteIO siteIO,String mainsiteId) {
         siteIO.setApprovalStatus(StatusString.WAITING.getValue());
         siteIO.setTimeStamp(new Date());

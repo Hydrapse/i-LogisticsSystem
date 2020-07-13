@@ -1,5 +1,6 @@
 package com.tcsquad.ilogistics.mapper.storage;
 
+import com.tcsquad.ilogistics.domain.storage.Category;
 import com.tcsquad.ilogistics.domain.storage.Inventory;
 import com.tcsquad.ilogistics.domain.storage.Item;
 import com.tcsquad.ilogistics.domain.response.WarehouseResp;
@@ -12,11 +13,12 @@ import java.util.Map;
 
 @Repository
 public interface WarehouseMapper {
-    //根据主站编号获取库房列表
-    List<WarehouseResp> getWarehouseRespByMainSiteId(String mainSiteId);
 
-    //根据库房编号获取库房信息(库房的item种类个数，以及库房当前存储总量)
-    List<WarehouseResp> getWarehouseRespByWarehouseId(String warehouseId);
+    //根据主站编号获取库房统计信息(库房的item种类个数，以及库房当前存储总量)
+    List<WarehouseResp> getWarehouseInfoListByMainsiteId(String mainsiteId);
+
+    //根据主站编号获取库房列表
+    Category getCategoryByWarehouseId(String warehouseId);
 
     //根据库房编号获取货物列表
     List<Item> getItemListByWarehouseId(String warehouseId);
