@@ -48,6 +48,79 @@
         where taskid = #{taskId}
     </select>
 
+    <select id="getTaskFormsBySubSiteId" parameterType="String" resultType="TaskForm">
+        select
+            taskid,
+            orderid,
+            subsiteid,
+            shipname,
+            shiptel,
+            shippro,
+            shipcity,
+            shipdis,
+            billname,
+            billtel,
+            billpro,
+            billcity,
+            billdis,
+            courier,
+            totalprice,
+            status,
+            note
+        from taskfrom
+        where subsiteid = #{subSiteId}
+    </select>
+
+    <select id="getTaskForms" resultType="TaskForm">
+        select
+            taskid,
+            orderid,
+            subsiteid,
+            shipname,
+            shiptel,
+            shippro,
+            shipcity,
+            shipdis,
+            billname,
+            billtel,
+            billpro,
+            billcity,
+            billdis,
+            courier,
+            totalprice,
+            status,
+            note
+        from taskfrom
+    </select>
+
+    <select id="searchTaskForms" parameterType="String" resultType="TaskForm">
+        select
+            taskid,
+            orderid,
+            subsiteid,
+            shipname,
+            shiptel,
+            shippro,
+            shipcity,
+            shipdis,
+            billname,
+            billtel,
+            billpro,
+            billcity,
+            billdis,
+            courier,
+            totalprice,
+            status,
+            note
+        from taskfrom
+        where
+            1 = 1
+            <if test="keyword != null and keyword != ''">
+            and concat(taskid,',',orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',status, ifnull(note,''))
+                like concat ('%', #{keyword},'%')
+            </if>
+    </select>
+
     <insert id="insertTaskForm" parameterType="TaskForm">
         insert into taskform
            (taskid, orderid, subsiteid, shipname, shiptel, shippro, shipcity, shipdis, billname, billtel,

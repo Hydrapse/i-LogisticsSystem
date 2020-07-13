@@ -34,7 +34,7 @@ public class OSSClientUtil {
     private String domainUrl;
 
     //文件存储目录
-    public static String PRODUCT_IMAGE_DIR= "i-logistics-system/image/item/";
+    public static String PRODUCT_IMAGE_DIR= "i-logistics-system/image/category/";
 
     /**
      * 上传图片
@@ -46,9 +46,11 @@ public class OSSClientUtil {
             return "图片太大";//RestResultGenerator.createErrorResult(ResponseEnum.PHOTO_TOO_MAX);
         }
         String originalFilename = file.getOriginalFilename();
-        String substring = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-        Random random = new Random();
-        String name = random.nextInt(10000) + System.currentTimeMillis() + substring;
+        //String substring = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+        //Random random = new Random();
+        //String name = random.nextInt(10000) + System.currentTimeMillis() + substring;
+        String name = getFileName(originalFilename);
+        logger.info("文件名："+name);
         try {
             InputStream inputStream = file.getInputStream();
             this.uploadFile2OSS(inputStream, name, fileDir);
