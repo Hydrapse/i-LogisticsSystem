@@ -1,30 +1,18 @@
-package com.tcsquad.ilogistics;
+package com.tcsquad.ilogistics.mapper;
 
+import com.tcsquad.ilogistics.ILogisticsSystemApplication;
 import com.tcsquad.ilogistics.domain.order.TaskForm;
 import com.tcsquad.ilogistics.mapper.order.TaskFormMapper;
-import com.tcsquad.ilogistics.mq.Sender;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-
 @SpringBootTest(classes = ILogisticsSystemApplication.class)
-class ILogisticsSystemApplicationTests {
-
-    @Autowired
-    Sender sender;
-
+public class MapperApplicationTests {
     @Autowired
     TaskFormMapper taskFormMapper;
-
-    @Test
-    void test() {
-        sender.send();
-    }
 
     @Test
     void testTaskForm() {
@@ -53,5 +41,4 @@ class ILogisticsSystemApplicationTests {
         taskFormMapper.insertTaskForm(taskForm1);
 
     }
-
 }

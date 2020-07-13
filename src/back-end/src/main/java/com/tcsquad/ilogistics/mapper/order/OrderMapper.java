@@ -14,6 +14,7 @@ public interface OrderMapper {
     void insertOrder(Order order);
 
     void insertOrderStatus(Order order);
+
     //更新订单处理状态:processStatus
     void updateOrderStatus(Order order);
 
