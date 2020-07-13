@@ -33,6 +33,7 @@ out/
 /src/main/resources/application-datasource.yml
 /src/main/resources/application-messagequeue.yml
 /src/main/resources/application-oss.yml
+/src/main/resources/application-baidumap.yml
 
 ## .DS_store
 *.DS_Store
