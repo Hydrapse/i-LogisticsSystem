@@ -16,11 +16,16 @@ public interface OrderMapper {
     void insertOrderStatus(Order order);
 
     //更新订单处理状态:processStatus
-    void updateOrderStatus(Order order);
+    void updateProcessStatus(Order order);
+
+    //更新支付状态:payStatus
+    void updatePayStatus(Order order);
 
     //void updateOrder(Order order);
 
     void deleteOrderByOrderId(long orderId);
 
+    void updateShippingCost(Order order);
 
+    boolean hasOrder(Long orderId);
 }

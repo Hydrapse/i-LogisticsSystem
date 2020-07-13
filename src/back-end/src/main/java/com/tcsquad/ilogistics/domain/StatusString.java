@@ -4,39 +4,89 @@ package com.tcsquad.ilogistics.domain;
 public enum StatusString {
 
     /**
-     * 主站库房商品出入库记录表的type值说明
+     * 订单progressStatus说明:
+     * 未处理（N 意为not process）
+     * 正在处理（P 意为processing）
+     * 交易成功（D 意为done）
+     * 交易关闭（C 意为close）
+     */
+    NOT_PROCESS("N", Group.OrderProcess),
+    PROCESSING("P", Group.OrderProcess),
+    ORDER_DONE("D", Group.OrderProcess),
+    ORDER_CLOSE("C", Group.OrderProcess),
+
+    /**
+     * OrderItem status 处理状态说明
+     * 缺货（O 意为stockOut）已处理
+     * 已分配给任务单(P)
+     * 待分配任务单（W waiting）
+     */
+    ITEM_STOCK_OUT("O", Group.OrderItem),
+    ITEM_PREPARED("P", Group.OrderItem),
+    WAITING_DISTRIBUTION("W", Group.OrderItem),
+
+
+    /**
+     * 主站库房商品出入库记录表(SiteIO)的type值说明
      * 补货入库（IN-01）/调货入库（IN-02）/退货入库（IN-03）；
      * 退货给供应商（OUT-01）/调货出库（OUT-02）/发货出库（OUT-03）
      */
-    SUPPLY_IN("IN-01"),
+    SUPPLY_IN("IN-01", Group.SiteIOType),
 
-    ADJUST_IN("IN-02"),
+    ADJUST_IN("IN-02", Group.SiteIOType),
 
-    RETURN_IN("IN-03"),
+    RETURN_IN("IN-03", Group.SiteIOType),
 
-    SUPPLY_OUT("OUT-01"),
+    CHANGE_IN("IN-04", Group.SiteIOType),
 
-    ADJUST_OUT("OUT-02"),
+    SUPPLY_OUT("OUT-01", Group.SiteIOType),
 
-    SHIP_OUT("OUT-03"),
+    ADJUST_OUT("OUT-02", Group.SiteIOType),
+
+    SHIP_OUT("OUT-03", Group.SiteIOType),
 
     /**
-     * 主站库房商品出入库记录表的approvalStatus值说明
-     * 待审核（W）waiting /已确认（C）confirm /已失效（I）invalid
+     * 主站库房商品出入库记录表(SiteIO)的approvalStatus值说明
+     * 待审核（W）waiting /已确认（Y）confirm /已失效（F）invalid
      */
-    WAITING("W"),
+    WAITING("W", Group.SiteIOApproval),
 
-    CONFIRM("C"),
+    CONFIRM("Y", Group.SiteIOApproval),
 
-    INVALID("I");
+    INVALID("F", Group.SiteIOApproval);
     ;
 
-    String value;
+    private String value;
+    private Group group;
+
+    StatusString(String str, Group group){
+        this.value = str;
+        this.group = group;
+    }
+
     public String getValue() {
         return value;
     }
 
-    StatusString(String str){
-        this.value=str;
+    /**
+     * 功能描述:<br>
+     * 判断某个状态码是否为指定组状态
+     */
+    public static boolean isInGroup(String value, Group group) {
+        boolean include = false;
+        for (StatusString e: StatusString.values()){
+            if(e.value.equals(value) && e.group == group){
+                include = true;
+                break;
+            }
+        }
+        return include;
+    }
+
+    public enum Group{
+        OrderProcess,
+        OrderItem,
+        SiteIOType,
+        SiteIOApproval
     }
 }

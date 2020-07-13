@@ -31,4 +31,19 @@
         values
               (#{recordId}, #{supplierId}, #{mainSiteId}, #{itemId}, #{qty}, #{timeStamp})
     </insert>
+
+    <select id="getSupplyByRecordId" resultType="Supplier">
+        select
+             sid as supplierId,
+             brandname,
+             manager,
+             tel,
+             email,
+             province,
+             city,
+             region,
+             addr
+        from supplier,supplyio
+        where sid = supplierid and recordid = #{recordId}
+    </select>
 </mapper>

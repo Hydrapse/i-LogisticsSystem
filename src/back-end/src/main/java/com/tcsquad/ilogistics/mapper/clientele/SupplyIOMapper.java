@@ -1,5 +1,6 @@
 package com.tcsquad.ilogistics.mapper.clientele;
 
+import com.tcsquad.ilogistics.domain.clientele.Supplier;
 import com.tcsquad.ilogistics.domain.clientele.SupplyIO;
 import org.springframework.stereotype.Repository;
 
@@ -21,6 +22,9 @@ public interface SupplyIOMapper {
 
     //通过商品编号查询与供应商的退订货记录
     List<SupplyIO> getSupplyIOListByItemId(String itemId);
+
+    //根据记录号查询供应商的信息
+    Supplier getSupplyByRecordId(Long recordId);
 
 
 }

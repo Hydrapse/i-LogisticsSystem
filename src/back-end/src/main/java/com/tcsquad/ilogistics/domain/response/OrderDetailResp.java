@@ -14,6 +14,15 @@ public class OrderDetailResp {
     SubSite subSite;
     String msg;
 
+    public OrderDetailResp() {
+    }
+
+    public OrderDetailResp(Order order, List<OrderItem> orderItemList, MainSite mainsite) {
+        this.order = order;
+        this.orderItemList = orderItemList;
+        this.mainsite = mainsite;
+    }
+
     public Order getOrder() {
         return order;
     }

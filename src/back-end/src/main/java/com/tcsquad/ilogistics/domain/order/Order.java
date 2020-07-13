@@ -1,10 +1,12 @@
 package com.tcsquad.ilogistics.domain.order;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class Order {
-    private long orderId;
+    private Long orderId;
     private String customerId;
+    private Integer lineNum; //orderItem个数
     private String payStatus;
     private String processStatus;
     private Date createDateTime;
@@ -15,18 +17,10 @@ public class Order {
     private String billCity;
     private String billDistrict;
     private String billAddr;
-    private double totalPrice;
+    private BigDecimal totalPrice;
     private double shippingCost;//运费
     private String payMethod = "支付宝";
     private String note;
-
-    public long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(long orderId) {
-        this.orderId = orderId;
-    }
 
     public String getCustomerId() {
         return customerId;
@@ -116,11 +110,11 @@ public class Order {
         this.billAddr = billAddr;
     }
 
-    public double getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(double totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 
@@ -146,5 +140,21 @@ public class Order {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public Long getOrderId(){
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    public Integer getLineNum() {
+        return lineNum;
+    }
+
+    public void setLineNum(Integer lineNum) {
+        this.lineNum = lineNum;
     }
 }

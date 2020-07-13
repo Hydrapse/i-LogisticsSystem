@@ -9,7 +9,7 @@ import java.util.List;
 public interface SupplierMapper {
     List<Supplier> getSuppliers();
 
-    Supplier getSupplierBySupplierId();
+    Supplier getSupplierBySupplierId(String supplierId);
 
     void insertSupplier(Supplier supplier);
 
