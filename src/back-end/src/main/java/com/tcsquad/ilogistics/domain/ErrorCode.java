@@ -20,6 +20,11 @@ public enum ErrorCode {
     MISS_PARAMS(40002),
 
     /**
+     * 参数错误
+     */
+    PARAMS_ERROR(40003),
+
+    /**
      *用户权限不足, 无法调用接口
      */
     USER_FORBIDDEN_ACCESS(40301),
@@ -28,6 +33,16 @@ public enum ErrorCode {
      *消息队列服务器宕机
      */
     MESSAGE_QUEUE_DOWNTIME(50001),
+
+    /**
+     * 连接错误
+     */
+    CONNECTION_ERROR(50002),
+
+    /**
+     * 外部服务器错误
+     */
+    OUTSIDE_SERVER_ERROR(50003),
     ;
 
     private int code;
