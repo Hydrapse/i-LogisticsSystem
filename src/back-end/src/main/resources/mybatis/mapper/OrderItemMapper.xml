@@ -12,8 +12,21 @@
 
     <select id="getOrderItemsByOrderId" resultType="OrderItem">
         select
-            orderid, itemid, taskid, itemnum, status, total
-        from orderitem
+            orderid,
+            orderitem.itemid as "itemId",
+            taskid,
+            itemnum,
+            orderitem.status as "status",
+            total,
+            item.itemid as "item.itemId",
+            cid as "item.categoryId",
+            name as "item.name",
+            unitcost as "item.unitCost",
+            listprice as "item.listPrice",
+            descn as "item.descn",
+            img as "item.imgUrl",
+            item.status as "item.status"
+        from orderitem join item on orderitem.itemid = item.itemid
         where orderid = #{orderId}
     </select>
 

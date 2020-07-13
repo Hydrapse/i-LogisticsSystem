@@ -26,4 +26,5 @@ public interface SiteMapper {
     //注销配送站
     void deleteSubSite(SubSite subSite);
 
+    boolean hasMainSiteId(String mainsiteId);
 }

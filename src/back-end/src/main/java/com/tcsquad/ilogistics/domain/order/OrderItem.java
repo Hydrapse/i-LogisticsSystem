@@ -5,27 +5,27 @@ import com.tcsquad.ilogistics.domain.storage.Item;
 import java.math.BigDecimal;
 
 public class OrderItem {
-    private long orderId;
-    private long taskId;
+    private Long orderId;
+    private Long taskId;
     private String itemId;
-    private int itemNum;
+    private Integer itemNum;
     private String status;
     private BigDecimal total;
     private Item item;
 
-    public long getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(long orderId) {
+    public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
 
-    public long getTaskId() {
+    public Long getTaskId() {
         return taskId;
     }
 
-    public void setTaskId(long taskId) {
+    public void setTaskId(Long taskId) {
         this.taskId = taskId;
     }
 
@@ -37,11 +37,11 @@ public class OrderItem {
         this.itemId = itemId;
     }
 
-    public int getItemNum() {
+    public Integer getItemNum() {
         return itemNum;
     }
 
-    public void setItemNum(int itemNum) {
+    public void setItemNum(Integer itemNum) {
         this.itemNum = itemNum;
     }
 
@@ -57,7 +57,7 @@ public class OrderItem {
         return total;
     }
 
-    public void setTotal(BigDecimal totalPrice) {
+    public void setTotal(BigDecimal total) {
         this.total = total;
     }
 

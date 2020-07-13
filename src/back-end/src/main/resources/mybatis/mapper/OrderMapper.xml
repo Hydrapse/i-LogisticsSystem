@@ -7,11 +7,13 @@
          select
             orderid,
             customerid,
-            createdate as createDateTime,
+            createdate as "createDateTime",
+            payDate as "payDateTime",
+            deliveryDate as "deliveryDateTime",
             billname,
             billpro,
             billcity,
-            billdis as billDistrict,
+            billdis as "billDistrict",
             billaddr,
             totalprice,
             shippingcost,
@@ -24,9 +26,12 @@
     </select>
     <select id="getOrder" resultType="Order">
         select
-            orderid,
+            orders.orderid,
             customerid,
+            linenum as lineNum,
             createdate as createDateTime,
+            payDate as payDateTime,
+            deliveryDate as deliveryDateTime,
             billname,
             billpro,
             billcity,
@@ -36,9 +41,10 @@
             shippingcost,
             paymethod,
             note,
-            status
+            paystatus,
+            processstatus
         from orders,orderstatus
-        where orders.orderid = orderstatus.orderid and orderid = #{orderId}
+        where orders.orderid = orderstatus.orderid and orders.orderid = #{orderId}
         order by createdate
     </select>
 
@@ -47,24 +53,41 @@
             (orderid, customerid, createdate, paydate, deliverydate,billname,billpro,billcity,billdis,
             billaddr, totalprice, shippingcost, paymethod, note)
         values
-            (#{orderId}, #{customerId}, #{createDate}, #{payDate}, #{deliveryDate}, #{billName}, #{billPro}, 
+            (#{orderId}, #{customerId}, #{createDateTime}, #{payDateTime}, #{deliveryDateTime}, #{billName}, #{billPro},
              #{billCity}, #{billDistrict}, #{billAddr}, #{totalPrice}, #{shippingCost}, #{payMethod},#{note})
     </insert>
     
     <insert id="insertOrderStatus" parameterType="Order">
         insert into orderstatus
-            (orderid, linenum, createtime, status)
+            (orderid, linenum, createtime, paystatus, processstatus)
         values
-            (#{orderId}, #{lineNum}, #{createTime}, #{status})
+            (#{orderId}, #{lineNum}, #{createDateTime}, #{payStatus}, #{processStatus})
     </insert>
-    <update id="updateOrderStatus" parameterType="Order">
+    <update id="updateProcessStatus" parameterType="Order">
         update orderstatus
         set
             processstatus = #{processStatus}
+        where orderid = #{orderId}
+    </update>
+    <update id="updatePayStatus" parameterType="Order">
+        update orderstatus
+        set
+            payStatus = #{payStatus}
         where orderid = #{orderId}
     </update>
     <delete id="deleteOrderByOrderId">
         delete from orders,orderstatus
         where orderid = #{orderId}
     </delete>
+    <update id="updateShippingCost" parameterType="Order">
+        update orders
+        set
+            shippingcost = #{shippingCost}
+        where orderid = #{orderId}
+    </update>
+    <select id="hasOrder" resultType="boolean">
+        select count(*)
+        from orders
+        where orderid = #{orderId}
+    </select>
 </mapper>
