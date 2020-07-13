@@ -14,6 +14,8 @@ public enum StatusString {
 
     RETURN_IN("IN-03"),
 
+    CHANGE_IN("IN-04"),
+
     SUPPLY_OUT("OUT-01"),
 
     ADJUST_OUT("OUT-02"),
@@ -26,9 +28,9 @@ public enum StatusString {
      */
     WAITING("W"),
 
-    CONFIRM("C"),
+    CONFIRM("Y"),
 
-    INVALID("I");
+    INVALID("F");
     ;
 
     String value;

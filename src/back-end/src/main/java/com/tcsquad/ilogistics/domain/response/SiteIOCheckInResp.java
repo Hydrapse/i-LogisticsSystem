@@ -3,17 +3,19 @@ package com.tcsquad.ilogistics.domain.response;
 import com.tcsquad.ilogistics.domain.storage.Item;
 
 import java.util.Date;
+import java.util.List;
 
 public class SiteIOCheckInResp {
     private Long recordId;
     private Date timeStamp;
     private String warehouseId;     //Todo:应该为可供入库的库房编号列表
+    private List<String> warehouseOptionalList;  //warehouseId为warehouseOptionalList[0]
     private Item item;
     private Integer itemNum;
     private Integer type;           //1表示补货，2表示调货，3表示退货，4表示换货
     private String typeDesc;       //对type属性的描述，如“补货”
     private Long formId;            //相关表单编号
-    private String itemDest;        //货物来源，例如：用户名
+    private String itemSrc;        //货物来源，例如：用户名
     private String approvalStatus;
     private String approver;        //待更改（之后会改为员工编号）
 
@@ -81,12 +83,12 @@ public class SiteIOCheckInResp {
         this.formId = formId;
     }
 
-    public String getItemDest() {
-        return itemDest;
+    public String getItemSrc() {
+        return itemSrc;
     }
 
-    public void setItemDest(String itemDest) {
-        this.itemDest = itemDest;
+    public void setItemSrc(String itemSrc) {
+        this.itemSrc = itemSrc;
     }
 
     public String getApprovalStatus() {
@@ -103,5 +105,13 @@ public class SiteIOCheckInResp {
 
     public void setApprover(String approver) {
         this.approver = approver;
+    }
+
+    public List<String> getWarehouseOptionalList() {
+        return warehouseOptionalList;
+    }
+
+    public void setWarehouseOptionalList(List<String> warehouseOptionalList) {
+        this.warehouseOptionalList = warehouseOptionalList;
     }
 }

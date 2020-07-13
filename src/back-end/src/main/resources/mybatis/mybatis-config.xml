@@ -28,6 +28,7 @@
         <typeAlias type="com.tcsquad.ilogistics.domain.storage.MainSite" alias="MainSite"/>
         <typeAlias type="com.tcsquad.ilogistics.domain.storage.SubSite" alias="SubSite"/>
         <typeAlias type="com.tcsquad.ilogistics.domain.response.WarehouseResp" alias="WarehouseResp"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.storage.Inventory" alias="Inventory"/>
     </typeAliases>
 
     <!--

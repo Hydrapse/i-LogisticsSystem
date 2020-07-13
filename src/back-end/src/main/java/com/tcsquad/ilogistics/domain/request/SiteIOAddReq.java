@@ -6,7 +6,7 @@ public class SiteIOAddReq {
     private Long formId;
     private String ItemId;
     private Integer itemNum;
-    private String warehouseId;
+    private String warehouseId;     //由后端查询得到
 
     public Integer getType() {
         return type;

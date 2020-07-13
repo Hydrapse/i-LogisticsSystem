@@ -26,6 +26,21 @@
         where warehouseid = #{warehouseId}
     </select>
 
+    <select id="getInventoryByItemIdAndWarehouseId" resultType="Inventory">
+        select  itemid as itemId,
+                warehouseid as warehouseId,
+                num as itemNum
+        from inventory
+        where itemid=#{itemId} and warehouseid=#{warehouseId}
+    </select>
+
+    <update id="updateInventoryByWarehouseIdAndItemId" parameterType="Inventory">
+        update inventory
+        set num = #{itemNum}
+        where
+            warehouseid = #{warehouseId} and itemid = #{itemId}
+    </update>
+
     <select id="getWarehouseIdsByItemAndMainsite" resultType="String">
         select warehouseid as warehouseId
         from warehouse,item
@@ -34,5 +49,39 @@
             and item.cid = warehouse.categoryid
             and mainsiteid = #{warehouseId}
     </select>
+
+    <select id="getWarehouseOptionsToCheckout" resultType="String">
+        select warehouse.warehouseid as warehouseId
+        from warehouse,item,inventory
+        where
+                item.itemid = inventory.itemid
+            and item.cid = warehouse.categoryid
+            and warehouse.warehouseid = inventory.warehouseid
+            and mainsiteid = #{warehouseId}
+            and item.itemid = #{itemId}
+            and inventory.num >= #{itemNum}
+    </select>
+
+    <select id="getWarehouseOptionsToCheckin" resultType="String">
+        select warehouseId
+        from (
+            select  warehouse.warehouseid as warehouseId,
+                    warehouse.maxsize - inventory.num as available
+            from warehouse,item,inventory
+            where
+                    item.itemid = inventory.itemid
+                and item.cid = warehouse.categoryid
+                and warehouse.warehouseid = inventory.warehouseid
+                and mainsiteid = #{warehouseId}
+                and item.itemid = #{itemId}
+        )
+        where available >= #{itemNum}
+
+    </select>
+
+    <insert id="insertInventoryOfItem" parameterType="Inventory">
+        insert into inventory(warehousid,itemid,num)
+        values(#{warehouseId},#{itemId},#(itemNum))
+    </insert>
 
 </mapper>

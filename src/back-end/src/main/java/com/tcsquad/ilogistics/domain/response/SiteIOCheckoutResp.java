@@ -3,6 +3,7 @@ package com.tcsquad.ilogistics.domain.response;
 import com.tcsquad.ilogistics.domain.storage.Item;
 
 import java.util.Date;
+import java.util.List;
 
 public class SiteIOCheckoutResp {
     private Long recordId;
@@ -16,6 +17,7 @@ public class SiteIOCheckoutResp {
     private String itemDest;        //货物出处，例如：其他主站的编号
     private String approvalStatus;
     private String approver;        //待更改（之后会改为员工编号）
+    private List<String> warehouseOptionalList;  //warehouseId为warehouseOptionalList[0]
 
     public Long getRecordId() {
         return recordId;
@@ -103,5 +105,13 @@ public class SiteIOCheckoutResp {
 
     public void setApprover(String approver) {
         this.approver = approver;
+    }
+
+    public List<String> getWarehouseOptionalList() {
+        return warehouseOptionalList;
+    }
+
+    public void setWarehouseOptionalList(List<String> warehouseOptionalList) {
+        this.warehouseOptionalList = warehouseOptionalList;
     }
 }
