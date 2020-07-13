@@ -1,15 +1,15 @@
 package com.tcsquad.ilogistics.domain.order;
 
-import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
+import java.util.Date;
 
 public class Order {
     private long orderId;
     private String customerId;
     private String payStatus;
     private String processStatus;
-    private DateTimeLiteralExpression.DateTime createDateTime;
-    private DateTimeLiteralExpression.DateTime payDateTime;
-    private DateTimeLiteralExpression.DateTime deliveryDateTime;//订单发货时间
+    private Date createDateTime;
+    private Date payDateTime;
+    private Date deliveryDateTime;//订单发货时间
     private String billName;
     private String billPro;
     private String billCity;
@@ -52,27 +52,27 @@ public class Order {
         this.processStatus = processStatus;
     }
 
-    public DateTimeLiteralExpression.DateTime getCreateDateTime() {
+    public Date getCreateDateTime() {
         return createDateTime;
     }
 
-    public void setCreateDateTime(DateTimeLiteralExpression.DateTime createDateTime) {
+    public void setCreateDateTime(Date createDateTime) {
         this.createDateTime = createDateTime;
     }
 
-    public DateTimeLiteralExpression.DateTime getPayDateTime() {
+    public Date getPayDateTime() {
         return payDateTime;
     }
 
-    public void setPayDateTime(DateTimeLiteralExpression.DateTime payDateTime) {
+    public void setPayDateTime(Date payDateTime) {
         this.payDateTime = payDateTime;
     }
 
-    public DateTimeLiteralExpression.DateTime getDeliveryDateTime() {
+    public Date getDeliveryDateTime() {
         return deliveryDateTime;
     }
 
-    public void setDeliveryDateTime(DateTimeLiteralExpression.DateTime deliveryDateTime) {
+    public void setDeliveryDateTime(Date deliveryDateTime) {
         this.deliveryDateTime = deliveryDateTime;
     }
 

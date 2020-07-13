@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 public class OrderItem {
     private long orderId;
     private long taskId;
-    private int itemId;
+    private String itemId;
     private int itemNum;
     private String status;
     private BigDecimal total;
@@ -29,11 +29,11 @@ public class OrderItem {
         this.taskId = taskId;
     }
 
-    public int getItemId() {
+    public String getItemId() {
         return itemId;
     }
 
-    public void setItemId(int itemId) {
+    public void setItemId(String itemId) {
         this.itemId = itemId;
     }
 
