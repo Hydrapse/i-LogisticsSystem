@@ -30,10 +30,24 @@
         where orderid = #{orderId}
     </select>
 
+    <select id="getOrderItemByTaskId" resultType="OrderItem">
+        select
+            orderid, itemid, taskid, itemnum, status, total
+        from orderitem
+        where taskid = #{taskId}
+    </select>
+
     <update id="updateOrderItemStatus" parameterType="OrderItem">
         update orderitem
         set
             status = #{status}
+        where orderid = #{orderId} and itemid = #{itemId}
+    </update>
+
+    <update id="updateOrderItemTaskId" parameterType="OrderItem">
+        update orderitem
+        set
+            taskid = #{taskId}
         where orderid = #{orderId} and itemid = #{itemId}
     </update>
 </mapper>

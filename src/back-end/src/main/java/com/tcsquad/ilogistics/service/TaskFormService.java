@@ -39,7 +39,7 @@ public class TaskFormService {
         return res;
     }
 
-    public List<TaskForm> getTaskFormsBySubSiteId(Long subSiteId) {
+    public List<TaskForm> getTaskFormsBySubSiteId(String subSiteId) {
         if(subSiteId == null)
             return new ArrayList<>();
         else

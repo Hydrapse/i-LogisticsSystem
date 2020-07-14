@@ -7,8 +7,8 @@ import java.util.List;
 
 public class TaskForm {
 
-    private long taskId;
-    private long orderId;
+    private Long taskId;
+    private Long orderId;
     private String subSiteId;
     private String courier;
     private String status;
@@ -53,7 +53,7 @@ public class TaskForm {
         this.billAddr = billAddr;
     }
 
-    public long getTaskId() {
+    public Long getTaskId() {
         return taskId;
     }
 
@@ -61,7 +61,7 @@ public class TaskForm {
         this.taskId = taskId;
     }
 
-    public long getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 

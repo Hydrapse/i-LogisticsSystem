@@ -9,8 +9,8 @@ import java.util.Date;
  * 
  */
 public class ReturnForm {
-    private long formId;
-    private long orderId;
+    private Long formId;
+    private Long orderId;
     private int isChange;
     private Item item;
     private int itemNum;
@@ -20,7 +20,7 @@ public class ReturnForm {
     private String processStatus;
     private String reason;
 
-    public long getFormId() {
+    public Long getFormId() {
         return formId;
     }
 
@@ -28,7 +28,7 @@ public class ReturnForm {
         this.formId = formId;
     }
 
-    public long getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 

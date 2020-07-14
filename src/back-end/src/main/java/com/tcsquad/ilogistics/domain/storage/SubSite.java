@@ -13,7 +13,6 @@ public class SubSite {
     private BigDecimal longitude;
     private BigDecimal latitude;
 
-
     public String getSubsiteId() {
         return subsiteId;
     }

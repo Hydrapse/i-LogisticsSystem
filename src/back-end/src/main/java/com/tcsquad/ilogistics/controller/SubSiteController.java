@@ -14,7 +14,7 @@ public class SubSiteController {
     TaskFormService taskFormService;
 
     @GetMapping("/{subSiteId}/taskforms")
-    public List<TaskForm> getTaskForms(@PathVariable Long subSiteId) {
+    public List<TaskForm> getTaskForms(@PathVariable String subSiteId) {
         return taskFormService.getTaskFormsBySubSiteId(subSiteId);
     }
 
