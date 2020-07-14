@@ -2,12 +2,9 @@ package com.tcsquad.ilogistics.controller;
 
 import com.tcsquad.ilogistics.domain.StatusString;
 import com.tcsquad.ilogistics.domain.request.SiteIOAddReq;
-import com.tcsquad.ilogistics.domain.response.ItemCheckinResp;
-import com.tcsquad.ilogistics.domain.response.ItemCheckoutResp;
-import com.tcsquad.ilogistics.domain.response.SiteIOCheckInResp;
-import com.tcsquad.ilogistics.domain.response.SiteIOCheckoutResp;
-import com.tcsquad.ilogistics.service.SiteIOService;
-import com.tcsquad.ilogistics.service.WarehouseService;
+import com.tcsquad.ilogistics.domain.response.*;
+import com.tcsquad.ilogistics.service.interf.SiteIOService;
+import com.tcsquad.ilogistics.service.interf.WarehouseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +84,7 @@ public class MainsiteController {
         return itemCheckoutResp;
     }
 
-    @ApiOperation("查询入库单详细信息")
+    @ApiOperation("查询出库单详细信息")
     @GetMapping("/{mainsiteId}/inventory/siteout/{recordId}")
     public SiteIOCheckoutResp getSiteIOCheckoutDetail(@PathVariable("mainsiteId")String mainsiteId,
                                                       @PathVariable("recordId")Long recordId){
@@ -95,7 +92,18 @@ public class MainsiteController {
         return siteIOCheckoutResp;
     }
 
+    @ApiOperation("查询库房列表")
+    @GetMapping("/{mainsiteId}/warehouses")
+    public List<WarehouseResp> getWarehouseInfoList(@PathVariable("mainsiteId")String mainsiteId){
+        List<WarehouseResp> warehouseRespList = warehouseService.getAllWarehouseInfo(mainsiteId);
+        return warehouseRespList;
+    }
 
-
-
+    @ApiOperation("查询库房详细信息")
+    @GetMapping("/{mainsiteId}/warehouse/{warehouseId}")
+    public WarehouseDetailResp getWarehouseInfoList(@PathVariable("mainsiteId")String mainsiteId,
+                                                    @PathVariable("warehouseId")String warehouseId){
+        WarehouseDetailResp warehouseDetailResp = warehouseService.getWarehouseDetail(warehouseId,mainsiteId);
+        return warehouseDetailResp;
+    }
 }

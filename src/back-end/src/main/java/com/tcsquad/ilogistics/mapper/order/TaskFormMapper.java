@@ -12,7 +12,7 @@ public interface TaskFormMapper {
     List<TaskForm> getTaskFormsByOrderId(long orderId);
 
     //通过配送站Id查询该订单对应的任务单
-    List<TaskForm> getTaskFormsBySubSiteId(String subsiteId); //DONE
+    List<TaskForm> getTaskFormsBySubSiteId(String subSiteId); //DONE
 
     //获取所有任务单
     List<TaskForm> getTaskForms(); //DONE

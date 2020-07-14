@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcsquad.ilogistics.mapper.storage.SiteIOMapper">
+    <insert id="insertSiteIORecord" parameterType="SiteIO">
+        insert into mainsiteio(time,warehouseid,itemid,qty,type,formid,approvalstatus,approver)
+        values(#{timeStamp},#{warehouseId},#{itemId},#{qty},#{type},#{formId},#{approvalStatus},#{approver})
+    </insert>
+
+    <update id="updateSiteIOStatus">
+        update mainsiteio
+        set approvalstatus = #{status}
+        where recordid=#{recordId};
+    </update>
+
+    <select id="getSiteIORecordById" resultType="SiteIO">
+        select  recordid as recordId,
+                time as timeStamp,
+                warehouseid as warehouseId,
+                itemid as itemId,
+                qty,
+                type,
+                formid as formId,
+                approvalstatus,
+                approver
+        from mainsiteio
+        where recordid=#{recordId}
+    </select>
+
+    <select id="getSiteIORecordIdByFormIdAndItemId" resultType="Long">
+        select recordid as recordId
+        from mainsiteio
+        where type=#{type} and formid=#{formId} and itemid=#{itemId}
+    </select>
+
+    <update id="updateSiteIOWarehouseId">
+        update mainsiteio
+        set warehouseid=#{warehouseId}
+        where recordid=#{recordId}
+    </update>
+
+</mapper>
