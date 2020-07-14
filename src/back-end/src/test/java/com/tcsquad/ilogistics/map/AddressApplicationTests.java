@@ -17,6 +17,7 @@ public class AddressApplicationTests {
     @Test
     void test() {
 //        System.out.println(addressService.distance(Pair.of(40.45,116.34), List.of(Pair.of(40.54,116.35))));
-        System.out.println(addressService.getPosition("北京市海淀区上地十街10号","北京市"));
+//        System.out.println(addressService.getPosition("北京市海淀区上地十街10号","北京市"));
+        System.out.println(addressService.route(Pair.of(40.45,116.34),null,Pair.of(40.54,116.35),0,false));
     }
 }
