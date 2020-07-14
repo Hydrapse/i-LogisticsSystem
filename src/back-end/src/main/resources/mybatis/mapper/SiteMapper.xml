@@ -56,4 +56,10 @@
         delete from subsite
         where subsid = #{subsiteId}
     </delete>
+
+    <select id="hasMainSiteId" resultType="boolean">
+        select count(*)
+        from mainsite
+        where mainsid = #{mainsiteId}
+    </select>
 </mapper>

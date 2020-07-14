@@ -10,6 +10,11 @@ public enum ErrorCode {
     USER_NOT_FOUND(40401),
 
     /**
+     * 订单不存在
+     */
+    ORDER_NOT_FOUND(40402),
+
+    /**
      * 订单已经提交
      */
     ORDER_ALREADY_SUBMIT(40001),
@@ -23,6 +28,11 @@ public enum ErrorCode {
      * 参数错误
      */
     PARAMS_ERROR(40003),
+
+    /**
+     * 订单已经存在
+     */
+    ORDER_ALREADY_EXIST(40004),
 
     /**
      *用户权限不足, 无法调用接口

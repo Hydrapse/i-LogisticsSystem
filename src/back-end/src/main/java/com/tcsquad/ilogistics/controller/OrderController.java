@@ -1,13 +1,16 @@
 package com.tcsquad.ilogistics.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.tcsquad.ilogistics.domain.order.Order;
 import com.tcsquad.ilogistics.domain.request.OrderAddReq;
+import com.tcsquad.ilogistics.domain.response.OrderDetailResp;
+import com.tcsquad.ilogistics.service.OrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Hydra
@@ -17,19 +20,60 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "订单管理模块API接口")
 @RestController
 public class OrderController {
-
     private static Logger logger = LoggerFactory.getLogger(OrderController.class);
 
-    @ApiOperation("新增订单")
-    @PostMapping("/orders")
-    public String newOrder(@RequestBody OrderAddReq orderAddReq){
-        logger.warn(String.valueOf(orderAddReq.getOrderItemList().size()));
+    @Autowired
+    OrderService orderService;
 
-        if(orderAddReq.isManual()){
-            return "isManual";
+    @ApiOperation("新增订单入口")
+    @PostMapping("/orders")
+    public void newOrder(@RequestBody OrderAddReq orderAddReq){
+        System.out.println(orderAddReq.getOrderItemList().get(0).getTotal());
+        //新增订单
+        orderService.insertOrderReq(orderAddReq);
+        Order order = orderAddReq.getOrder();
+
+        //判断订单是否需要被审核
+        if (orderService.isCheckNeeded(orderAddReq)){
+            //如果需要, 直接发送消息给队列
+            orderService.sendOrderMessage(order);
+            return;
         }
-        return "isAuto";
+
+        //若不需要,直接进行预分拣获取mainsiteId
+        //接着传递给任务单生成模块
+        String mainsiteId = orderService.preSlotForMainSite(order).getMainsiteId();
+
+        //更新订单状态
+        //order.setProcessStatus(StatusString.PROCESSING.getValue());
+        //orderMapper.updateOrderStatus(order);
+
+        //taskFormService.createTaskForm(order, mainsiteId);
     }
 
+    @ApiOperation("订单审核详情")
+    @GetMapping("/orders/{orderId}/check")
+    public OrderDetailResp getCheckDetail(@PathVariable("orderId")Long orderId){
+        //获取订单详情
+        OrderDetailResp orderDetailResp = orderService.getDetailRespByOrderId(orderId);
+
+        return orderDetailResp;
+    }
+
+    @ApiOperation("修改订单信息")
+    @PatchMapping("/orders/{orderId}/check")
+    public void confirmCheckDetail(@PathVariable("orderId")Long orderId,
+                                   String processStatus,
+                                   @RequestParam("mainsiteId") String mainsiteId, //必须要有
+                                   String shippingCost) {
+        //检查mainsiteId是否正确, 若不正确抛出异常
+        orderService.checkMainSiteId(mainsiteId);
+
+        Order order = orderService.confirmOrder(orderId, processStatus, shippingCost);
+
+        //TODO: 判断是否接受订单,若接受, 传递order,mainsiteId给任务单生成模块
+        logger.info(JSON.toJSONString(order));
+//        taskFormService.createTaskForm(order, mainsiteId);
+    }
 
 }
