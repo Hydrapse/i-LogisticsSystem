@@ -71,10 +71,10 @@ public class MainsiteController {
         }
 
         if(approvalStatus.equals(StatusString.CONFIRM.getValue())){ //确认审核
-            siteIOService.confirmSiteIORecord(recordId);
+            siteIOService.confirmSiteIORecord(recordId,true);
         }
         else if(approvalStatus.equals(StatusString.INVALID.getValue())) { //取消审核
-            siteIOService.cancelSiteIOStatus(recordId);
+            siteIOService.cancelSiteIOStatus(recordId,true);
         }
         else{
             //Todo:Error
@@ -95,6 +95,31 @@ public class MainsiteController {
                                                       @PathVariable("recordId")Long recordId){
         SiteIOCheckoutResp siteIOCheckoutResp = siteIOService.getSiteIOCheckoutRespByRecordId(recordId,mainsiteId);
         return siteIOCheckoutResp;
+    }
+
+    @ApiOperation("修改出库单信息")
+    @PatchMapping("/{mainsiteId}/inventory/siteout/{recordId}")
+    public String updateSiteIOCheckoutInfo(@PathVariable("mainsiteId")String mainsiteId,
+                                          @PathVariable("recordId")Long recordId,
+                                          String warehouseId,String approvalStatus){
+        /*
+        1. 修改出库库房信息
+        2. 修改出库状态，其中包含对其他模块的调用（例如调货单状态的修改）
+         */
+        if(!warehouseId.equals("") && warehouseId!=null){
+            siteIOService.updateWarehouseToCheckout(recordId,warehouseId);
+        }
+
+        if(approvalStatus.equals(StatusString.CONFIRM.getValue())){ //确认审核
+            siteIOService.confirmSiteIORecord(recordId,false);
+        }
+        else if(approvalStatus.equals(StatusString.INVALID.getValue())) { //取消审核
+            siteIOService.cancelSiteIOStatus(recordId,false);
+        }
+        else{
+            //Todo:Error
+        }
+        return "Success";
     }
 
     @ApiOperation("查询库房列表")
