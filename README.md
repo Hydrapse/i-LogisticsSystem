@@ -19,4 +19,5 @@
 5. 出库审核，topic： `unreviewed item out`，ack：需要
 6. 入库审核，topic： `unreviewed item in`，ack：需要
 7. 入库请求，topic： `item in`，ack：需要，后端消费
+8. 缺货，topic： `lack item`，ack：需要，后端消费
 
