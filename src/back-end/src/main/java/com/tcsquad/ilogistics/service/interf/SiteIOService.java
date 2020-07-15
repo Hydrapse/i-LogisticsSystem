@@ -9,10 +9,10 @@ import com.tcsquad.ilogistics.domain.storage.SiteIO;
 
 public interface SiteIOService {
     //取消出入库记录（将status置为'F'）
-    void cancelSiteIOStatus(Long recordId);
+    void cancelSiteIOStatus(Long recordId,boolean isCheckin);
 
     //出入库记录审核通过（将status置为'C'）
-    void confirmSiteIORecord(Long recordId);
+    void confirmSiteIORecord(Long recordId,boolean isCheckin);
 
     //新增入库记录
     Long insertCheckinRecord(SiteIOAddReq siteIOAddReq);
@@ -28,6 +28,9 @@ public interface SiteIOService {
 
     //修改入库库房
     void updateWarehouseToCheckin(Long recordId,String warehouseId);
+
+    //修改出库库房
+    void updateWarehouseToCheckout(Long recordId,String warehouseId);
 
 
     //获取出库消息

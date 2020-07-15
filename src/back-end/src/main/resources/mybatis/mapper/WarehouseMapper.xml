@@ -34,14 +34,15 @@
     <select id="getInventoryByItemIdAndWarehouseId" resultType="Inventory">
         select  itemid as itemId,
                 warehouseid as warehouseId,
-                num as itemNum
+                num as itemNum,
+                logicinventory as logicInventory
         from inventory
         where itemid=#{itemId} and warehouseid=#{warehouseId}
     </select>
 
     <update id="updateInventoryByWarehouseIdAndItemId" parameterType="Inventory">
         update inventory
-        set num = #{itemNum}
+        set num = #{itemNum},logicinventory=#{logicInventory}
         where
             warehouseid = #{warehouseId} and itemid = #{itemId}
     </update>
@@ -62,7 +63,8 @@
                 item.itemid = inventory.itemid
             and item.cid = warehouse.categoryid
             and warehouse.warehouseid = inventory.warehouseid
-            and mainsiteid = #{warehouseId}
+            and item.itemid = inventory.itemid
+            and mainsiteid = #{mainsiteId}
             and item.itemid = #{itemId}
             and inventory.num >= #{itemNum}
     </select>
@@ -81,8 +83,8 @@
     </select>
 
     <insert id="insertInventoryOfItem" parameterType="Inventory">
-        insert into inventory(warehousid,itemid,num)
-        values(#{warehouseId},#{itemId},#(itemNum))
+        insert into inventory(warehousid,itemid,num,logicinventory)
+        values(#{warehouseId},#{itemId},#(itemNum),#(itemNum))
     </insert>
 
 </mapper>
