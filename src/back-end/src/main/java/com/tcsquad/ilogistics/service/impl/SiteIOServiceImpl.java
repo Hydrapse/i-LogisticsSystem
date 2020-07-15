@@ -10,6 +10,7 @@ import com.tcsquad.ilogistics.domain.response.ItemCheckoutResp;
 import com.tcsquad.ilogistics.domain.response.SiteIOCheckInResp;
 import com.tcsquad.ilogistics.domain.response.SiteIOCheckoutResp;
 import com.tcsquad.ilogistics.domain.storage.AdjustForm;
+import com.tcsquad.ilogistics.domain.storage.Inventory;
 import com.tcsquad.ilogistics.domain.storage.Item;
 import com.tcsquad.ilogistics.domain.storage.SiteIO;
 import com.tcsquad.ilogistics.mapper.clientele.SupplyIOMapper;
@@ -20,6 +21,7 @@ import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.mapper.storage.SiteIOMapper;
 import com.tcsquad.ilogistics.mapper.storage.WarehouseMapper;
 import com.tcsquad.ilogistics.service.interf.SiteIOService;
+import com.tcsquad.ilogistics.service.interf.WarehouseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,19 +45,60 @@ public class SiteIOServiceImpl implements SiteIOService {
     ReturnFormMapper returnFormMapper;
     @Autowired
     OrderMapper orderMapper;
+    @Autowired
+    WarehouseService warehouseService;
 
     @Override
     @Transactional
-    public void cancelSiteIOStatus(Long recordId) {
-        //Todo:取消入库对其他模块的影响？？？
-        siteIOMapper.updateSiteIOStatus(recordId, StatusString.INVALID.getValue());
+    public void cancelSiteIOStatus(Long recordId,boolean isCheckin) {
+        if(isCheckin){
+            siteIOMapper.updateSiteIOStatus(recordId, StatusString.INVALID.getValue());
+
+            //Todo:取消入库对其他模块的影响？？？
+        }
+        else {
+            //取消出库,则将逻辑库存加上itemNum
+            SiteIO siteIO = siteIOMapper.getSiteIORecordById(recordId);
+            Inventory inventory = warehouseMapper.getInventoryByItemIdAndWarehouseId(siteIO.getWarehouseId(),siteIO.getItemId());
+            int num = inventory.getLogicInventory() + siteIO.getQty();
+            inventory.setLogicInventory(num);
+            warehouseMapper.updateInventoryByWarehouseIdAndItemId(inventory);
+            siteIOMapper.updateSiteIOStatus(recordId,StatusString.INVALID.getValue());
+
+            //Todo:取消出库对其他模块的影响？？？
+        }
+
     }
 
     @Override
     @Transactional
-    public void confirmSiteIORecord(Long recordId) {
-        //Todo:确认入库对其他模块的影响？？？
-        siteIOMapper.updateSiteIOStatus(recordId,StatusString.CONFIRM.getValue());
+    public void confirmSiteIORecord(Long recordId,boolean isCheckin) {
+        if(isCheckin){
+            //Todo:确认入库对其他模块的影响？？？
+            SiteIO siteIO = siteIOMapper.getSiteIORecordById(recordId);
+            warehouseService.addItemToWarehouse(siteIO.getWarehouseId(),siteIO.getItemId(),siteIO.getQty());
+            siteIOMapper.updateSiteIOStatus(recordId,StatusString.CONFIRM.getValue());
+        }
+        else {
+            //Todo:确认出库对其他模块的影响？？？
+
+            //确认出库，将真实库存减掉itemNum
+            SiteIO siteIO = siteIOMapper.getSiteIORecordById(recordId);
+            Inventory inventory = warehouseMapper.getInventoryByItemIdAndWarehouseId(siteIO.getWarehouseId(),siteIO.getItemId());
+            int num = inventory.getItemNum() - siteIO.getQty();
+            if(num >= 0){
+                inventory.setItemNum(num);
+                warehouseMapper.updateInventoryByWarehouseIdAndItemId(inventory);
+                siteIOMapper.updateSiteIOStatus(recordId,StatusString.CONFIRM.getValue());
+            }
+            else {
+                //Todo:Error
+
+            }
+
+
+        }
+
     }
 
     //1表示补货，2表示调货，3表示退货，4表示换货
@@ -147,6 +190,26 @@ public class SiteIOServiceImpl implements SiteIOService {
         checkInResp.setApprovalStatus(siteIO.getApprovalStatus());
         checkInResp.setApprover(siteIO.getApprover());
         List<String> warehousesOptional = warehouseMapper.getWarehouseOptionsToCheckin(item.getItemId(),siteIO.getQty(),mainsiteId);
+
+        //验证入库库房是否与查询所得相一致，避免提供的入库编号并不是该主站的记录，同时将入库库房作为可供入库选择的第一个元素
+        int index = 0;
+        for (String warehouseId:warehousesOptional
+             ) {
+            if(warehouseId.equals(checkInResp.getWarehouseId())){
+                break;
+            }
+            else{
+                index++;
+            }
+        }
+        if(index != warehousesOptional.size() && index != 0){
+            warehousesOptional.remove(index);
+            warehousesOptional.add(0,checkInResp.getWarehouseId());
+        }
+        else {
+            //Todo:Error
+        }
+
         checkInResp.setWarehouseOptionalList(warehousesOptional);
         return checkInResp;
     }
@@ -176,6 +239,26 @@ public class SiteIOServiceImpl implements SiteIOService {
         siteIOMapper.updateSiteIOWarehouseId(recordId,warehouseId);
     }
 
+    @Override
+    @Transactional
+    public void updateWarehouseToCheckout(Long recordId, String warehouseId) {
+        SiteIO siteIO = siteIOMapper.getSiteIORecordById(recordId);
+        //将原库房的逻辑库存加上itemNum
+        Inventory inventory = warehouseMapper.getInventoryByItemIdAndWarehouseId(siteIO.getWarehouseId(),siteIO.getItemId());
+        int num = inventory.getLogicInventory() + siteIO.getQty();
+        inventory.setLogicInventory(num);
+        warehouseMapper.updateInventoryByWarehouseIdAndItemId(inventory);
+
+        //将修改后的库房的逻辑库存减掉itemNum
+        inventory = warehouseMapper.getInventoryByItemIdAndWarehouseId(warehouseId,siteIO.getItemId());
+        num = inventory.getLogicInventory() - siteIO.getQty();
+        inventory.setLogicInventory(num);
+        warehouseMapper.updateInventoryByWarehouseIdAndItemId(inventory);
+
+        //修改库房编号
+        siteIOMapper.updateSiteIOWarehouseId(recordId,warehouseId);
+
+    }
 
     @Override
     @Transactional
@@ -196,6 +279,7 @@ public class SiteIOServiceImpl implements SiteIOService {
     @Override
     public ItemCheckoutResp getItemCheckoutRespByRecordId(Long recordId) {
         SiteIO siteIO = siteIOMapper.getSiteIORecordById(recordId);
+        System.out.println(siteIO.getType());
         ItemCheckoutResp itemCheckoutResp = new ItemCheckoutResp();
         itemCheckoutResp.setType(checkoutTypeStringToInteger(siteIO.getType()));
         itemCheckoutResp.setFormId(siteIO.getFormId());
@@ -235,6 +319,26 @@ public class SiteIOServiceImpl implements SiteIOService {
         checkoutResp.setApprovalStatus(siteIO.getApprovalStatus());
         checkoutResp.setApprover(siteIO.getApprover());
         List<String> warehousesOptional = warehouseMapper.getWarehouseOptionsToCheckout(item.getItemId(),siteIO.getQty(),mainsiteId);
+
+        //验证入库库房是否与查询所得相一致，避免提供的入库编号并不是该主站的记录，同时将入库库房作为可供入库选择的第一个元素
+        int index = 0;
+        for (String warehouseId:warehousesOptional
+        ) {
+            if(warehouseId.equals(checkoutResp.getWarehouseId())){
+                break;
+            }
+            else{
+                index++;
+            }
+        }
+        if(index != warehousesOptional.size() && index != 0){
+            warehousesOptional.remove(index);
+            warehousesOptional.add(0,checkoutResp.getWarehouseId());
+        }
+        else {
+            //Todo:Error
+        }
+
         checkoutResp.setWarehouseOptionalList(warehousesOptional);
         return checkoutResp;
 

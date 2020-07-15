@@ -34,7 +34,7 @@ public interface WarehouseMapper {
     List<String> getWarehouseIdsByItemAndMainsite(String itemId,String mainsiteId);
 
     //根据主站编号和商品编号和商品数量获取商品可出库的库房
-    List<String> getWarehouseOptionsToCheckout(String itemId, int itemNum, String mainsiteId);
+    List<String> getWarehouseOptionsToCheckout(@Param("itemId")String itemId, @Param("itemNum")int itemNum, @Param("mainsiteId")String mainsiteId);
 
     //根据主站编号和商品编号和商品数量获取商品可入库的库房
     List<String> getWarehouseOptionsToCheckin(@Param("itemId")String itemId, @Param("itemNum")int itemNum, @Param("mainsiteId")String mainsiteId);
@@ -43,6 +43,6 @@ public interface WarehouseMapper {
     void insertInventoryOfItem(Inventory inventory);
 
     //根据库房编号和商品编号获取库存
-    Inventory getInventoryByItemIdAndWarehouseId(String warehouseId,String itemId);
+    Inventory getInventoryByItemIdAndWarehouseId(@Param("warehouseId")String warehouseId,@Param("itemId")String itemId);
 
 }

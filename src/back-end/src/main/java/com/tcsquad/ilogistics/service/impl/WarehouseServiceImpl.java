@@ -40,17 +40,21 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     @Transactional
     public void addItemToWarehouse(String warehouseId, String itemId, int itemNum) {
+        System.out.println("addItemToWarehouse");
         Inventory inventory = warehouseMapper.getInventoryByItemIdAndWarehouseId(warehouseId,itemId);
         if(inventory == null){
             inventory = new Inventory();
             inventory.setWarehouseId(warehouseId);
             inventory.setItemId(itemId);
             inventory.setItemNum(itemNum);
+            inventory.setLogicInventory(itemNum);
             warehouseMapper.insertInventoryOfItem(inventory);
         }
         else{
             int num = inventory.getItemNum() + itemNum;
             inventory.setItemNum(num);
+            num = inventory.getLogicInventory() + itemNum;
+            inventory.setLogicInventory(num);
             warehouseMapper.updateInventoryByWarehouseIdAndItemId(inventory);
         }
     }
@@ -80,7 +84,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public WarehouseDetailResp getWarehouseDetail(String warehouseId, String mainsiteId) {
         WarehouseDetailResp warehouseDetailResp = new WarehouseDetailResp();
-        warehouseDetailResp.setMainSiteId(warehouseId);
+        warehouseDetailResp.setMainSiteId(mainsiteId);
         warehouseDetailResp.setMainsiteName(warehouseId);
         warehouseDetailResp.setWarehouseId(warehouseId);
         Category category = warehouseMapper.getCategoryByWarehouseId(warehouseId);

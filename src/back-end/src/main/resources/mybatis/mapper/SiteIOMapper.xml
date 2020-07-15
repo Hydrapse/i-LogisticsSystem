@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tcsquad.ilogistics.mapper.storage.SiteIOMapper">
     <insert id="insertSiteIORecord" parameterType="SiteIO">
-        insert into mainsiteio(recordid,time,warehouseid,itemid,qty,type,formid,approvalstatus,approver)
-        values(#{recordId},#{timeStamp},#{warehouseId},#{itemId},#{qty},#{type},#{formId},#{approvalStatus},#{approver})
+        insert into mainsiteio(time,warehouseid,itemid,qty,type,formid,approvalstatus,approver)
+        values(#{timeStamp},#{warehouseId},#{itemId},#{qty},#{type},#{formId},#{approvalStatus},#{approver})
     </insert>
 
     <update id="updateSiteIOStatus">
