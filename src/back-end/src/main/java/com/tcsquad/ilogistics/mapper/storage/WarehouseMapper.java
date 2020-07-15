@@ -5,7 +5,7 @@ import com.tcsquad.ilogistics.domain.storage.Inventory;
 import com.tcsquad.ilogistics.domain.storage.Item;
 import com.tcsquad.ilogistics.domain.response.WarehouseResp;
 import org.apache.ibatis.annotations.MapKey;
-import org.apache.ibatis.annotations.Param;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,11 +33,11 @@ public interface WarehouseMapper {
     //根据主站编号和商品编号获取商品所在的库房
     List<String> getWarehouseIdsByItemAndMainsite(String itemId,String mainsiteId);
 
-    //根据主站编号和商品编号和商品数量获取商品可入库的库房
+    //根据主站编号和商品编号和商品数量获取商品可出库的库房
     List<String> getWarehouseOptionsToCheckout(String itemId, int itemNum, String mainsiteId);
 
-    //根据主站编号和商品编号和商品数量获取商品可出库的库房
-    List<String> getWarehouseOptionsToCheckin(String itemId,int itemNum,String mainsiteId);
+    //根据主站编号和商品编号和商品数量获取商品可入库的库房
+    List<String> getWarehouseOptionsToCheckin(@Param("itemId")String itemId, @Param("itemNum")int itemNum, @Param("mainsiteId")String mainsiteId);
 
     //原本该库房为存储该商品，现新增该商品，即在数据库中新增一行
     void insertInventoryOfItem(Inventory inventory);

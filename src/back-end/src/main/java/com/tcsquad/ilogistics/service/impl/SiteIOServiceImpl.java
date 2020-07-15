@@ -87,6 +87,9 @@ public class SiteIOServiceImpl implements SiteIOService {
             siteIO.setFormId(siteIOAddReq.getFormId());
             siteIO.setApprovalStatus(StatusString.WAITING.getValue());
             siteIO.setApprover("Auto");                //"Auto"表示为程序根据请求自动出入库
+
+//            //第一次添加
+//            siteIO.setRecordId(10000000);
             siteIOMapper.insertSiteIORecord(siteIO);
 
             //查询本次入库请求的recordId
@@ -258,16 +261,18 @@ public class SiteIOServiceImpl implements SiteIOService {
     }
 
     int checkinTypeStringToInteger(String typeString){
-        if(typeString == StatusString.SUPPLY_IN.getValue()){
+        System.out.println(typeString);
+        System.out.println();
+        if(typeString.equals(StatusString.SUPPLY_IN.getValue())){
             return 1;
         }
-        else if(typeString == StatusString.ADJUST_IN.getValue()){
+        else if(typeString.equals(StatusString.ADJUST_IN.getValue())){
             return 2;
         }
-        else if(typeString == StatusString.RETURN_IN.getValue()){
+        else if(typeString.equals(StatusString.RETURN_IN.getValue())){
             return 3;
         }
-        else if(typeString == StatusString.CHANGE_IN.getValue()){
+        else if(typeString.equals(StatusString.CHANGE_IN.getValue())){
             return 4;
         }
         else {
@@ -279,13 +284,13 @@ public class SiteIOServiceImpl implements SiteIOService {
 
     //1：退货给供应商，2：调货出库，3：发货出库
     int checkoutTypeStringToInteger(String typeString){
-        if(typeString == StatusString.SUPPLY_OUT.getValue()){
+        if(typeString.equals(StatusString.SUPPLY_OUT.getValue())){
             return 1;
         }
-        else if(typeString == StatusString.ADJUST_OUT.getValue()){
+        else if(typeString.equals(StatusString.ADJUST_OUT.getValue())){
             return 2;
         }
-        else if(typeString == StatusString.SHIP_OUT.getValue()){
+        else if(typeString.equals(StatusString.SHIP_OUT.getValue())){
             return 3;
         }
         else {

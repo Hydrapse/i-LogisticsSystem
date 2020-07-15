@@ -4,7 +4,7 @@ package com.tcsquad.ilogistics.domain.request;
 public class SiteIOAddReq {
     private Integer type;
     private Long formId;
-    private String ItemId;
+    private String itemId;
     private Integer itemNum;
     private String warehouseId;     //由后端查询得到
 
@@ -25,11 +25,11 @@ public class SiteIOAddReq {
     }
 
     public String getItemId() {
-        return ItemId;
+        return itemId;
     }
 
     public void setItemId(String itemId) {
-        ItemId = itemId;
+        this.itemId = itemId;
     }
 
     public Integer getItemNum() {
