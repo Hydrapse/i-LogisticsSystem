@@ -68,20 +68,16 @@
     </select>
 
     <select id="getWarehouseOptionsToCheckin" resultType="String">
-        select warehouseId
-        from (
-            select  warehouse.warehouseid as warehouseId,
-                    warehouse.maxsize - inventory.num as available
-            from warehouse,item,inventory
-            where
-                    item.itemid = inventory.itemid
-                and item.cid = warehouse.categoryid
-                and warehouse.warehouseid = inventory.warehouseid
-                and mainsiteid = #{warehouseId}
-                and item.itemid = #{itemId}
-        )
-        where available >= #{itemNum}
-
+        select warehouse.warehouseid as warehouseId
+        from warehouse,item
+        where   item.cid = warehouse.categoryid
+            and item.itemid = #{itemId}
+			and mainsiteid = #{mainsiteId}
+			and exists (select inventory.warehouseid
+                from inventory
+				where inventory.warehouseid = warehouse.warehouseid
+                group by inventory.warehouseid
+				having max(maxsize) - sum(num) >= #{itemNum})
     </select>
 
     <insert id="insertInventoryOfItem" parameterType="Inventory">

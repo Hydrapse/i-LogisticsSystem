@@ -41,7 +41,7 @@
              email,
              province,
              city,
-             region,
+             district,
              addr
         from supplier,supplyio
         where sid = supplierid and recordid = #{recordId}

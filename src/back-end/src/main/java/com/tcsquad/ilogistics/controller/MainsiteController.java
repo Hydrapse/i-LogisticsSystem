@@ -25,7 +25,7 @@ public class MainsiteController {
     @ApiOperation("入库请求")
     @PostMapping("/{mainsiteId}/inventory/inquery")
     public void insertCheckinRecord(@PathVariable("mainsiteId")String mainsiteId,
-                                    SiteIOAddReq siteIOAddReq){
+                                    @RequestBody SiteIOAddReq siteIOAddReq){
         List<String> warehouseList = warehouseService.getWarehouseOptionsToCheckin(siteIOAddReq.getItemId(),siteIOAddReq.getItemNum(),mainsiteId);
         if(warehouseList.isEmpty()){
             //根据itemId和mainsiteId未能找到相匹配库房，入库请求失败
@@ -66,13 +66,15 @@ public class MainsiteController {
         1. 修改入库仓库信息
         2. 修改入库状态，其中包含对其他模块的调用（例如调货单状态的修改）
          */
-
         siteIOService.updateWarehouseToCheckin(recordId,warehouseId);
-        if(approvalStatus == StatusString.CONFIRM.getValue()){ //确认审核
+        if(approvalStatus.equals(StatusString.CONFIRM.getValue())){ //确认审核
             siteIOService.confirmSiteIORecord(recordId);
         }
-        else if(approvalStatus == StatusString.INVALID.getValue()) { //取消审核
+        else if(approvalStatus.equals(StatusString.INVALID.getValue())) { //取消审核
             siteIOService.cancelSiteIOStatus(recordId);
+        }
+        else{
+            //Todo:Error
         }
         return "Success";
     }
