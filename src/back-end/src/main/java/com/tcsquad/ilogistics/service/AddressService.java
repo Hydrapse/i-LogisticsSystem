@@ -163,6 +163,14 @@ public class AddressService {
                 + "&tactics=" + tactics
                 + "&alternatives=" + (alternatives ? 1 : 0)
                 + "&ak=" + ak;
-        return send(uri,RouteResult.class);
+        return send(uri, RouteResult.class);
+    }
+
+    public RouteResult route(Pair<Double, Double> from, List<Pair<Double, Double>> waypoints, Pair<Double, Double> to) {
+        return route(from, waypoints, to, 0, false);
+    }
+
+    public RouteResult route(Pair<Double, Double> from, Pair<Double, Double> to) {
+        return route(from, null, to, 0, false);
     }
 }

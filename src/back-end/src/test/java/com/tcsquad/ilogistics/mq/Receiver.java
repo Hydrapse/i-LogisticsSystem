@@ -4,10 +4,9 @@ import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-@Component
-@RabbitListener(queues = "test")
+//@Component
 public class Receiver {
-    @RabbitHandler
+    @RabbitListener(queues = "test")
     public void onMessage(String message){
         System.out.println("Received:"+message);
     }
