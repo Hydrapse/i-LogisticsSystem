@@ -1,11 +1,11 @@
 package com.tcsquad.ilogistics.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tcsquad.ilogistics.domain.ErrorCode;
-import com.tcsquad.ilogistics.domain.order.TaskForm;
 import com.tcsquad.ilogistics.exception.*;
 import com.tcsquad.ilogistics.mapper.TestMapper;
-import com.tcsquad.ilogistics.mapper.order.TaskFormMapper;
 import com.tcsquad.ilogistics.util.OSSClientUtil;
+import com.tcsquad.ilogistics.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * @author Hydra
@@ -34,6 +31,9 @@ public class TestController {
 
     @Autowired
     TestMapper testMapper;
+
+    @Autowired
+    RedisUtil redisUtil;
 
     @ResponseBody
     @GetMapping("/test/db")
@@ -74,6 +74,47 @@ public class TestController {
         return url;
     }
 
+    @ResponseBody
+    @GetMapping("/test/redis")
+    Object testRedis(){
+//        redisUtil.set("ts", "我叼你妈的比");
+
+        //模拟存入缺货数据
+        JSONObject obj1 = new JSONObject();
+        obj1.put("oid", "10000001");
+        obj1.put("tid", "2020070602"); //需要数量
+        obj1.put("num", "3"); //需要数量
+
+        JSONObject obj2 = new JSONObject();
+        obj2.put("oid", "10000002");
+        obj2.put("tid", "2020071301"); //需要数量
+        obj2.put("num", "7"); //需要数量
+
+        //对应主站id
+        String mid1 = "MAIN-001";
+        String mid2 = "MAIN-002";
+        String mid3 = "MAIN-003";
+        String mid4 = "MAIN-004";
+        String mid5 = "MAIN-005";
+
+        //对应itemId
+        String iid1 = "A-001";
+        String iid2 = "A-002";
+        // ...
+
+        //ListId
+        String listId1 = mid1 + "|" +iid1;
+        redisUtil.lSet(listId1, obj1);
+        redisUtil.lSet(listId1, obj2);
+
+        //获取数据
+        Object rtn = redisUtil.lGetListSize(listId1);
+
+        //删除List
+        redisUtil.del(listId1);
+
+        return rtn;
+    }
 
 
 }

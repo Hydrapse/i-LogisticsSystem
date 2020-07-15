@@ -164,7 +164,7 @@
             status,
             note
         from taskform
-        where subsiteid = #{subSite.subsiteId}
+        where subsiteid = #{subSiteId}
               and
               status = #{status}
     </select>
@@ -189,7 +189,7 @@
             status,
             note
         from taskform
-        where subsiteid = #{subSite.subsiteId}
+        where subsiteid = #{subsiteId}
               and
               concat(taskid,',',orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',status, ifnull(note,''))
                 like concat ('%', #{keyword},'%')

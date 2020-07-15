@@ -113,14 +113,14 @@ public class TestMapperController {
 
     @GetMapping("/test/getTaskFormsBySubsiteAndStatus")
     List<TaskForm> getTaskFormsBySubsiteAndStatusAndKeyword(){
-        SubSite subSite = siteMapper.getSubSiteById("SUB-H-002");
-        return taskFormMapper.getTaskFormsBySubsiteAndStatus(subSite.getSubsiteId(),"Y");
+        //SubSite subSite = siteMapper.getSubSiteById("SUB-H-002");
+        return taskFormMapper.getTaskFormsBySubsiteAndStatus("SUB-H-002","Y");
     }
 
     @GetMapping("/test/getTaskFormsBySubsiteAndKeyword")
     List<TaskForm> getTaskFormsBySubsiteAndKeyword(){
-        SubSite subSite = siteMapper.getSubSiteById("SUB-H-002");
-        return taskFormMapper.getTaskFormsBySubsiteAndKeyword(subSite.getSubsiteId(),"2020070602");
+        //SubSite subSite = siteMapper.getSubSiteById("SUB-H-002");
+        return taskFormMapper.getTaskFormsBySubsiteAndKeyword("SUB-H-002","2020070602");
     }
 
 }

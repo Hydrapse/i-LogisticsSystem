@@ -29,7 +29,6 @@ public class OrderController {
     @ApiOperation("新增订单入口")
     @PostMapping("/orders")
     public void newOrder(@RequestBody OrderAddReq orderAddReq){
-        System.out.println(orderAddReq.getOrderItemList().get(0).getTotal());
         //新增订单
         orderService.insertOrderReq(orderAddReq);
         Order order = orderAddReq.getOrder();
@@ -67,6 +66,7 @@ public class OrderController {
                                    String processStatus,
                                    String mainsiteId,
                                    String shippingCost) {
+        logger.info("1111:" + processStatus);
         //更新order信息
         Order order = orderService.confirmOrder(orderId, processStatus, shippingCost);
 

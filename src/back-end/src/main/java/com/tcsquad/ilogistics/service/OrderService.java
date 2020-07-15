@@ -90,7 +90,7 @@ public class OrderService {
             orderItemMapper.insertOrderItem(orderItem);
         }
 
-        logger.info("订单 " + orderId + " 已接收");
+        logger.info("订单 " + orderId + " 已初始化");
     }
 
     /**
@@ -114,7 +114,7 @@ public class OrderService {
         orderMsg.put("createDateTime", dateString);
         orderMsg.put("totalPrice", order.getTotalPrice());
 
-        //向消息队列服务器发送消息
+        //向待审核订单队列发送消息unreviewed order
         amqpTemplate.convertAndSend("unreviewed order", orderMsg.toJSONString());
 
         logger.info("成功发送订单消息: " + orderMsg.toJSONString());

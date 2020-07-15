@@ -20,7 +20,7 @@ public class MySpringMvcConfigurer{
             //添加视图控制器
             @Override
             public void addViewControllers(ViewControllerRegistry registry) {
-                registry.addViewController("/").setViewName("index");
+                registry.addViewController("/").setViewName("imageUpload");
             }
 
             //注册拦截器
