@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -64,16 +65,22 @@ public class OrderController {
     @PatchMapping("/orders/{orderId}/check")
     public void confirmCheckDetail(@PathVariable("orderId")Long orderId,
                                    String processStatus,
-                                   @RequestParam("mainsiteId") String mainsiteId, //必须要有
+                                   String mainsiteId,
                                    String shippingCost) {
+        //更新order信息
+        Order order = orderService.confirmOrder(orderId, processStatus, shippingCost);
+
+        //若mainsiteId为空, 则重新执行预分拣,查找主站
+        if(StringUtils.isEmpty(mainsiteId)){
+            mainsiteId = orderService.preSlotForMainSite(order).getMainsiteId();
+        }
         //检查mainsiteId是否正确, 若不正确抛出异常
         orderService.checkMainSiteId(mainsiteId);
 
-        Order order = orderService.confirmOrder(orderId, processStatus, shippingCost);
-
         //TODO: 判断是否接受订单,若接受, 传递order,mainsiteId给任务单生成模块
         logger.info(JSON.toJSONString(order));
-//        taskFormService.createTaskForm(order, mainsiteId);
+        logger.info(mainsiteId);
+        //taskFormService.createTaskForm(order, mainsiteId);
     }
 
 }

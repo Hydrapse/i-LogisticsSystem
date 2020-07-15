@@ -98,7 +98,8 @@ public class OrderService {
      * TODO: 订单预分拣, 返回主站信息
      */
     public MainSite preSlotForMainSite(Order order){
-        return null;
+        String tempId = "MAIN-002";
+        return siteMapper.getMainSiteById(tempId);
     }
 
     /**
@@ -212,7 +213,7 @@ public class OrderService {
      * 检查mainsiteId是否正确
      */
     public void checkMainSiteId(String mainsiteId){
-        if (siteMapper.hasMainSiteId(mainsiteId)){
+        if (!siteMapper.hasMainSiteId(mainsiteId)){
             throw new BusinessErrorException("mainsiteId不存在, 请重试", ErrorCode.PARAMS_ERROR.getCode());
         }
     }
