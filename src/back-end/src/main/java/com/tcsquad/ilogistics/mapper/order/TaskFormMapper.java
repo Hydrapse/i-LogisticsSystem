@@ -28,8 +28,12 @@ public interface TaskFormMapper {
     //根据任务单status查询任务单
     List<TaskForm> getTaskFormsByStatus(String status);
 
-    //根据配送站、状态和关键词查询任务单
-    List<TaskForm> getTaskFormsBySubsiteAndStatusAndKeyword(@Param("subSite")SubSite subSite,@Param("status")String status,@Param("keyword")String keyword);
+    //根据配送站和关键词查询任务单
+    List<TaskForm> getTaskFormsBySubsiteAndKeyword(@Param("subSite")SubSite subSite,@Param("keyword")String keyword);
+
+    //根据配送站和状态查询任务单
+    List<TaskForm> getTaskFormsBySubsiteAndStatus(@Param("subSite")SubSite subSite,@Param("status")String status);
+
 
     void insertTaskForm(TaskForm taskForm);
 

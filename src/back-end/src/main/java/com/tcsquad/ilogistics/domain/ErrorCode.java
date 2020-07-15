@@ -35,6 +35,11 @@ public enum ErrorCode {
     ORDER_ALREADY_EXIST(40004),
 
     /**
+     * 订单已经存在
+     */
+    SUPPLIER_ALREADY_EXIST(40005),
+
+    /**
      *用户权限不足, 无法调用接口
      */
     USER_FORBIDDEN_ACCESS(40301),

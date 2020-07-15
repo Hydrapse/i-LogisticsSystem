@@ -46,6 +46,15 @@ public enum StatusString {
     SHIP_OUT("OUT-03", Group.SiteIOType),
 
     /**
+     * ItemSupply status 商品供应状态说明
+     * 正常供应（N NORMAL)
+     * 停止供应（E END)
+     */
+    ITEM_SUPPLY_NORMAL("N", Group.ItemSupply),
+    ITEM_SUPPLY_END("E", Group.ItemSupply),
+
+
+    /**
      * 主站库房商品出入库记录表(SiteIO)的approvalStatus值说明
      * 待审核（W）waiting /已确认（Y）confirm /已失效（F）invalid
      */
@@ -87,6 +96,7 @@ public enum StatusString {
         OrderProcess,
         OrderItem,
         SiteIOType,
-        SiteIOApproval
+        SiteIOApproval,
+        ItemSupply
     }
 }

@@ -144,7 +144,7 @@
         where status = #{status}
     </select>
 
-    <select id="getTaskFormsBySubsiteAndStatusAndKeyword" resultType="TaskForm">
+    <select id="getTaskFormsBySubsiteAndStatus" resultType="TaskForm">
          select
             taskid,
             orderid,
@@ -167,6 +167,29 @@
         where subsiteid = #{subSite.subsiteId}
               and
               status = #{status}
+    </select>
+
+    <select id="getTaskFormsBySubsiteAndKeyword" resultType="TaskForm">
+        select
+            taskid,
+            orderid,
+            subsiteid,
+            shipname,
+            shiptel,
+            shippro,
+            shipcity,
+            shipdis,
+            billname,
+            billtel,
+            billpro,
+            billcity,
+            billdis,
+            courier,
+            totalprice,
+            status,
+            note
+        from taskform
+        where subsiteid = #{subSite.subsiteId}
               and
               concat(taskid,',',orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',status, ifnull(note,''))
                 like concat ('%', #{keyword},'%')
