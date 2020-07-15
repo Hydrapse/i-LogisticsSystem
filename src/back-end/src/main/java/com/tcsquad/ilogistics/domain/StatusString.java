@@ -62,7 +62,17 @@ public enum StatusString {
 
     CONFIRM("Y", Group.SiteIOApproval),
 
-    INVALID("F", Group.SiteIOApproval);
+    INVALID("F", Group.SiteIOApproval),
+
+    /**
+     * 任务单的status值说明
+     * 缺货等待调货（W）waiting，未发出（U）unsent，运输中（O）on the way，未配送（N）not delivered，已签收（Y）accepted
+     */
+    T_WAITING("W",Group.TaskFormProcess),
+    T_UNSENT("U",Group.TaskFormProcess),
+    T_ON_THE_WAY("O",Group.TaskFormProcess),
+    T_NOT_DELIVERED("N",Group.TaskFormProcess),
+    T_ACCEPTED("Y",Group.TaskFormProcess),
     ;
 
     private String value;
@@ -97,6 +107,7 @@ public enum StatusString {
         OrderItem,
         SiteIOType,
         SiteIOApproval,
-        ItemSupply
+        ItemSupply,
+        TaskFormProcess
     }
 }
