@@ -66,7 +66,10 @@ public class MainsiteController {
         1. 修改入库仓库信息
         2. 修改入库状态，其中包含对其他模块的调用（例如调货单状态的修改）
          */
-        siteIOService.updateWarehouseToCheckin(recordId,warehouseId);
+        if(!warehouseId.equals("") && warehouseId!=null){
+            siteIOService.updateWarehouseToCheckin(recordId,warehouseId);
+        }
+
         if(approvalStatus.equals(StatusString.CONFIRM.getValue())){ //确认审核
             siteIOService.confirmSiteIORecord(recordId);
         }

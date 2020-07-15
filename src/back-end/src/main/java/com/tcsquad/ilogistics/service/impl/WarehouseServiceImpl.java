@@ -40,6 +40,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     @Transactional
     public void addItemToWarehouse(String warehouseId, String itemId, int itemNum) {
+        System.out.println("addItemToWarehouse");
         Inventory inventory = warehouseMapper.getInventoryByItemIdAndWarehouseId(warehouseId,itemId);
         if(inventory == null){
             inventory = new Inventory();

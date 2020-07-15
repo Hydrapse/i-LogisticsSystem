@@ -20,6 +20,7 @@ import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.mapper.storage.SiteIOMapper;
 import com.tcsquad.ilogistics.mapper.storage.WarehouseMapper;
 import com.tcsquad.ilogistics.service.interf.SiteIOService;
+import com.tcsquad.ilogistics.service.interf.WarehouseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +44,8 @@ public class SiteIOServiceImpl implements SiteIOService {
     ReturnFormMapper returnFormMapper;
     @Autowired
     OrderMapper orderMapper;
+    @Autowired
+    WarehouseService warehouseService;
 
     @Override
     @Transactional
@@ -55,6 +58,8 @@ public class SiteIOServiceImpl implements SiteIOService {
     @Transactional
     public void confirmSiteIORecord(Long recordId) {
         //Todo:确认入库对其他模块的影响？？？
+        SiteIO siteIO = siteIOMapper.getSiteIORecordById(recordId);
+        warehouseService.addItemToWarehouse(siteIO.getWarehouseId(),siteIO.getItemId(),siteIO.getQty());
         siteIOMapper.updateSiteIOStatus(recordId,StatusString.CONFIRM.getValue());
     }
 
@@ -147,6 +152,26 @@ public class SiteIOServiceImpl implements SiteIOService {
         checkInResp.setApprovalStatus(siteIO.getApprovalStatus());
         checkInResp.setApprover(siteIO.getApprover());
         List<String> warehousesOptional = warehouseMapper.getWarehouseOptionsToCheckin(item.getItemId(),siteIO.getQty(),mainsiteId);
+
+        //验证入库库房是否与查询所得相一致，避免提供的入库编号并不是该主站的记录，同时将入库库房作为可供入库选择的第一个元素
+        int index = 0; //warehouse
+        for (String warehouseId:warehousesOptional
+             ) {
+            if(warehouseId.equals(checkInResp.getWarehouseId())){
+                break;
+            }
+            else{
+                index++;
+            }
+        }
+        if(index != warehousesOptional.size() && index != 0){
+            warehousesOptional.remove(index);
+            warehousesOptional.add(0,checkInResp.getWarehouseId());
+        }
+        else {
+            //Todo:Error
+        }
+
         checkInResp.setWarehouseOptionalList(warehousesOptional);
         return checkInResp;
     }
