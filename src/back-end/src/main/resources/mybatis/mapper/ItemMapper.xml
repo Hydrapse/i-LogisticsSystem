@@ -47,4 +47,38 @@
            img = #{imgUrl}
         where itemid = #{itemId}
     </update>
+
+    <select id="getItemInventoryByRequest" resultType="ItemInventoryResp">
+        select  item.itemid      as "item.itemId",
+        cid         as "item.categoryId",
+        name        as "item.name",
+        unitcost    as "item.unitCost",
+        listprice   as "item.listPrice",
+        descn       as "item.descn",
+        img         as "item.imgUrl",
+        status      as "item.status",
+        num         as inventory,
+        inventory.warehouseid   as warehouseId
+        from item,inventory,warehouse
+        where
+                item.itemid = inventory.itemid
+            and warehouse.warehouseid = inventory.warehouseid
+            and warehouse.categoryid = item.cid
+            and warehouse.mainsiteid = #{mainsiteId}
+            <if test="keyword != null and keyword != ''">
+                and item.name like '%${keyword}%'
+            </if>
+            <if test="categoryIdList != null and categoryIdList.length > 0">
+                and item.cid in
+                <foreach collection="categoryIdList" item="categoryID" open="(" close=")" separator=",">
+                    #{categoryID}
+                </foreach>
+            </if>
+            <if test="warehouseIdList != null and warehouseIdList.length > 0">
+                and inventory.warehouseid in
+                <foreach collection="warehouseIdList" item="warehouseID" open="(" close=")" separator=",">
+                    #{warehouseID}
+                </foreach>
+            </if>
+    </select>
 </mapper>

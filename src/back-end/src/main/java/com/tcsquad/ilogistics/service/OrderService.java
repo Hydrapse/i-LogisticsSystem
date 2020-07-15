@@ -115,7 +115,7 @@ public class OrderService {
         orderMsg.put("totalPrice", order.getTotalPrice());
 
         //向消息队列服务器发送消息
-        amqpTemplate.convertAndSend("order-message", orderMsg.toJSONString());
+        amqpTemplate.convertAndSend("unreviewed order", orderMsg.toJSONString());
 
         logger.info("成功发送订单消息: " + orderMsg.toJSONString());
     }

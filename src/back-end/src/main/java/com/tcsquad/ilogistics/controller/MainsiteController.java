@@ -1,16 +1,24 @@
 package com.tcsquad.ilogistics.controller;
 
+import com.tcsquad.ilogistics.domain.PageResult;
 import com.tcsquad.ilogistics.domain.StatusString;
+import com.tcsquad.ilogistics.domain.request.InventoryUpdateReq;
+import com.tcsquad.ilogistics.domain.request.ItemInventoryGetReq;
+import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.request.SiteIOAddReq;
 import com.tcsquad.ilogistics.domain.response.*;
+import com.tcsquad.ilogistics.service.interf.ItemService;
 import com.tcsquad.ilogistics.service.interf.SiteIOService;
 import com.tcsquad.ilogistics.service.interf.WarehouseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "主站管理模块API接口")
 @RestController
@@ -21,6 +29,8 @@ public class MainsiteController {
     SiteIOService siteIOService;
     @Autowired
     WarehouseService warehouseService;
+    @Autowired
+    ItemService itemService;
 
     @ApiOperation("入库请求")
     @PostMapping("/{mainsiteId}/inventory/inquery")
@@ -136,4 +146,31 @@ public class MainsiteController {
         WarehouseDetailResp warehouseDetailResp = warehouseService.getWarehouseDetail(warehouseId,mainsiteId);
         return warehouseDetailResp;
     }
+
+    @ApiOperation("根据限定条件获取库房货物列表")
+    @GetMapping("/{mainsiteId}/items")
+    public PageResult productList(@PathVariable("mainsiteId")String mainsiteId,ItemInventoryGetReq req, PageRequest pageRequest){
+        //初始校验pageRequest
+        pageRequest.initialValidate(1, 6);
+        req.setMainsiteId(mainsiteId);
+
+//        logger.info("查询请求: " + prodKey);
+//        logger.info("分页数据: " + pageRequest);
+
+        PageResult pageResult = itemService.getItemInventoryRespByRequest(req, pageRequest);
+
+        return pageResult;
+    }
+
+    @ApiOperation("更新库房具体商品库存")
+    @PatchMapping("/{mainsiteId}/items/{itemId}")
+    public void updateItemInventoryBetweenWarehouses(@PathVariable("mainsiteId")String mainsiteId,
+                                                     @PathVariable("itemId")String itemId,
+                                                     InventoryUpdateReq inventoryUpdateReq){
+        inventoryUpdateReq.setMainsiteId(mainsiteId);
+        inventoryUpdateReq.setItemId(itemId);
+        warehouseService.updateItemInventoryBetweenWarehouses(inventoryUpdateReq);
+
+    }
+
 }

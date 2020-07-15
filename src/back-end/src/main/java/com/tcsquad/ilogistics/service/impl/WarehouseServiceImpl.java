@@ -1,10 +1,13 @@
 package com.tcsquad.ilogistics.service.impl;
 
+import com.tcsquad.ilogistics.domain.ErrorCode;
+import com.tcsquad.ilogistics.domain.request.InventoryUpdateReq;
 import com.tcsquad.ilogistics.domain.response.ItemInventoryResp;
 import com.tcsquad.ilogistics.domain.response.WarehouseDetailResp;
 import com.tcsquad.ilogistics.domain.response.WarehouseResp;
 import com.tcsquad.ilogistics.domain.storage.Category;
 import com.tcsquad.ilogistics.domain.storage.Inventory;
+import com.tcsquad.ilogistics.exception.BusinessErrorException;
 import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.mapper.storage.WarehouseMapper;
 import com.tcsquad.ilogistics.service.interf.WarehouseService;
@@ -92,5 +95,34 @@ public class WarehouseServiceImpl implements WarehouseService {
         List<ItemInventoryResp> itemInventoryResps = itemMapper.getItemInventoryByWarehouseId(warehouseId);
         warehouseDetailResp.setItemList(itemInventoryResps);
         return warehouseDetailResp;
+    }
+
+
+    @Override
+    @Transactional
+    public void updateItemInventoryBetweenWarehouses(InventoryUpdateReq req) {
+        //查询该商品是否可以存放在目标库房中
+        Inventory inventoryDest = warehouseMapper.getInventoryByItemIdAndWarehouseId(req.getDestWarehouseId(),req.getItemId());
+        if(inventoryDest == null){
+            throw new BusinessErrorException("业务逻辑异常, 目标库房不能存储该商品",
+                    ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
+        }
+        else{
+            //减掉源库房的库存
+            Inventory inventorySrc = warehouseMapper.getInventoryByItemIdAndWarehouseId(req.getSourceWarehouseId(),req.getItemId());
+            int realNum = inventorySrc.getItemNum() - req.getItemNum();
+            int logicNum = inventorySrc.getLogicInventory() - req.getItemNum();
+            inventorySrc.setItemNum(realNum);
+            inventorySrc.setLogicInventory(logicNum);
+            warehouseMapper.updateInventoryByWarehouseIdAndItemId(inventorySrc);
+
+            //添加目标库房的库存
+            realNum = inventoryDest.getItemNum() + req.getItemNum();
+            logicNum = inventoryDest.getLogicInventory() + req.getItemNum();
+            inventoryDest.setItemNum(realNum);
+            inventoryDest.setLogicInventory(logicNum);
+            warehouseMapper.updateInventoryByWarehouseIdAndItemId(inventoryDest);
+        }
+
     }
 }

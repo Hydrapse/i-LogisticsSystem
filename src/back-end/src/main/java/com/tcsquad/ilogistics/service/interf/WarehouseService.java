@@ -1,5 +1,6 @@
 package com.tcsquad.ilogistics.service.interf;
 
+import com.tcsquad.ilogistics.domain.request.InventoryUpdateReq;
 import com.tcsquad.ilogistics.domain.response.WarehouseDetailResp;
 import com.tcsquad.ilogistics.domain.response.WarehouseResp;
 
@@ -24,4 +25,7 @@ public interface WarehouseService {
 
     //获取库房详细信息
     WarehouseDetailResp getWarehouseDetail(String warehouseId,String mainsiteId);
+
+    //在库房间转移货物
+    void updateItemInventoryBetweenWarehouses(InventoryUpdateReq req);
 }

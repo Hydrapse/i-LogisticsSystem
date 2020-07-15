@@ -7,4 +7,5 @@ import lombok.Data;
 public class ItemInventoryResp{
     Item item;
     Integer inventory;
+    String warehouseId;
 }

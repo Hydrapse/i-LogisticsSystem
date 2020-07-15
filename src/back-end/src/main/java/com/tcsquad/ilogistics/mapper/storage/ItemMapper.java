@@ -1,5 +1,6 @@
 package com.tcsquad.ilogistics.mapper.storage;
 
+import com.tcsquad.ilogistics.domain.request.ItemInventoryGetReq;
 import com.tcsquad.ilogistics.domain.response.ItemInventoryResp;
 import com.tcsquad.ilogistics.domain.storage.Item;
 import org.apache.ibatis.annotations.Param;
@@ -26,4 +27,5 @@ public interface ItemMapper {
     //更新
     void updateItem(Item item);
 
+    List<ItemInventoryResp> getItemInventoryByRequest(ItemInventoryGetReq itemInventoryGetReq);
 }
