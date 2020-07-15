@@ -1,5 +1,6 @@
 package com.tcsquad.ilogistics.mapper.storage;
 
+import com.tcsquad.ilogistics.domain.response.ItemInventoryResp;
 import com.tcsquad.ilogistics.domain.storage.Item;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -11,6 +12,8 @@ public interface ItemMapper {
 
     //通过商品编号获取item列表信息
     List<Item> getItemListByCategoryId(String categoryId);
+
+    List<ItemInventoryResp> getItemInventoryByWarehouseId(String warehouseId);
 
     Item getItem(String itemId);
 

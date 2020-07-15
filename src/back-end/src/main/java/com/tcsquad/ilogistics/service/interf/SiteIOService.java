@@ -1,4 +1,4 @@
-package com.tcsquad.ilogistics.service;
+package com.tcsquad.ilogistics.service.interf;
 
 import com.tcsquad.ilogistics.domain.request.SiteIOAddReq;
 import com.tcsquad.ilogistics.domain.response.ItemCheckinResp;

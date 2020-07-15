@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tcsquad.ilogistics.domain.ErrorCode;
 import com.tcsquad.ilogistics.domain.map.DistanceResult;
 import com.tcsquad.ilogistics.domain.map.GeoCodingResult;
+import com.tcsquad.ilogistics.domain.map.RouteResult;
 import com.tcsquad.ilogistics.exception.BusinessErrorException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
@@ -77,7 +78,7 @@ public class AddressService {
     }
 
     public GeoCodingResult.Location getPosition(String address) {
-        return getPosition(address,null);
+        return getPosition(address, null);
     }
 
     public List<DistanceResult.Result> distance(Pair<Double, Double> startPoint, List<Pair<Double, Double>> endPoints) {
@@ -122,5 +123,46 @@ public class AddressService {
 
         }
         return result;
+    }
+
+    /**
+     * @param from         起始坐标
+     * @param to           结束坐标
+     * @param waypoints    途径坐标串 （小于18个）
+     * @param tactics      策略 (0：默认, 2：距离最短（只返回一条路线，不考虑限行和路况，距离最短且稳定，用于估价场景）, 3：不走高速, 4：高速优先, 5：躲避拥堵, 6：少收费, 7: 躲避拥堵 & 高速优先, 8: 躲避拥堵 & 不走高速, 9: 躲避拥堵 & 少收费, 10: 躲避拥堵 & 不走高速 & 少收费, 11: 不走高速 & 少收费, 12: 距离优先（考虑限行和路况，距离相对短且不一定稳定）)
+     * @param alternatives 是否返回备选路线 (false:返回一条推荐路线 ,true:返回1-3条路线供选择)
+     * @return
+     */
+    public RouteResult route(Pair<Double, Double> from, List<Pair<Double, Double>> waypoints, Pair<Double, Double> to, int tactics, boolean alternatives) {
+        if (from == null || to == null) {
+            throw new BusinessErrorException("坐标不能为空", ErrorCode.MISS_PARAMS.getCode());
+        }
+        if (!List.of(0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).contains(tactics))
+            throw new BusinessErrorException("策略不存在", ErrorCode.PARAMS_ERROR.getCode());
+
+        String way = null;
+        if (waypoints != null && !waypoints.isEmpty()) {
+            if (waypoints.size() > 18)
+                throw new BusinessErrorException("途径坐标不能超过18个", ErrorCode.MISS_PARAMS.getCode());
+
+            for (var point : waypoints) {
+                if (point == null)
+                    throw new BusinessErrorException("坐标不能为空", ErrorCode.MISS_PARAMS.getCode());
+
+                if (way == null)
+                    way = AddressService.coordinateToString(point);
+                else
+                    way += "|" + AddressService.coordinateToString(point);
+            }
+        }
+
+        String uri = "http://api.map.baidu.com/direction/v2/driving"
+                + "?origin=" + AddressService.coordinateToString(from)
+                + "&destination=" + AddressService.coordinateToString(to)
+                + (way != null ? "&waypoints=" + way : "")
+                + "&tactics=" + tactics
+                + "&alternatives=" + (alternatives ? 1 : 0)
+                + "&ak=" + ak;
+        return send(uri,RouteResult.class);
     }
 }

@@ -22,7 +22,7 @@
             totalprice,
             status,
             note
-        from taskfrom
+        from taskform
         where orderid = #{orderId}
     </select>
     <select id="getTaskForm" resultType="TaskForm">
@@ -44,7 +44,7 @@
             totalprice,
             status,
             note
-        from taskfrom
+        from taskform
         where taskid = #{taskId}
     </select>
 
@@ -67,8 +67,8 @@
             totalprice,
             status,
             note
-        from taskfrom
-        where subsiteid = #{subSiteId}
+        from taskform
+        where subsiteid = #{subsiteId}
     </select>
 
     <select id="getTaskForms" resultType="TaskForm">
@@ -90,7 +90,7 @@
             totalprice,
             status,
             note
-        from taskfrom
+        from taskform
     </select>
 
     <select id="searchTaskForms" parameterType="String" resultType="TaskForm">
@@ -112,7 +112,7 @@
             totalprice,
             status,
             note
-        from taskfrom
+        from taskform
         where
             1 = 1
             <if test="keyword != null and keyword != ''">
@@ -123,12 +123,12 @@
 
     <insert id="insertTaskForm" parameterType="TaskForm">
         insert into taskform
-           (taskid, orderid, subsiteid, shipname, shiptel, shippro, shipcity, shipdis, billname, billtel,
-            billpro, billcity, billdis, courier, totalprice, status, note)
+           (taskid, orderid, subsiteid, shipname, shiptel, shippro, shipcity, shipdis, shipaddr, billname,
+            billtel, billpro, billcity, billdis, billaddr, courier, totalprice, status, note)
         values
-           (#{taskid}, #{orderId}, #{subsiteId}, #{shipname}, #{shiptel}, #{shippro}, #{shipcity},
-            #{shipdis}, #{billname}, #{billtel}, #{billpro}, #{billcity}, #{billdis}, #{courier},
-            #{totalprice}, #{status}, #{note})
+           (#{taskId}, #{orderId}, #{subSiteId}, #{shipName}, #{shipTel}, #{shipPro}, #{shipCity},
+            #{shipDis}, #{shipAddr}, #{billName}, #{billTel}, #{billPro}, #{billCity}, #{billDis},
+            #{billAddr}, #{courier}, #{totalPrice}, #{status}, #{note})
     </insert>
 
     <update id="updateTaskFormStatus">

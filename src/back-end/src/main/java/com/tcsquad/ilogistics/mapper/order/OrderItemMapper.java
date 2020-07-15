@@ -12,6 +12,11 @@ public interface OrderItemMapper {
 
     void insertOrderItem(OrderItem orderItem);
 
+    OrderItem getOrderItemByTaskId(long taskId);
+
     //更新订单商品项的状态信息：调/补货成功
     void updateOrderItemStatus(OrderItem orderItem);
+
+    //注销一个任务单时，设置orderitem的taskid为空
+    void updateOrderItemTaskId(OrderItem orderItem);
 }
