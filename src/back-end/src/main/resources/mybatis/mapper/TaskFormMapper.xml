@@ -121,6 +121,57 @@
             </if>
     </select>
 
+    <select id="getTaskFormsByStatus" parameterType="String" resultType="TaskForm">
+        select
+            taskid,
+            orderid,
+            subsiteid,
+            shipname,
+            shiptel,
+            shippro,
+            shipcity,
+            shipdis,
+            billname,
+            billtel,
+            billpro,
+            billcity,
+            billdis,
+            courier,
+            totalprice,
+            status,
+            note
+        from taskform
+        where status = #{status}
+    </select>
+
+    <select id="getTaskFormsBySubsiteAndStatusAndKeyword" resultType="TaskForm">
+         select
+            taskid,
+            orderid,
+            subsiteid,
+            shipname,
+            shiptel,
+            shippro,
+            shipcity,
+            shipdis,
+            billname,
+            billtel,
+            billpro,
+            billcity,
+            billdis,
+            courier,
+            totalprice,
+            status,
+            note
+        from taskform
+        where subsiteid = #{subSite.subsiteId}
+              and
+              status = #{status}
+              and
+              concat(taskid,',',orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',status, ifnull(note,''))
+                like concat ('%', #{keyword},'%')
+    </select>
+
     <insert id="insertTaskForm" parameterType="TaskForm">
         insert into taskform
            (taskid, orderid, subsiteid, shipname, shiptel, shippro, shipcity, shipdis, shipaddr, billname,

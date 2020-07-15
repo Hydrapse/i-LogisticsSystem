@@ -1,6 +1,8 @@
 package com.tcsquad.ilogistics.mapper.order;
 
 import com.tcsquad.ilogistics.domain.order.TaskForm;
+import com.tcsquad.ilogistics.domain.storage.SubSite;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,6 +24,12 @@ public interface TaskFormMapper {
 
     //根据任务单编号查询任务单
     TaskForm getTaskForm(long taskId);
+
+    //根据任务单status查询任务单
+    List<TaskForm> getTaskFormsByStatus(String status);
+
+    //根据配送站、状态和关键词查询任务单
+    List<TaskForm> getTaskFormsBySubsiteAndStatusAndKeyword(@Param("subSite")SubSite subSite,@Param("status")String status,@Param("keyword")String keyword);
 
     void insertTaskForm(TaskForm taskForm);
 
