@@ -2,8 +2,10 @@ package com.tcsquad.ilogistics.controller;
 
 import com.tcsquad.ilogistics.domain.order.OrderItem;
 import com.tcsquad.ilogistics.domain.order.TaskForm;
+import com.tcsquad.ilogistics.domain.storage.SubSite;
 import com.tcsquad.ilogistics.mapper.order.OrderItemMapper;
 import com.tcsquad.ilogistics.mapper.order.TaskFormMapper;
+import com.tcsquad.ilogistics.mapper.storage.SiteMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +20,9 @@ public class TestMapperController {
 
     @Autowired
     OrderItemMapper orderItemMapper;
+
+    @Autowired
+    SiteMapper siteMapper;
 
     @GetMapping("/test/insertTaskform")
     List<TaskForm> insertTaskForm() {
@@ -100,6 +105,19 @@ public class TestMapperController {
         taskFormMapper.deleteTaskFormsByOrderId(10000000);
         return taskFormMapper.getTaskForms();
     }
+
+    @GetMapping("/test/getTaskFormsByStatus")
+    List<TaskForm> getTaskFormsByStatus(){
+        return taskFormMapper.getTaskFormsByStatus("Y");
+    }
+
+    @GetMapping("/test/getTaskFormsBySubsiteAndStatusAndKeyword")
+    List<TaskForm> getTaskFormsBySubsiteAndStatusAndKeyword(){
+        SubSite subSite = siteMapper.getSubSiteById("SUB-H-002");
+        return taskFormMapper.getTaskFormsBySubsiteAndStatusAndKeyword(subSite,"Y","2020070602");
+    }
+
+
 
 
 }
