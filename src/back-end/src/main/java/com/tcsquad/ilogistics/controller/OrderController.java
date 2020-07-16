@@ -1,10 +1,11 @@
 package com.tcsquad.ilogistics.controller;
 
-import com.alibaba.fastjson.JSON;
+import com.tcsquad.ilogistics.domain.StatusString;
 import com.tcsquad.ilogistics.domain.order.Order;
 import com.tcsquad.ilogistics.domain.request.OrderAddReq;
 import com.tcsquad.ilogistics.domain.response.OrderDetailResp;
 import com.tcsquad.ilogistics.service.OrderService;
+import com.tcsquad.ilogistics.service.TaskFormService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -26,6 +27,9 @@ public class OrderController {
     @Autowired
     OrderService orderService;
 
+    @Autowired
+    TaskFormService taskFormService;
+
     @ApiOperation("新增订单入口")
     @PostMapping("/orders")
     public void newOrder(@RequestBody OrderAddReq orderAddReq){
@@ -45,10 +49,11 @@ public class OrderController {
         String mainsiteId = orderService.preSlotForMainSite(order).getMainsiteId();
 
         //更新订单状态
-        //order.setProcessStatus(StatusString.PROCESSING.getValue());
-        //orderMapper.updateOrderStatus(order);
+        order.setProcessStatus(StatusString.PROCESSING.getValue());
+        orderService.updateProcessStatus(order);
 
-        //taskFormService.createTaskForm(order, mainsiteId);
+        //传递order,mainsiteId给任务单生成模块
+//        taskFormService.generateTaskForms(order, mainsiteId);
     }
 
     @ApiOperation("订单审核详情")
@@ -66,7 +71,6 @@ public class OrderController {
                                    String processStatus,
                                    String mainsiteId,
                                    String shippingCost) {
-        logger.info("1111:" + processStatus);
         //更新order信息
         Order order = orderService.confirmOrder(orderId, processStatus, shippingCost);
 
@@ -77,11 +81,8 @@ public class OrderController {
         //检查mainsiteId是否正确, 若不正确抛出异常
         orderService.checkMainSiteId(mainsiteId);
 
-        //TODO: 判断是否接受订单,若接受, 传递order,mainsiteId给任务单生成模块
-        logger.info(JSON.toJSONString(order));
-        logger.info(mainsiteId);
-
-        //taskFormService.createTaskForm(order, mainsiteId);
+        //传递order,mainsiteId给任务单生成模块
+//        taskFormService.generateTaskForms(order, mainsiteId);
     }
 
 }
