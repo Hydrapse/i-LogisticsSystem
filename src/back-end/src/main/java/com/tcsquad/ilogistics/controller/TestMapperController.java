@@ -5,6 +5,7 @@ import com.tcsquad.ilogistics.domain.order.TaskForm;
 import com.tcsquad.ilogistics.domain.storage.SubSite;
 import com.tcsquad.ilogistics.mapper.order.OrderItemMapper;
 import com.tcsquad.ilogistics.mapper.order.TaskFormMapper;
+import com.tcsquad.ilogistics.mapper.storage.LogicInventoryMapper;
 import com.tcsquad.ilogistics.mapper.storage.SiteMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,9 @@ public class TestMapperController {
 
     @Autowired
     SiteMapper siteMapper;
+
+    @Autowired
+    LogicInventoryMapper logicInventoryMapper;
 
     @GetMapping("/test/insertTaskform")
     List<TaskForm> insertTaskForm() {
@@ -129,6 +133,12 @@ public class TestMapperController {
     @GetMapping("/test/countTaskFormsByStatus")
     int countTaskFormsByStatus(){
         return taskFormMapper.countTaskFormsByStatus("Y");
+    }
+
+
+    @GetMapping("/test/testLogic")
+    void getLogicInventory(String mainsiteId,String itemId,int logicInv){
+        logicInventoryMapper.updateLogicInventory(mainsiteId,itemId,logicInv);
     }
 
 }

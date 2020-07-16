@@ -9,6 +9,7 @@ import com.tcsquad.ilogistics.domain.request.OrderAddReq;
 import com.tcsquad.ilogistics.domain.response.OrderDetailResp;
 import com.tcsquad.ilogistics.domain.storage.Item;
 import com.tcsquad.ilogistics.domain.storage.MainSite;
+import com.tcsquad.ilogistics.domain.storage.SubSite;
 import com.tcsquad.ilogistics.exception.BusinessErrorException;
 import com.tcsquad.ilogistics.exception.NotFoundException;
 import com.tcsquad.ilogistics.mapper.order.OrderItemMapper;
@@ -20,12 +21,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,6 +59,9 @@ public class OrderService {
 
     @Autowired
     SiteMapper siteMapper;
+
+    @Autowired
+    AddressService addressService;
 
     /**
      * 功能描述: <br>
@@ -98,8 +104,16 @@ public class OrderService {
      * TODO: 订单预分拣, 返回主站信息
      */
     public MainSite preSlotForMainSite(Order order){
-        String tempId = "MAIN-002";
-        return siteMapper.getMainSiteById(tempId);
+        var mainSites = siteMapper.getAllMainSite();
+        var mainSitesPoints = new ArrayList<Pair<Double,Double>>();
+        for(var mainSite:mainSites) {
+            mainSitesPoints.add(Pair.of(mainSite.getLatitude().doubleValue(),mainSite.getLongitude().doubleValue()));
+        }
+        var destination = addressService.getPosition(order.getBillPro() + order.getBillCity() + order.getBillDistrict() + order.getBillAddr(), order.getBillCity());
+        var destinationPoint = Pair.of(destination.getLat(),destination.getLng());
+        int closest = addressService.closest(destinationPoint,mainSitesPoints);
+
+        return mainSites.get(closest);
     }
 
     /**
