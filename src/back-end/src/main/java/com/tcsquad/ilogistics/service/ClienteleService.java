@@ -1,6 +1,7 @@
 package com.tcsquad.ilogistics.service;
 
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.tcsquad.ilogistics.domain.ErrorCode;
 import com.tcsquad.ilogistics.domain.PageResult;
 import com.tcsquad.ilogistics.domain.StatusString;
@@ -15,6 +16,7 @@ import com.tcsquad.ilogistics.exception.BusinessErrorException;
 import com.tcsquad.ilogistics.mapper.clientele.CustomerMapper;
 import com.tcsquad.ilogistics.mapper.clientele.SupplierMapper;
 import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
+import com.tcsquad.ilogistics.util.PageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 
 @Service
@@ -39,8 +40,12 @@ ClienteleService {
     @Autowired
     ItemMapper itemMapper;
 
-    public List<Customer> getCustomers(){
-        return customerMapper.getCustomers();
+    public PageResult getCustomers(CustomerReq customerReq,PageRequest pageRequest){
+        checkPageRequest(pageRequest);
+        PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
+        List<Customer> customerList = customerMapper.getCustomersByCustomerReq(customerReq);
+        return PageUtil.getPageResult(pageRequest, new PageInfo<>(customerList));
+
     }
 
     public List<Customer> getCustomerByName(String name){
@@ -90,14 +95,20 @@ ClienteleService {
         logger.info("供应商 " + supplierId + " 已添加");
     }
 
-    public void deleteSupplier(Supplier supplier){ supplierMapper.deleteSupplier(supplier.getSupplierId()); }
+    public void deleteSupplier(Supplier supplier){
+        supplierMapper.deleteSupplier(supplier.getSupplierId());
+        System.out.println(supplierMapper.hasSupplier(supplier.getSupplierId()));
+    }
 
     public void updateSupplier(Supplier supplier){
         supplierMapper.updateSupplier(supplier);
     }
 
-    public List<Supplier> getSupplierList(){
-        return supplierMapper.getSuppliers();
+    public PageResult getSupplierList(PageRequest pageRequest) {
+        checkPageRequest(pageRequest);
+        PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
+        List<Supplier> supplierList = supplierMapper.getSuppliers();
+        return PageUtil.getPageResult(pageRequest, new PageInfo<>(supplierList));
     }
 
     public Supplier getSupplierById(String supplierId){
