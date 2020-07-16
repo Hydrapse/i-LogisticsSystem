@@ -1,4 +1,6 @@
 package com.tcsquad.ilogistics.domain.clientele;
+import com.tcsquad.ilogistics.domain.storage.Item;
+
 import java.util.*;
 
 /**
@@ -14,11 +16,12 @@ public class Supplier {
     private String city;
     private String district;
     private String addr;                //详细地址信息
+    //private List<Item> itemSupplyList;//商品供应表
     private Map<String,String> supplyStatus = new HashMap<>();   //以itemId为键，以status为值
 
-    public String getItemSupplyStatus(String itemId){
-        return supplyStatus.get(itemId);
-    }
+    //public String getItemSupplyStatus(String itemId){
+        //return supplyStatus.get(itemId);
+    //}
 
     public String getSupplierId() {
         return supplierId;

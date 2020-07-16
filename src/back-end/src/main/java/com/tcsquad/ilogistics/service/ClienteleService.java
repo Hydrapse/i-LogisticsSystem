@@ -1,10 +1,13 @@
 package com.tcsquad.ilogistics.service;
 
+import com.github.pagehelper.PageHelper;
 import com.tcsquad.ilogistics.domain.ErrorCode;
+import com.tcsquad.ilogistics.domain.PageResult;
 import com.tcsquad.ilogistics.domain.StatusString;
 import com.tcsquad.ilogistics.domain.clientele.Customer;
 import com.tcsquad.ilogistics.domain.clientele.Supplier;
 import com.tcsquad.ilogistics.domain.request.CustomerReq;
+import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.request.SupplierAddReq;
 import com.tcsquad.ilogistics.domain.response.ItemSupplyResp;
 import com.tcsquad.ilogistics.domain.storage.Item;
@@ -115,6 +118,11 @@ ClienteleService {
         }
         return itemSupplyResp;
 
+    }
+
+    private void checkPageRequest(PageRequest pageRequest) {
+        if(pageRequest == null || pageRequest.getPageNum()== null || pageRequest.getPageSize() == null)
+            throw new BusinessErrorException("分页信息不能为空",ErrorCode.PARAMS_ERROR.getCode());
     }
 
 }
