@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.tcsquad.ilogistics.domain.ErrorCode;
 import com.tcsquad.ilogistics.domain.PageResult;
 import com.tcsquad.ilogistics.domain.StatusString;
+import com.tcsquad.ilogistics.domain.map.RouteResult;
 import com.tcsquad.ilogistics.domain.order.Order;
 import com.tcsquad.ilogistics.domain.order.TaskForm;
 import com.tcsquad.ilogistics.domain.request.PageRequest;
@@ -128,28 +129,36 @@ public class TaskFormService {
         var subSite = siteMapper.getSubSiteById(taskForm.getSubSiteId());
         var mainSite = siteMapper.getMainSiteById(subSite.getMainsiteId());
         var destination = addressService.getPosition(taskForm.getBillPro() + taskForm.getBillCity() + taskForm.getBillDis() + taskForm.getBillAddr(), taskForm.getBillCity());
-        var route = addressService.route(
+        var route = new RouteResult.Route[2];
+        route[0] = addressService.route(
                 Pair.of(mainSite.getLatitude().doubleValue(), mainSite.getLongitude().doubleValue()),
-                List.of(Pair.of(subSite.getLatitude().doubleValue(), subSite.getLongitude().doubleValue())),
+                Pair.of(subSite.getLatitude().doubleValue(), subSite.getLongitude().doubleValue())
+        ).getResult().getRoutes().get(0);
+        route[1] = addressService.route(
+                Pair.of(subSite.getLatitude().doubleValue(), subSite.getLongitude().doubleValue()),
                 Pair.of(destination.getLat(), destination.getLng())
         ).getResult().getRoutes().get(0);
 
-        var result = new RouteResp();
-        result.setDistance(route.getDistance());
-        result.setDuration(route.getDuration());
-        var list = new ArrayList<RouteResp.Step>();
-        for (var item : route.getSteps()) {
-            var tmp = new RouteResp.Step();
-            var start = item.getStart_location();
-            var end = item.getEnd_location();
+        var result = new RouteResp.Result[2];
+        for(int i=0;i<2;i++) {
+            result[i] = new RouteResp.Result();
+            result[i].setDistance(route[i].getDistance());
+            result[i].setDuration(route[i].getDuration());
+            var list = new ArrayList<RouteResp.Step>();
+            for (var item : route[i].getSteps()) {
+                var tmp = new RouteResp.Step();
+                var start = item.getStart_location();
+                var end = item.getEnd_location();
 
-            tmp.setLeg_index(item.getLeg_index());
-            tmp.setStart_location(new RouteResp.Point(start.getLng(), start.getLat()));
-            tmp.setEnd_location(new RouteResp.Point(end.getLng(), end.getLat()));
-            list.add(tmp);
+                tmp.setLeg_index(item.getLeg_index());
+                tmp.setStart_location(new RouteResp.Point(start.getLng(), start.getLat()));
+                tmp.setEnd_location(new RouteResp.Point(end.getLng(), end.getLat()));
+                list.add(tmp);
+            }
+            result[i].setSteps(list);
         }
-        result.setSteps(list);
-        return result;
+
+        return new RouteResp(result[0],result[1]);
     }
 
     /**

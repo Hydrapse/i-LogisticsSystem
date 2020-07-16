@@ -6,10 +6,17 @@ import lombok.Data;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
 public class RouteResp {
-    private double distance;
-    private double duration;
-    private List<Step> steps;
+    private Result first;
+    private Result second;
+
+    @Data
+    public static class Result{
+        private double distance;
+        private double duration;
+        private List<Step> steps;
+    }
 
     @Data
     public static class Step{
