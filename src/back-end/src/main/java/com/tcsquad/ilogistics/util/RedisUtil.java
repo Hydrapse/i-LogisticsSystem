@@ -465,7 +465,7 @@ public class RedisUtil {
          * 将list放入缓存
          * @param key 键
          * @param value 值
-         * @param time 时间(秒)
+         * @param time 过期时间(秒)
          * @return
          */
     public boolean lSet(String key, List<Object> value, long time) {
@@ -473,6 +473,21 @@ public class RedisUtil {
             redisTemplate.opsForList().rightPushAll(key, value);
             if (time > 0)
             expire(key, time);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    /**
+     * 将list放入指定缓存列表的左部, 下次取出时会优先取出
+     * @param key 键
+     * @param value 值
+     * @return
+     */
+    public boolean lSetLeft(String key, List<Object> value) {
+        try {
+            redisTemplate.opsForList().leftPushAll(key, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -510,5 +525,15 @@ public class RedisUtil {
             e.printStackTrace();
             return 0;
         }
+    }
+
+    /**
+     * 从左往右数移除N个值
+     * @param key 键
+     * @param count 移除多少个
+     */
+    public void lRemove(String key, long count){
+        Long size = lGetListSize(key);
+        redisTemplate.opsForList().trim(key, count, size-1);
     }
 }
