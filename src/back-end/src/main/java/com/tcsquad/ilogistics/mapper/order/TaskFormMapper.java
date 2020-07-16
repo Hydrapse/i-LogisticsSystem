@@ -20,7 +20,7 @@ public interface TaskFormMapper {
     List<TaskForm> getTaskForms(); //DONE
 
     //按关键词搜索任务单
-    List<TaskForm> searchTaskForms(String[] keyword); //TODO
+    List<TaskForm> searchTaskForms(String[] keyword); //DONE
 
     //根据任务单编号查询任务单
     TaskForm getTaskForm(long taskId);
@@ -28,17 +28,15 @@ public interface TaskFormMapper {
     //根据任务单status查询任务单
     List<TaskForm> getTaskFormsByStatus(String status);
 
-    //根据status统计任务单数量
-    int countTaskFormsByStatus(String status); //TODO
-
     //根据配送站和关键词查询任务单
 //    List<TaskForm> getTaskFormsBySubsiteAndKeyword(@Param("subSite")SubSite subSite,@Param("keyword")String keyword);//OLD
-    List<TaskForm> getTaskFormsBySubsiteAndKeyword(String subSiteId,@Param("keyword")String[] keyword);//TODO
+    List<TaskForm> getTaskFormsBySubsiteAndKeyword(String subSiteId,@Param("keyword")String[] keyword);
 
     //根据配送站和状态查询任务单
 //    List<TaskForm> getTaskFormsBySubsiteAndStatus(@Param("subSite")SubSite subSite,@Param("status")String status);//OLD
     List<TaskForm> getTaskFormsBySubsiteAndStatus(String subSiteId,@Param("status")String status);
 
+    int countTaskFormsByStatus(String status);
 
     void insertTaskForm(TaskForm taskForm);
 
