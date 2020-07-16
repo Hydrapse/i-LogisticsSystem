@@ -1,14 +1,19 @@
 package com.tcsquad.ilogistics.domain.response;
 
+import com.tcsquad.ilogistics.domain.order.OrderItem;
+
 import java.util.Date;
+import java.util.List;
 
 public class TaskFormLogResp {
     private long taskFormId;
     private String subSiteId;
     private String status;
     private Date shipTime;
-    private String sendAddress;
-    private String receiveAddress;
+    private String receiverName;
+    private String receiverTel;
+    private String receiverAddress;
+    private List<OrderItem> orderItems;
 
     public long getTaskFormId() {
         return taskFormId;
@@ -42,19 +47,35 @@ public class TaskFormLogResp {
         this.shipTime = shipTime;
     }
 
-    public String getSendAddress() {
-        return sendAddress;
+    public String getReceiverName() {
+        return receiverName;
     }
 
-    public void setSendAddress(String sendAddress) {
-        this.sendAddress = sendAddress;
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
     }
 
-    public String getReceiveAddress() {
-        return receiveAddress;
+    public String getReceiverTel() {
+        return receiverTel;
     }
 
-    public void setReceiveAddress(String receiveAddress) {
-        this.receiveAddress = receiveAddress;
+    public void setReceiverTel(String receiverTel) {
+        this.receiverTel = receiverTel;
+    }
+
+    public String getReceiverAddress() {
+        return receiverAddress;
+    }
+
+    public void setReceiverAddress(String receiverAddress) {
+        this.receiverAddress = receiverAddress;
+    }
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 }

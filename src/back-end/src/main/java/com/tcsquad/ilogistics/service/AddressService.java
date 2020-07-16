@@ -74,6 +74,14 @@ public class AddressService {
                 + "&ak=" + ak
                 + "&sn=" + sn;
         var tmp = send(uri, GeoCodingResult.class);
+        if(tmp.getStatus()!=0){
+            if(tmp.getStatus() == 2)
+                throw new BusinessErrorException("请求参数非法",ErrorCode.PARAMS_ERROR.getCode());
+            else if(tmp.getStatus() ==1)
+                throw new BusinessErrorException("百度服务器内部错误",ErrorCode.OUTSIDE_SERVER_ERROR.getCode());
+            else
+                throw new BusinessErrorException("权限或配额错误",ErrorCode.OUTSIDE_SERVER_ERROR.getCode());
+        }
         return tmp.getResult().getLocation();
     }
 
@@ -163,7 +171,14 @@ public class AddressService {
                 + "&tactics=" + tactics
                 + "&alternatives=" + (alternatives ? 1 : 0)
                 + "&ak=" + ak;
-        return send(uri, RouteResult.class);
+        var result = send(uri, RouteResult.class);
+        if(result.getStatus() !=0) {
+            if(result.getStatus() ==2)
+                throw new BusinessErrorException(result.getMessage(),ErrorCode.PARAMS_ERROR.getCode());
+            else
+                throw new BusinessErrorException(result.getMessage(),ErrorCode.OUTSIDE_SERVER_ERROR.getCode());
+        }
+        return result;
     }
 
     public RouteResult route(Pair<Double, Double> from, List<Pair<Double, Double>> waypoints, Pair<Double, Double> to) {

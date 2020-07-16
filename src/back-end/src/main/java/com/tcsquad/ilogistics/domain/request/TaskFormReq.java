@@ -7,8 +7,6 @@ package com.tcsquad.ilogistics.domain.request;
  **/
 public class TaskFormReq {
     private String[] q; //关键词
-    private Integer pageNum;
-    private Integer pageSize;
 
     public String[] getQ() {
         return q;
@@ -20,22 +18,6 @@ public class TaskFormReq {
         } else {
             this.q = q.split("[ ]+");//任意长空串
         }
-    }
-
-    public Integer getPageNum() {
-        return pageNum;
-    }
-
-    public void setPageNum(Integer pageNum) {
-        this.pageNum = pageNum;
-    }
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
     }
 
     public static void main(String[] args) {
