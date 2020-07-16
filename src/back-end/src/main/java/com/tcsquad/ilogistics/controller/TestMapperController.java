@@ -75,7 +75,7 @@ public class TestMapperController {
     }
     @GetMapping("/test/searchTaskForms")
     List<TaskForm> searchTaskForms(){
-        return taskFormMapper.searchTaskForms("娄底");
+        return taskFormMapper.searchTaskForms(new String[]{"娄底"});
     }
 
     @GetMapping("/test/updateTaskFormStatus")
@@ -120,7 +120,7 @@ public class TestMapperController {
     @GetMapping("/test/getTaskFormsBySubsiteAndKeyword")
     List<TaskForm> getTaskFormsBySubsiteAndKeyword(){
         //SubSite subSite = siteMapper.getSubSiteById("SUB-H-002");
-        return taskFormMapper.getTaskFormsBySubsiteAndKeyword("SUB-H-002","2020070602");
+        return taskFormMapper.getTaskFormsBySubsiteAndKeyword("SUB-H-002",new String[]{"2020070602"});
     }
 
 }

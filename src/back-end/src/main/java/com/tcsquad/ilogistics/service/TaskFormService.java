@@ -45,6 +45,7 @@ public class TaskFormService {
     }
 
     public List<TaskForm> getAllTaskForms() {
+
         return taskFormMapper.getTaskForms();
     }
 
@@ -53,9 +54,10 @@ public class TaskFormService {
         if (keywords == null)
             return getAllTaskForms();
 
-        for (String keyword : keywords) {
-            res.addAll(taskFormMapper.searchTaskForms(keyword));
-        }
+//        for (String keyword : keywords) {
+//            res.addAll(taskFormMapper.searchTaskForms(keyword));
+//        }
+        res.addAll(taskFormMapper.searchTaskForms(keywords));
         return res;
     }
 
@@ -179,9 +181,10 @@ public class TaskFormService {
         if (subSiteId == null || keywords == null)
             return getTaskFormsBySubSiteId(subSiteId);
 
-        for (String keyword : keywords) {
-            res.addAll(taskFormMapper.getTaskFormsBySubsiteAndKeyword(subSiteId, keyword));
-        }
+//        for (String keyword : keywords) {
+//            res.addAll(taskFormMapper.getTaskFormsBySubsiteAndKeyword(subSiteId, keyword));
+//        }
+        res.addAll(taskFormMapper.getTaskFormsBySubsiteAndKeyword(subSiteId, keywords));
         return res;
     }
 

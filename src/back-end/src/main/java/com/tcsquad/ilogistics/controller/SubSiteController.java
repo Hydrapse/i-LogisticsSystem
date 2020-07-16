@@ -25,11 +25,13 @@ public class SubSiteController {
         }
     }
 
+    @Deprecated
     @DeleteMapping("/{subSiteId}/inventory/items")
     public Object takeItems(@PathVariable Long subSiteId, Object object) { // no @RequestParam
         return null;
     }
 
+    @Deprecated
     @PostMapping("/{subSiteId}/inventory/items")
     public Object addItems(@PathVariable Long subSiteId, @RequestBody Object object) {
         return null;
