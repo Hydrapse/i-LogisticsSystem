@@ -2,11 +2,13 @@ package com.tcsquad.ilogistics.controller;
 
 import com.tcsquad.ilogistics.domain.PageResult;
 import com.tcsquad.ilogistics.domain.request.PageRequest;
+import com.tcsquad.ilogistics.domain.response.ItemInventoryDetailResp;
 import com.tcsquad.ilogistics.service.GoodsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,5 +46,11 @@ public class GoodsController {
         pageRequest.initialValidate(1, 6);
 
         return goodsService.getItemByRequest(categoryIdList,keyword,pageRequest);
+    }
+
+    @ApiOperation("查询商品详细信息")
+    @GetMapping("/items/{itemId}")
+    public ItemInventoryDetailResp getItemInventoryDetail(@PathVariable("itemId")String itemId) {
+        return goodsService.getItemInventoryDetail(itemId);
     }
 }

@@ -4,13 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.tcsquad.ilogistics.domain.PageResult;
-import com.tcsquad.ilogistics.domain.request.ItemInventoryGetReq;
 import com.tcsquad.ilogistics.domain.request.PageRequest;
-import com.tcsquad.ilogistics.domain.response.ItemInventoryResp;
+import com.tcsquad.ilogistics.domain.response.ItemInventoryDetailResp;
 import com.tcsquad.ilogistics.domain.storage.Category;
 import com.tcsquad.ilogistics.domain.storage.Item;
+import com.tcsquad.ilogistics.domain.storage.MainsiteInventory;
 import com.tcsquad.ilogistics.mapper.storage.CategoryMapper;
 import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
+import com.tcsquad.ilogistics.mapper.storage.WarehouseMapper;
 import com.tcsquad.ilogistics.util.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,9 @@ public class GoodsService {
 
     @Autowired
     CategoryMapper categoryMapper;
+
+    @Autowired
+    WarehouseMapper warehouseMapper;
 
     public List getCatalog(){
         List list = new ArrayList();
@@ -77,7 +81,7 @@ public class GoodsService {
     }
 
 
-    //根据请求来获取库房货物列表
+    //根据请求来获取商品列表
     public PageResult getItemByRequest(String[] categoryIdList,String keyword, PageRequest pageRequest){
         int pageNum = pageRequest.getPageNum();
         int pageSize = pageRequest.getPageSize();
@@ -89,5 +93,22 @@ public class GoodsService {
         List<Item> items = itemMapper.getItemListByRequest(categoryIdList,keyword);
 
         return PageUtil.getPageResult(pageRequest, new PageInfo<>(items));
+    }
+
+
+    //查询该商品的信息以及该商品在各主站分布状态
+    public ItemInventoryDetailResp getItemInventoryDetail(String itemId){
+        ItemInventoryDetailResp detailResp = new ItemInventoryDetailResp();
+        Item item = itemMapper.getItem(itemId);
+        detailResp.setItem(item);
+        List<MainsiteInventory> mainsiteInventoryList = warehouseMapper.getMainsiteInventorysByItemId(itemId);
+        detailResp.setMainsiteInventoryList(mainsiteInventoryList);
+        int totalInventory = 0;
+        for (MainsiteInventory i: mainsiteInventoryList){
+            totalInventory += i.getItemInventory();
+        }
+        detailResp.setTotalInventory(totalInventory);
+
+        return detailResp;
     }
 }
