@@ -73,10 +73,6 @@ public class TestMapperController {
         System.out.println(taskFormList1.size());
         return taskFormMapper.getTaskFormsByOrderId(10000000);
     }
-    @GetMapping("/test/searchTaskForms")
-    List<TaskForm> searchTaskForms(){
-        return taskFormMapper.searchTaskForms(new String[]{"娄底"});
-    }
 
     @GetMapping("/test/updateTaskFormStatus")
       TaskForm updateTaskFormStatus(){
@@ -122,5 +118,15 @@ public class TestMapperController {
         //SubSite subSite = siteMapper.getSubSiteById("SUB-H-002");
         return taskFormMapper.getTaskFormsBySubsiteAndKeyword("SUB-H-002",new String[]{"2020070602"});
     }
+    @GetMapping("/test/searchTaskForms")
+    List<TaskForm> searchTaskForms(){
+        String[] keyword = {"杨林","陕西省"};
+        return taskFormMapper.searchTaskForms(keyword);
+    }
+    @GetMapping("/test/countTaskFormsByStatus")
+    int countTaskFormsByStatus(){
+        return taskFormMapper.countTaskFormsByStatus("Y");
+    }
+
 
 }
