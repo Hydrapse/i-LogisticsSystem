@@ -125,4 +125,14 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
 
     }
+
+    @Override
+    public int getItemInventoryByMainSiteAndItemId(String itemId, String mainsiteId) {
+        return 0;
+    }
+
+    @Override
+    public void decreaseItemInventoryByMainSiteAndItemId(String itemId, String mainsiteId, int number) {
+
+    }
 }

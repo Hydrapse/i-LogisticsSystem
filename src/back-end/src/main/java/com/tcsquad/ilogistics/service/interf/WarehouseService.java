@@ -28,4 +28,10 @@ public interface WarehouseService {
 
     //在库房间转移货物
     void updateItemInventoryBetweenWarehouses(InventoryUpdateReq req);
+
+    //TODO 按主站和商品获取数量
+    int getItemInventoryByMainSiteAndItemId(String itemId,String mainsiteId);
+
+    //TODO 按主站和商品减去逻辑库存
+    void decreaseItemInventoryByMainSiteAndItemId(String itemId,String mainsiteId,int number);
 }
