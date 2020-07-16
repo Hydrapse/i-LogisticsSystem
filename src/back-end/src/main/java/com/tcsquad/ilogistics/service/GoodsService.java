@@ -146,7 +146,23 @@ public class GoodsService {
             return item;
         }
 
-        logger.warn("item 失败插入，显示JSON串：\n" + JSON.toJSONString(item));
+        logger.warn("item 插入失败，显示JSON串：\n" + JSON.toJSONString(item));
         return null;
+    }
+
+    public Item updateItem(Item item){
+        //更新item
+        logger.info("更新item: " + item.toString());
+        if(itemMapper.updateItem(item)){
+            logger.info(item.getItemId() + " 更新成功");
+            return item;
+        }
+
+        logger.warn("item 更新失败，显示JSON串：\n" + JSON.toJSONString(item));
+        return null;
+    }
+
+    public Item getItemById(String itemId){
+        return itemMapper.getItem(itemId);
     }
 }
