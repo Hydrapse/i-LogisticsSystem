@@ -5,15 +5,58 @@
 <mapper namespace="com.tcsquad.ilogistics.mapper.clientele.CustomerMapper">
     <select id="getCustomers" resultType="Customer">
         select
-             customerid as customerId, cname, email, tel, addr, district, city, province
+             customerid, cname as name, email, tel, addr, district, city, province
         from customer
     </select>
     <select id="getCustomerByCustomerId" resultType="Customer">
         select
-             cname, email, tel, addr, district, city, province
+             customerid, cname as name, email, tel, addr, district, city, province
         from customer
         where customerid = #{customerId}
     </select>
+    <select id="getCustomersByName" parameterType="String" resultType="Customer">
+        select
+             customerid, cname as name, email, tel, addr, district, city, province
+        from customer
+        where cname = #{name}
+    </select>
+    <select id="getCustomerByOrderId" resultType="Customer">
+        select
+             customer.customerid,
+             cname as name,
+             email, tel,
+             addr,
+             district,
+             city,
+             province
+        from customer, orders
+        where customer.customerid = orders.customerid and orderid = #{orderId}
+    </select>
+
+    <select id="getCustomersByKeyword" parameterType="String" resultType="Customer">
+        select
+             customerid, cname as name, email, tel, addr, district, city, province
+        from customer
+        where
+             1 = 1
+             <if test="keyword != null and keyword != ''">
+                 and concat(customerid,',',cname,',',email,',',tel,',',addr,',',district,',',city,',',province)
+                 like concat ('%', #{keyword},'%')
+             </if>
+    </select>
+
+    <select id="getCustomersByAddr" parameterType="String" resultType="Customer">
+        select
+        customerid, cname as name, email, tel, addr, district, city, province
+        from customer
+        where
+        1 = 1
+        <if test="addr != null and addr != ''">
+            and concat(addr,',',district,',',city,',',province)
+            like concat ('%', #{addr},'%')
+        </if>
+    </select>
+
     <update id="updateCustomer" parameterType="Customer">
         update customer
         set
@@ -25,4 +68,24 @@
              province = #{province}
         where customerid = #{customerId}
     </update>
+
+    <select id="getCustomersByCustomerReq" parameterType="CustomerReq" resultType="Customer">
+        select customerid, cname as name, email, tel, addr, district, city, province
+        from customer
+        where
+           1 = 1
+        <if test="name != null and name != ''">
+            and cname like '%${name}%'
+        </if>
+        <if test="district != null and district != ''">
+            and district = #{district}
+        </if>
+        <if test="city != null and city != ''">
+            and city = #{city}
+        </if>
+        <if test="district != null and district != ''">
+            and province = #{province}
+        </if>
+
+    </select>
 </mapper>

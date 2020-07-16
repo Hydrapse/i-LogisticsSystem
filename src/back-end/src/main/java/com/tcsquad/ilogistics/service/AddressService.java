@@ -74,6 +74,14 @@ public class AddressService {
                 + "&ak=" + ak
                 + "&sn=" + sn;
         var tmp = send(uri, GeoCodingResult.class);
+        if(tmp.getStatus()!=0){
+            if(tmp.getStatus() == 2)
+                throw new BusinessErrorException("请求参数非法",ErrorCode.PARAMS_ERROR.getCode());
+            else if(tmp.getStatus() ==1)
+                throw new BusinessErrorException("百度服务器内部错误",ErrorCode.OUTSIDE_SERVER_ERROR.getCode());
+            else
+                throw new BusinessErrorException("权限或配额错误",ErrorCode.OUTSIDE_SERVER_ERROR.getCode());
+        }
         return tmp.getResult().getLocation();
     }
 
@@ -81,6 +89,12 @@ public class AddressService {
         return getPosition(address, null);
     }
 
+    /**
+     *
+     * @param startPoint 纬度,经度
+     * @param endPoints 纬度,经度
+     * @return
+     */
     public List<DistanceResult.Result> distance(Pair<Double, Double> startPoint, List<Pair<Double, Double>> endPoints) {
         if (startPoint == null)
             throw new BusinessErrorException("起始点不能为空", ErrorCode.MISS_PARAMS.getCode());
@@ -126,9 +140,9 @@ public class AddressService {
     }
 
     /**
-     * @param from         起始坐标
-     * @param to           结束坐标
-     * @param waypoints    途径坐标串 （小于18个）
+     * @param from         起始坐标(纬度,经度)
+     * @param to           结束坐标(纬度,经度)
+     * @param waypoints    途径坐标串 （小于18个）(纬度,经度)
      * @param tactics      策略 (0：默认, 2：距离最短（只返回一条路线，不考虑限行和路况，距离最短且稳定，用于估价场景）, 3：不走高速, 4：高速优先, 5：躲避拥堵, 6：少收费, 7: 躲避拥堵 & 高速优先, 8: 躲避拥堵 & 不走高速, 9: 躲避拥堵 & 少收费, 10: 躲避拥堵 & 不走高速 & 少收费, 11: 不走高速 & 少收费, 12: 距离优先（考虑限行和路况，距离相对短且不一定稳定）)
      * @param alternatives 是否返回备选路线 (false:返回一条推荐路线 ,true:返回1-3条路线供选择)
      * @return
@@ -163,7 +177,14 @@ public class AddressService {
                 + "&tactics=" + tactics
                 + "&alternatives=" + (alternatives ? 1 : 0)
                 + "&ak=" + ak;
-        return send(uri, RouteResult.class);
+        var result = send(uri, RouteResult.class);
+        if(result.getStatus() !=0) {
+            if(result.getStatus() ==2)
+                throw new BusinessErrorException(result.getMessage(),ErrorCode.PARAMS_ERROR.getCode());
+            else
+                throw new BusinessErrorException(result.getMessage(),ErrorCode.OUTSIDE_SERVER_ERROR.getCode());
+        }
+        return result;
     }
 
     public RouteResult route(Pair<Double, Double> from, List<Pair<Double, Double>> waypoints, Pair<Double, Double> to) {

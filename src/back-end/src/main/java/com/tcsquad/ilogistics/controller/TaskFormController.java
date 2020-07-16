@@ -1,5 +1,7 @@
 package com.tcsquad.ilogistics.controller;
 
+import com.tcsquad.ilogistics.domain.PageResult;
+import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.request.TaskFormReq;
 import com.tcsquad.ilogistics.domain.response.RouteResp;
 import com.tcsquad.ilogistics.domain.response.StatusStatisticsResp;
@@ -25,11 +27,11 @@ public class TaskFormController {
     private TaskFormService taskFormService;
 
     @GetMapping("")
-    public List<TaskFormLogResp> searchTaskFrom(TaskFormReq taskFormReq) { // no @RequestParam
-        if (taskFormReq.getQ() != null) {//TODO 分页
-            return taskFormService.toTaskFormLogs(taskFormService.searchTaskForms(taskFormReq.getQ()));
-        } else {//TODO 分页
-            return taskFormService.toTaskFormLogs(taskFormService.getAllTaskForms());
+    public PageResult searchTaskFrom(TaskFormReq taskFormReq, PageRequest pageRequest) { // no @RequestParam
+        if (taskFormReq.getQ() != null) {
+            return taskFormService.searchTaskForms(taskFormReq.getQ(),pageRequest);
+        } else {
+            return taskFormService.getAllTaskForms(pageRequest);
         }
     }
 
