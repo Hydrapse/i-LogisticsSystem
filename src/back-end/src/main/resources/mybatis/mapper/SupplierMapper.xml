@@ -7,12 +7,12 @@
         select
              sid as supplierId,
              brandname,
-             manager,
+             manager as managerName,
              tel,
              email,
              province,
              city,
-             region,
+             district,
              addr
         from supplier
     </select>
@@ -21,31 +21,31 @@
         select
              sid as supplierId,
              brandname,
-             manager,
+             manager as managerName,
              tel,
              email,
              province,
              city,
-             region,
+             district,
              addr
         from supplier
         where sid = #{supplierId}
     </select>
     <insert id="insertSupplier" parameterType="Supplier">
-        insert into supplier(sid, brandname, manager, tel, email, province, city, region, addr)
+        insert into supplier(sid, brandname, manager, tel, email, province, city, district, addr)
         values
-            (#{supplierId}, #{brandname}, #{manager}, #{tel}, #{email}, #{province}, #{city},
-             #{rehion}, #{addr})
+            (#{supplierId}, #{brandName}, #{managerName}, #{tel}, #{email}, #{province}, #{city},
+             #{district}, #{addr})
     </insert>
     <update id="updateSupplier" parameterType="Supplier">
         update supplier
         set
-           manager = #{manager},
-           brandname = #{brandname},
+           manager = #{managerName},
+           brandname = #{brandName},
            tel = #{tel},
            email = #{email},
            province = #{city},
-           region = #{region},
+           district = #{district},
            addr = #{addr}
         where sid = #{supplierId}
     </update>
@@ -54,4 +54,22 @@
         delete from supplier
         where sid = #{supplierId}
     </delete>
+
+    <select id="hasSupplier" resultType="boolean">
+        select count(*)
+        from supplier
+        where sid = #{supplierId}
+    </select>
+
+    <insert id="insertItemSupply">
+        insert into itemsupply(supplierid, itemid, status)
+        values
+              (#{supplierId}, #{item.itemId}, #{item.status})
+    </insert>
+
+    <select id="getItemSupplyListBySupplierId" parameterType="String" resultType="String">
+        select itemid
+        from itemsupply
+        where supplierid = #{supplierId}
+    </select>
 </mapper>

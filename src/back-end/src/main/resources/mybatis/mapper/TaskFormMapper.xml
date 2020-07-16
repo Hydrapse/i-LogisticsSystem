@@ -93,7 +93,7 @@
         from taskform
     </select>
 
-    <select id="searchTaskForms" parameterType="String" resultType="TaskForm">
+    <select id="searchTaskForms" resultType="TaskForm">
         select
             taskid,
             orderid,
@@ -115,10 +115,15 @@
         from taskform
         where
             1 = 1
-            <if test="keyword != null and keyword != ''">
-            and concat(taskid,',',orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',status, ifnull(note,''))
-                like concat ('%', #{keyword},'%')
+            <if test="keyword != null and keyword.length > 0">
+            and
+                <foreach collection="keyword" item="keyword" open="(" close=")" separator="or">
+                    concat(taskid,',',orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',status, ifnull(note,''))
+                    like concat ('%', #{keyword},'%')
+                </foreach>
+
             </if>
+
     </select>
 
     <select id="getTaskFormsByStatus" parameterType="String" resultType="TaskForm">
@@ -189,10 +194,20 @@
             status,
             note
         from taskform
-        where subsiteid = #{subsiteId}
-              and
-              concat(taskid,',',orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',status, ifnull(note,''))
-                like concat ('%', #{keyword},'%')
+        where subsiteid = #{subSiteId}
+            <if test="keyword != null and keyword.length > 0">
+                and
+                 <foreach collection="keyword" item="keyword" open="(" close=")" separator="or">
+                     concat(taskid,',',orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',status, ifnull(note,''))
+                     like concat ('%', #{keyword},'%')
+                 </foreach>
+            </if>
+    </select>
+
+    <select id="countTaskFormsByStatus" parameterType="String" resultType="java.lang.Integer">
+        select count(*)
+        from taskform
+        where status = #{status}
     </select>
 
     <insert id="insertTaskForm" parameterType="TaskForm">

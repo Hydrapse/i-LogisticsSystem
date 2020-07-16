@@ -1,5 +1,7 @@
 package com.tcsquad.ilogistics.controller;
 
+import com.tcsquad.ilogistics.domain.PageResult;
+import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.request.SubSiteTaskFormReq;
 import com.tcsquad.ilogistics.domain.response.TaskFormLogResp;
 import com.tcsquad.ilogistics.service.TaskFormService;
@@ -15,13 +17,13 @@ public class SubSiteController {
     TaskFormService taskFormService;
 
     @GetMapping("/{subSiteId}/taskforms")
-    public List<TaskFormLogResp> getTaskForms(@PathVariable String subSiteId, SubSiteTaskFormReq subSiteTaskFormReq) {
+    public PageResult getTaskForms(@PathVariable String subSiteId, SubSiteTaskFormReq subSiteTaskFormReq, PageRequest pageRequest) {
         if (subSiteTaskFormReq.getStatus() != null) {
-            return taskFormService.toTaskFormLogs(taskFormService.searchTaskFormsBySubSiteAndStatus(subSiteId,subSiteTaskFormReq.getStatus()));
+            return taskFormService.searchTaskFormsBySubSiteAndStatus(subSiteId,subSiteTaskFormReq.getStatus(),pageRequest);
         } else if (subSiteTaskFormReq.getQ() != null) {
-            return taskFormService.toTaskFormLogs(taskFormService.searchTaskFormsBySubSiteAndKeyword(subSiteId,subSiteTaskFormReq.getQ()));
+            return taskFormService.searchTaskFormsBySubSiteAndKeyword(subSiteId,subSiteTaskFormReq.getQ(),pageRequest);
         } else {
-            return taskFormService.toTaskFormLogs(taskFormService.getTaskFormsBySubSiteId(subSiteId));
+            return taskFormService.getTaskFormsBySubSiteId(subSiteId,pageRequest);
         }
     }
 

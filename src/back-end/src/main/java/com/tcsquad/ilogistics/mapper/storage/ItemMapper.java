@@ -28,4 +28,6 @@ public interface ItemMapper {
     void updateItem(Item item);
 
     List<ItemInventoryResp> getItemInventoryByRequest(ItemInventoryGetReq itemInventoryGetReq);
+
+    List<Item> getItemListByRequest(@Param("categoryIdList")String[] categoryIdList,@Param("keyword")String keyword);
 }
