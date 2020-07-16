@@ -11,10 +11,12 @@ import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.response.RouteResp;
 import com.tcsquad.ilogistics.domain.response.StatusStatisticsResp;
 import com.tcsquad.ilogistics.domain.response.TaskFormLogResp;
+import com.tcsquad.ilogistics.domain.storage.SubSite;
 import com.tcsquad.ilogistics.exception.BusinessErrorException;
 import com.tcsquad.ilogistics.mapper.order.OrderItemMapper;
 import com.tcsquad.ilogistics.mapper.order.TaskFormMapper;
 import com.tcsquad.ilogistics.mapper.storage.SiteMapper;
+import com.tcsquad.ilogistics.service.interf.WarehouseService;
 import com.tcsquad.ilogistics.util.PageUtil;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,9 @@ public class TaskFormService {
 
     @Autowired
     SiteMapper siteMapper;
+
+    @Autowired
+    WarehouseService warehouseService;
 
     public TaskForm getTaskForm(Long taskFormId) {
         if (taskFormId != null)
@@ -148,30 +153,47 @@ public class TaskFormService {
 
     /**
      * 核心功能，生成任务单
+     * 缺少shipxxx信息和配送员信息
      *
      * @param order      订单
      * @param mainSiteId 主站id
      * @return 任务单列表
      */
     public List<TaskForm> generateTaskForms(Order order, String mainSiteId) {
+        //获取商品列表
         var items = orderItemMapper.getOrderItemsByOrderId(order.getOrderId());
+
+        //计算最近配送站
+        var subsites = siteMapper.getSubSiteListByMainSiteId(mainSiteId);
+        var subsitesPositions  = new ArrayList<Pair<Double,Double>>();
         var destination = addressService.getPosition(order.getBillPro() + order.getBillCity() + order.getBillDistrict() + order.getBillAddr(), order.getBillCity());
+        for(SubSite subSite:subsites) {
+            subsitesPositions.add(Pair.of(subSite.getLatitude().doubleValue(),subSite.getLongitude().doubleValue()));
+        }
+        var distance = addressService.distance(Pair.of(destination.getLat(),destination.getLng()),subsitesPositions);
+        int closest = 0;
+        double closestValue = distance.get(0).getDistance().getValue();
+        for(int i = 1;i<distance.size();i++){
+            double tmp = distance.get(i).getDistance().getValue();
+            if(tmp < closestValue) {
+                closest = i;
+                closestValue = tmp;
+            }
+        }
+        String subSiteId = subsites.get(closest).getSubsiteId();
 
-
-        var inStock = preGenerateTaskForm(order);
-        //courier;ship xxx;subsite;
-        inStock.setStatus("N");
-
+        var inStock = preGenerateTaskForm(order,subSiteId);
+        inStock.setStatus(StatusString.T_UNSENT.getValue());
         var outStocks = new ArrayList<TaskForm>();
         for (var item : items) {
-            if (false) { // in stock TODO 判断
-                item.setStatus("P");
+            if (warehouseService.getItemInventoryByMainSiteAndItemId(item.getItemId(),mainSiteId) >= item.getItemNum()) { // in stock TODO 判断
+                warehouseService.decreaseItemInventoryByMainSiteAndItemId(item.getItemId(),mainSiteId,item.getItemNum());
+                item.setStatus(StatusString.ITEM_PREPARED.getValue());
                 inStock.getOrderItems().add(item);
-                // TODO 改库存
             } else {
-                item.setStatus("O");
-                var form = preGenerateTaskForm(order);
-                form.setStatus("W");
+                item.setStatus(StatusString.ITEM_STOCK_OUT.getValue());
+                var form = preGenerateTaskForm(order,subSiteId);
+                form.setStatus(StatusString.T_WAITING.getValue());
                 form.getOrderItems().add(item);
                 outStocks.add(form);
             }
@@ -195,7 +217,7 @@ public class TaskFormService {
             throw new BusinessErrorException("分页信息不能为空",ErrorCode.PARAMS_ERROR.getCode());
     }
 
-    private TaskForm preGenerateTaskForm(Order order) {
+    private TaskForm preGenerateTaskForm(Order order,String subSiteId) {
         if (order == null)
             throw new BusinessErrorException("order不能为空", ErrorCode.MISS_PARAMS.getCode());
 
@@ -209,6 +231,7 @@ public class TaskFormService {
         taskForm.setTotalPrice(order.getTotalPrice());
         taskForm.setNote(order.getNote());
         taskForm.setOrderItems(new ArrayList<>());
+        taskForm.setSubSiteId(subSiteId);
 
         return taskForm;
     }

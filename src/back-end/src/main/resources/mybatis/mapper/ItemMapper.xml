@@ -81,4 +81,27 @@
                 </foreach>
             </if>
     </select>
+
+    <select id="getItemListByRequest" resultType="Item">
+        select  itemid      as itemId,
+        cid         as categoryId,
+        name        as name,
+        unitcost    as unitCost,
+        listprice   as listPrice,
+        descn       as descn,
+        img         as imgUrl,
+        status      as status
+        from item
+        where itemid is not null
+        <if test="keyword != null and keyword != ''">
+            and name like '%${keyword}%'
+        </if>
+        <if test="categoryIdList != null and categoryIdList.length > 0">
+            and cid in
+            <foreach collection="categoryIdList" item="categoryID" open="(" close=")" separator=",">
+                #{categoryID}
+            </foreach>
+        </if>
+    </select>
+
 </mapper>

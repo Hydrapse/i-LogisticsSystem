@@ -4,6 +4,7 @@ import com.tcsquad.ilogistics.domain.storage.Category;
 import com.tcsquad.ilogistics.domain.storage.Inventory;
 import com.tcsquad.ilogistics.domain.storage.Item;
 import com.tcsquad.ilogistics.domain.response.WarehouseResp;
+import com.tcsquad.ilogistics.domain.storage.MainsiteInventory;
 import org.apache.ibatis.annotations.MapKey;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -44,5 +45,8 @@ public interface WarehouseMapper {
 
     //根据库房编号和商品编号获取库存
     Inventory getInventoryByItemIdAndWarehouseId(@Param("warehouseId")String warehouseId,@Param("itemId")String itemId);
+
+    //根据商品编号获取商品在各主站的库存
+    List<MainsiteInventory> getMainsiteInventorysByItemId(String itemId);
 
 }

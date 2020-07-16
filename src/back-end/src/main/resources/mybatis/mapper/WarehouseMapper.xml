@@ -63,7 +63,6 @@
                 item.itemid = inventory.itemid
             and item.cid = warehouse.categoryid
             and warehouse.warehouseid = inventory.warehouseid
-            and item.itemid = inventory.itemid
             and mainsiteid = #{mainsiteId}
             and item.itemid = #{itemId}
             and inventory.num >= #{itemNum}
@@ -86,5 +85,18 @@
         insert into inventory(warehousid,itemid,num,logicinventory)
         values(#{warehouseId},#{itemId},#(itemNum),#(itemNum))
     </insert>
+
+
+    <select id="getMainsiteInventorysByItemId" resultType="MainsiteInventory">
+        select  warehouse.mainsiteid as mainsiteId,
+                sum(inventory.num) as itemInventory
+        from warehouse,item,inventory
+        where
+                item.itemid = inventory.itemid
+            and item.cid = warehouse.categoryid
+            and warehouse.warehouseid = inventory.warehouseid
+            and item.itemid = #{itemId}
+        group by warehouse.mainsiteid
+    </select>
 
 </mapper>

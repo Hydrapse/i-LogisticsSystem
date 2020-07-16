@@ -9,12 +9,16 @@ import com.tcsquad.ilogistics.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author Hydra
@@ -24,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class TestController {
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd:HH");
+
     private static Logger logger = LoggerFactory.getLogger(TestController.class);
 
     @Autowired
@@ -34,6 +40,9 @@ public class TestController {
 
     @Autowired
     RedisUtil redisUtil;
+
+    @Autowired
+    RedisTemplate redisTemplate;
 
     @ResponseBody
     @GetMapping("/test/db")
@@ -75,6 +84,12 @@ public class TestController {
     }
 
     @ResponseBody
+    @GetMapping("/test/date")
+    String getDate(){
+        return dateFormat.format(new Date());
+    }
+
+    @ResponseBody
     @GetMapping("/test/redis")
     Object testRedis(){
 //        redisUtil.set("ts", "我叼你妈的比");
@@ -104,14 +119,23 @@ public class TestController {
 
         //ListId
         String listId1 = mid1 + "|" +iid1;
-        redisUtil.lSet(listId1, obj1);
-        redisUtil.lSet(listId1, obj2);
+//        redisUtil.lSet(listId1, obj1);
+//        redisUtil.lSet(listId1, obj2);
+//        redisUtil.lSet(listId1, obj1);
+//        redisUtil.lSet(listId1, obj2);
+//        redisUtil.lSet(listId1, obj1);
+//        redisUtil.lSet(listId1, obj2);
 
         //获取数据
-        Object rtn = redisUtil.lGetListSize(listId1);
+
+        Long size = redisUtil.lGetListSize(listId1);
+        redisTemplate.opsForList().trim(listId1, 3, size-1);
+        Object rtn = redisUtil.lGet(listId1, 0, 2);
+        System.out.println(redisUtil.lGetListSize(listId1));
+
 
         //删除List
-        redisUtil.del(listId1);
+//        redisUtil.del(listId1);
 
         return rtn;
     }
