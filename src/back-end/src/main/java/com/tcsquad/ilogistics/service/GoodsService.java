@@ -12,9 +12,13 @@ import com.tcsquad.ilogistics.domain.storage.MainsiteInventory;
 import com.tcsquad.ilogistics.mapper.storage.CategoryMapper;
 import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.mapper.storage.WarehouseMapper;
+import com.tcsquad.ilogistics.util.OSSClientUtil;
 import com.tcsquad.ilogistics.util.PageUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +30,7 @@ import java.util.List;
  */
 @Service
 public class GoodsService {
+    private static final Logger logger = LoggerFactory.getLogger(GoodsService.class);
 
     @Autowired
     ItemMapper itemMapper;
@@ -35,6 +40,9 @@ public class GoodsService {
 
     @Autowired
     WarehouseMapper warehouseMapper;
+
+    @Autowired
+    OSSClientUtil ossClientUtil;
 
     public List getCatalog(){
         List list = new ArrayList();
@@ -110,5 +118,20 @@ public class GoodsService {
         detailResp.setTotalInventory(totalInventory);
 
         return detailResp;
+    }
+
+    public void setItemImage(Item item, MultipartFile img){
+        //如果img存在, 修改图片
+        if(img != null && !img.isEmpty()){
+            logger.info("修改product图片");
+            String url = ossClientUtil.checkImage(img, OSSClientUtil.PRODUCT_IMAGE_DIR);
+            item.setImgUrl(url);
+        }
+    }
+
+    public Item createItem(Item item){
+        //Todo:设置命名
+        itemMapper.insertItem(item);
+        return null;
     }
 }

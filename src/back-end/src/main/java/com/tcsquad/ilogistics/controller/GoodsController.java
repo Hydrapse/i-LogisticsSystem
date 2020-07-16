@@ -1,16 +1,23 @@
 package com.tcsquad.ilogistics.controller;
 
+import com.tcsquad.ilogistics.domain.ErrorCode;
 import com.tcsquad.ilogistics.domain.PageResult;
+import com.tcsquad.ilogistics.domain.SequenceName;
+import com.tcsquad.ilogistics.domain.StatusString;
 import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.response.ItemInventoryDetailResp;
+import com.tcsquad.ilogistics.domain.storage.Item;
+import com.tcsquad.ilogistics.exception.BusinessErrorException;
 import com.tcsquad.ilogistics.service.GoodsService;
+import com.tcsquad.ilogistics.util.IDSequenceUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,9 +30,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/goods")
 public class GoodsController {
+    private static final Logger logger = LoggerFactory.getLogger(GoodsController.class);
 
     @Autowired
     GoodsService goodsService;
+
+    @Autowired
+    IDSequenceUtil idSequenceUtil;
 
     @ApiOperation("获取大类+商品目录")
     @GetMapping("/catalog")
@@ -52,5 +63,28 @@ public class GoodsController {
     @GetMapping("/items/{itemId}")
     public ItemInventoryDetailResp getItemInventoryDetail(@PathVariable("itemId")String itemId) {
         return goodsService.getItemInventoryDetail(itemId);
+    }
+
+    @ApiOperation("新增商品")
+    @PostMapping("/items")
+    public void insertItem(Item item, MultipartFile img) {
+        if(StringUtils.isEmpty(item.getName())){
+            //logger.warn("item插入时name为空");
+            throw new BusinessErrorException("业务逻辑异常, item名称为空",
+                    ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
+        }
+
+        //若img不为空则插入图片
+        goodsService.setItemImage(item,img);
+        Item rtnItem = goodsService.createItem(item);
+        if(rtnItem == null){
+            throw new BusinessErrorException("业务逻辑异常, 传入值包含非法值",
+                    ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
+        }
+    }
+
+    @GetMapping("/sequence")
+    public Long getNextSequence(String name){
+        return idSequenceUtil.getNextFormIdByName(SequenceName.TASK_FORM.getValue());
     }
 }

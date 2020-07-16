@@ -4,6 +4,7 @@ import com.tcsquad.ilogistics.domain.PageResult;
 import com.tcsquad.ilogistics.domain.clientele.Customer;
 import com.tcsquad.ilogistics.domain.clientele.Supplier;
 import com.tcsquad.ilogistics.domain.request.CustomerReq;
+import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.request.SupplierAddReq;
 import com.tcsquad.ilogistics.domain.response.ItemSupplyResp;
 import com.tcsquad.ilogistics.service.ClienteleService;
@@ -22,25 +23,12 @@ public class ClienteleController {
     @Autowired
     ClienteleService clienteleService;
 
-    //查询买家列表
+    //根据限定条件获取买家列表
     @GetMapping("/clientele/customers")
-    public List<Customer> getCustomerList(){
-        return clienteleService.getCustomers();
+    public PageResult getCustomerList(CustomerReq customerReq,PageRequest pageRequest){
+        return clienteleService.getCustomers(customerReq,pageRequest);
     }
 
-
-    //未完成
-    @GetMapping("")
-    public List<Customer> customerList(CustomerReq customerReq){
-
-        List<Customer> customerList = clienteleService.getCustomerListByCustomerReq(customerReq);
-        if(customerList.isEmpty()){
-            logger.info("不存在匹配顾客");
-            return null;
-        }
-        else
-            return customerList;
-    }
     /*
     @GetMapping("/clientele/{orderId}/customer")
     public Customer getCustomersByOrderId(@PathVariable("orderId")long orderId){
@@ -53,34 +41,6 @@ public class ClienteleController {
             return null;
         }
 
-    }
-
-
-
-    @GetMapping("/clientele/customer/addr={addr}")
-    public List<Customer> getCustomersByAddr(@PathVariable("addr")String addr){
-        List<Customer> customerList = clienteleService.getCustomersByAddr(addr);
-        if(!customerList.isEmpty()){
-            return customerList;
-        }
-        else{
-            logger.info("未找到地址为 "+addr+" 的顾客");
-            return null;
-        }
-
-    }
-
-    @GetMapping("/clientele/customer/keyword={keyword}")
-    public List<Customer> getCustomersByKeyword(@PathVariable("keyword")String keyword){
-        List<Customer> customerList = clienteleService.getCustomersByKeyword(keyword);
-        if(!customerList.isEmpty()){
-            return customerList;
-        }
-        else{
-            logger.info("未找到信息包含 "+keyword+" 的顾客");
-            return null;
-        }
-
     }*/
 
     @PostMapping("/suppliers")
@@ -90,8 +50,8 @@ public class ClienteleController {
     }
     //获取供应商列表
     @GetMapping("/clientele/suppliers")
-    public List<Supplier> getSupplierList(){
-        return clienteleService.getSupplierList();
+    public PageResult getSupplierList(PageRequest pageRequest){
+        return clienteleService.getSupplierList(pageRequest);
     }
     //查看某一供应商商品供应列表
     @GetMapping("/clientele/suppliers/{supplierId}/itemSupply")
@@ -101,10 +61,9 @@ public class ClienteleController {
     }
     //删除供应商
     @DeleteMapping("/clientele/suppliers/{supplierId}")
-    public List<Supplier> deleteSupplier(@PathVariable("supplierId")String supplierId){
+    public void deleteSupplier(@PathVariable("supplierId")String supplierId){
         Supplier supplier = clienteleService.getSupplierById(supplierId);
         clienteleService.deleteSupplier(supplier);
-        return clienteleService.getSupplierList();
 
     }
 
