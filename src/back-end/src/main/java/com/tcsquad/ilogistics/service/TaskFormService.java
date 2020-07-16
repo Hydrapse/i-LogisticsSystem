@@ -118,10 +118,13 @@ public class TaskFormService {
         var taskForm = taskFormMapper.getTaskForm(taskFormId);
         if (taskForm == null)
             throw new BusinessErrorException("任务单不存在", ErrorCode.PARAMS_ERROR.getCode());
+
         var subSite = siteMapper.getSubSiteById(taskForm.getSubSiteId());
+        var mainSite = siteMapper.getMainSiteById(subSite.getMainsiteId());
         var destination = addressService.getPosition(taskForm.getBillPro() + taskForm.getBillCity() + taskForm.getBillDis() + taskForm.getBillAddr(), taskForm.getBillCity());
         var route = addressService.route(
-                Pair.of(subSite.getLongitude().doubleValue(), subSite.getLatitude().doubleValue()),
+                Pair.of(mainSite.getLongitude().doubleValue(), mainSite.getLatitude().doubleValue()),
+                List.of(Pair.of(subSite.getLongitude().doubleValue(), subSite.getLatitude().doubleValue())),
                 Pair.of(destination.getLng(), destination.getLat())
         ).getResult().getRoutes().get(0);
 
