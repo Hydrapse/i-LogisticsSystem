@@ -48,7 +48,12 @@ public class MainsiteController {
         siteIOAddReq.setWarehouseId(warehouseList.get(0));
         Long newRecordId = siteIOService.insertCheckinRecord(siteIOAddReq);
 
-        //Todo:向消息队列推送消息
+        //if(isCheckNeeded()){
+        //  Todo:向消息队列推送消息
+        // return;
+        //}
+
+        //Todo: confirmSiteIORecord()
 
     }
 

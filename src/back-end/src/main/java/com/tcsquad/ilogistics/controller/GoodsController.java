@@ -35,9 +35,6 @@ public class GoodsController {
     @Autowired
     GoodsService goodsService;
 
-    @Autowired
-    IDSequenceUtil idSequenceUtil;
-
     @ApiOperation("获取大类+商品目录")
     @GetMapping("/catalog")
     public List getCatalog() {
@@ -67,24 +64,20 @@ public class GoodsController {
 
     @ApiOperation("新增商品")
     @PostMapping("/items")
-    public void insertItem(Item item, MultipartFile img) {
+    public void insertItem(Item item,MultipartFile imgFile) {
+        logger.info(item.getCategoryId());
         if(StringUtils.isEmpty(item.getName())){
-            //logger.warn("item插入时name为空");
+            logger.warn("item插入时name为空");
             throw new BusinessErrorException("业务逻辑异常, item名称为空",
                     ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
         }
 
         //若img不为空则插入图片
-        goodsService.setItemImage(item,img);
+        goodsService.setItemImage(item,imgFile);
         Item rtnItem = goodsService.createItem(item);
         if(rtnItem == null){
             throw new BusinessErrorException("业务逻辑异常, 传入值包含非法值",
                     ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
         }
-    }
-
-    @GetMapping("/sequence")
-    public Long getNextSequence(String name){
-        return idSequenceUtil.getNextFormIdByName(SequenceName.TASK_FORM.getValue());
     }
 }

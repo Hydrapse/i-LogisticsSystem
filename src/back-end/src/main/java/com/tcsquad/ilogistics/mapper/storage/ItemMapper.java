@@ -19,13 +19,13 @@ public interface ItemMapper {
     Item getItem(String itemId);
 
     //新增
-    void insertItem(Item item);
+    boolean insertItem(Item item);
 
     //更新商品状态（上架/下架）
     void updateItemStatus(Item item);
 
     //更新
-    void updateItem(Item item);
+    boolean updateItem(Item item);
 
     List<ItemInventoryResp> getItemInventoryByRequest(ItemInventoryGetReq itemInventoryGetReq);
 

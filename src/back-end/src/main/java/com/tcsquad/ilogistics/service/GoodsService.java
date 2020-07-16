@@ -1,5 +1,6 @@
 package com.tcsquad.ilogistics.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -12,8 +13,10 @@ import com.tcsquad.ilogistics.domain.storage.MainsiteInventory;
 import com.tcsquad.ilogistics.mapper.storage.CategoryMapper;
 import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.mapper.storage.WarehouseMapper;
+import com.tcsquad.ilogistics.util.IDSequenceUtil;
 import com.tcsquad.ilogistics.util.OSSClientUtil;
 import com.tcsquad.ilogistics.util.PageUtil;
+import io.netty.util.internal.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +46,9 @@ public class GoodsService {
 
     @Autowired
     OSSClientUtil ossClientUtil;
+
+    @Autowired
+    IDSequenceUtil idSequenceUtil;
 
     public List getCatalog(){
         List list = new ArrayList();
@@ -126,12 +132,21 @@ public class GoodsService {
             logger.info("修改product图片");
             String url = ossClientUtil.checkImage(img, OSSClientUtil.PRODUCT_IMAGE_DIR);
             item.setImgUrl(url);
+            logger.info(url);
         }
     }
 
     public Item createItem(Item item){
-        //Todo:设置命名
-        itemMapper.insertItem(item);
+        String itemId = idSequenceUtil.getNextItemId(item.getCategoryId());
+        item.setStatus("P");
+        item.setItemId(itemId);
+        logger.info(JSON.toJSONString(item));
+        if(!StringUtil.isNullOrEmpty(itemId) && itemMapper.insertItem(item)){
+            logger.info(itemId + " 插入成功");
+            return item;
+        }
+
+        logger.warn("item 失败插入，显示JSON串：\n" + JSON.toJSONString(item));
         return null;
     }
 }

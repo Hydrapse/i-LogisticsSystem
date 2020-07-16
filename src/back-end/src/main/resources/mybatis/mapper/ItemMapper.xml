@@ -3,7 +3,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tcsquad.ilogistics.mapper.storage.ItemMapper">
     <select id="getItemListByCategoryId" parameterType="String" resultType="Item">
-        select itemid, cid as categoryId, name, unitcost, listprice, descn, img as imgUrl, status
+        select  itemid as itemId,
+                cid as categoryId,
+                name,
+                unitcost as unitCost,
+                listprice as listPrice,
+                descn,
+                img as imgUrl,
+                status
         from item
         where cid = #{categoryId}
     </select>
@@ -23,14 +30,21 @@
     </select>
 
     <select id="getItem" parameterType="String" resultType="Item">
-        select itemid, cid as categoryId, name, unitcost, listprice, descn, img as imgUrl, status
+        select  itemid as itemId,
+                cid as categoryId,
+                name,
+                unitcost as unitCost,
+                listprice as listPrice,
+                descn,
+                img as imgUrl,
+                status
         from item
         where itemid = #{itemId}
     </select>
     <insert id="insertItem" parameterType="Item">
         insert into item(itemid, cid, name, unitcost, listprice, descn, img, status)
         values
-            (#{itemId} #{categoryId}, #{name}, #{unitcost}, #{listprice}, #{descn}, #{imgUrl}, #{status})
+            (#{itemId} ,#{categoryId}, #{name}, #{unitCost}, #{listPrice}, #{descn}, #{imgUrl}, #{status})
     </insert>
 
     <update id="updateItemStatus">

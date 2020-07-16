@@ -52,8 +52,6 @@ public class SiteIOServiceImpl implements SiteIOService {
     @Transactional
     public void cancelSiteIOStatus(Long recordId,boolean isCheckin) {
         if(isCheckin){
-            siteIOMapper.updateSiteIOStatus(recordId, StatusString.INVALID.getValue());
-
             //Todo:取消入库对其他模块的影响？？？
         }
         else {
@@ -63,27 +61,26 @@ public class SiteIOServiceImpl implements SiteIOService {
             int num = inventory.getLogicInventory() + siteIO.getQty();
             inventory.setLogicInventory(num);
             warehouseMapper.updateInventoryByWarehouseIdAndItemId(inventory);
-            siteIOMapper.updateSiteIOStatus(recordId,StatusString.INVALID.getValue());
 
             //Todo:取消出库对其他模块的影响？？？
         }
+        siteIOMapper.updateSiteIOStatus(recordId, StatusString.INVALID.getValue());
 
     }
 
     @Override
     @Transactional
     public void confirmSiteIORecord(Long recordId,boolean isCheckin) {
+        SiteIO siteIO = siteIOMapper.getSiteIORecordById(recordId);
         if(isCheckin){
-            //Todo:确认入库对其他模块的影响？？？
-            SiteIO siteIO = siteIOMapper.getSiteIORecordById(recordId);
             warehouseService.addItemToWarehouse(siteIO.getWarehouseId(),siteIO.getItemId(),siteIO.getQty());
             siteIOMapper.updateSiteIOStatus(recordId,StatusString.CONFIRM.getValue());
+
+            //Todo: 确认入库对其他模块的影响
+            //Todo: 处理缺货订单
         }
         else {
-            //Todo:确认出库对其他模块的影响？？？
-
             //确认出库，将真实库存减掉itemNum
-            SiteIO siteIO = siteIOMapper.getSiteIORecordById(recordId);
             Inventory inventory = warehouseMapper.getInventoryByItemIdAndWarehouseId(siteIO.getWarehouseId(),siteIO.getItemId());
             int num = inventory.getItemNum() - siteIO.getQty();
             if(num >= 0){
@@ -96,6 +93,8 @@ public class SiteIOServiceImpl implements SiteIOService {
 
             }
 
+            //Todo:确认出库对其他模块的影响
+            //Todo:修改任务单、调货单、与供应商的退订单
 
         }
 
@@ -273,7 +272,13 @@ public class SiteIOServiceImpl implements SiteIOService {
         siteIO.setWarehouseId(warehouseOptions.get(0));
         siteIOMapper.insertSiteIORecord(siteIO);
 
-        //Todo:减少库存
+        //if(isCheckNeeded()){
+        //  Todo:发送消息
+        // return;
+        //}
+
+        //Todo: confirmSiteIORecord()
+
     }
 
     @Override
