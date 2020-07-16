@@ -9,7 +9,10 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.sql.DataSource;
 import java.net.UnknownHostException;
 
 @Configuration
@@ -49,7 +52,17 @@ public class RedisConfig {
         redisTemplate.setDefaultSerializer(jackson2JsonRedisSerializer);
         redisTemplate.setEnableDefaultSerializer(true);
         redisTemplate.afterPropertiesSet();
+
+        // 开启单机Redis事务(不支持集群)
+        redisTemplate.setEnableTransactionSupport(true);
+
         return redisTemplate;
+    }
+
+    //配置事务管理器
+    @Bean
+    public PlatformTransactionManager transactionManager(DataSource dataSource){
+        return new DataSourceTransactionManager(dataSource);
     }
 
 
