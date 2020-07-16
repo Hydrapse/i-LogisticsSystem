@@ -46,7 +46,7 @@ public interface TaskFormMapper {
 
     void insertTaskId(List<OrderItem> taskItemList);//插入任务单时，同时给任务单的任务商品设置任务单编号
 
-    void updateTaskForm(TaskForm taskForm); //TODO:更新全部信息
+    void updateTaskForm(TaskForm taskForm); 
 
     void updateTaskFormStatus(String status,long taskId);
 

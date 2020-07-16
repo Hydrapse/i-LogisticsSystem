@@ -252,6 +252,23 @@
             </foreach>
         </if>
     </update>
+    <update id="updateTaskForm" parameterType="TaskForm">
+        update taskform
+        set
+            subsiteid = #{subSiteId},
+            shipname = #{shipName},
+            shiptel = #{shipTel},
+            shipaddr = #{shipAddr},
+            shipdis = #{shipDis},
+            shipcity = #{shipCity},
+            shippro = #{shipPro},
+            courier = #{courier},
+            totalprice = #{totalPrice},
+            status = #{status},
+            note = #{note},
+            shiptime = #{deliveryDateTime}
+        where taskid = #{taskId}
+    </update>
     <select id="getTaskItemsByTaskId" parameterType="Long">
         select
             orderid, itemid, taskid, itemnum, status, total
