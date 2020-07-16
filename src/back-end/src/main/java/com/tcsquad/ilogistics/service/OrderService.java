@@ -116,7 +116,7 @@ public class OrderService {
 
         //向待审核订单队列发送消息unreviewed order
 //        amqpTemplate.convertAndSend("unreviewed order", orderMsg.toJSONString());
-        amqpTemplate.convertAndSend("test", orderMsg.toJSONString());
+        amqpTemplate.convertAndSend("unreviewed order", orderMsg.toJSONString());
 
         logger.info("成功发送订单消息: " + orderMsg.toJSONString());
     }
@@ -217,5 +217,13 @@ public class OrderService {
         if (!siteMapper.hasMainSiteId(mainsiteId)){
             throw new BusinessErrorException("mainsiteId不存在, 请重试", ErrorCode.PARAMS_ERROR.getCode());
         }
+    }
+
+    /**
+     * 功能描述:<br>
+     * 更新订单处理状态
+     */
+    public void updateProcessStatus(Order order){
+        orderMapper.updateProcessStatus(order);
     }
 }

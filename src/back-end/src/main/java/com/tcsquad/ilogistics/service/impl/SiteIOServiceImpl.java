@@ -73,11 +73,16 @@ public class SiteIOServiceImpl implements SiteIOService {
     public void confirmSiteIORecord(Long recordId,boolean isCheckin) {
         SiteIO siteIO = siteIOMapper.getSiteIORecordById(recordId);
         if(isCheckin){
-            warehouseService.addItemToWarehouse(siteIO.getWarehouseId(),siteIO.getItemId(),siteIO.getQty());
+            //更新出入库单
             siteIOMapper.updateSiteIOStatus(recordId,StatusString.CONFIRM.getValue());
 
+            //更新真实库存
+            warehouseService.addItemToWarehouse(siteIO.getWarehouseId(),siteIO.getItemId(),siteIO.getQty());
+
+            //更新逻辑库存, 会自动检查缺货消息,并处理缺货订单
+            //increaseLogicalInventory(mainsiteId, itemId, increment);
+
             //Todo: 确认入库对其他模块的影响
-            //Todo: 处理缺货订单
         }
         else {
             //确认出库，将真实库存减掉itemNum
