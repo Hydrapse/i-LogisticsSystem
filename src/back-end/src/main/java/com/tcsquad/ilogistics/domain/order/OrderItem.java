@@ -28,6 +28,9 @@ public class OrderItem {
     public void setTaskId(Long taskId) {
         this.taskId = taskId;
     }
+    public void setTaskId(int taskId) {
+        this.taskId = (long) taskId;
+    }
 
     public String getItemId() {
         return itemId;
