@@ -20,7 +20,6 @@ import com.tcsquad.ilogistics.mapper.storage.SiteMapper;
 import com.tcsquad.ilogistics.service.interf.WarehouseService;
 import com.tcsquad.ilogistics.util.PageUtil;
 import com.tcsquad.ilogistics.util.StockOutMsgUtil;
-import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -196,6 +195,8 @@ public class TaskFormService {
         inStock.setStatus(StatusString.T_UNSENT.getValue());
         var outStocks = new ArrayList<TaskForm>();
         for (var item : items) {
+            //TODO: 调用LogicalInventoryService方法扣除逻辑库存
+            //if(decreaseLogicalInventory(item.getItemId(), mainSiteId, item.getItemNum()))
             if (warehouseService.getItemInventoryByMainSiteAndItemId(item.getItemId(),mainSiteId) >= item.getItemNum()) { // in stock TODO 判断
                 warehouseService.decreaseItemInventoryByMainSiteAndItemId(item.getItemId(),mainSiteId,item.getItemNum());
                 item.setStatus(StatusString.ITEM_PREPARED.getValue());
@@ -215,8 +216,15 @@ public class TaskFormService {
 
         var all = taskFormMapper.getTaskFormsByOrderId(order.getOrderId());
         for (var form : all) {
-            if (form.getStatus().equals(StatusString.T_WAITING.getValue()))
+            if (form.getStatus().equals(StatusString.T_WAITING.getValue())){
                 stockOutMsgUtil.insertStockOutMessage(mainSiteId,form.getOrderItems().get(0));
+                //TODO:生成调货单
+            }
+            else if(form.getStatus().equals(StatusString.T_UNSENT.getValue())){
+                //TODO: 发送出库消息
+                //type: SHIP_OUT
+                //insertCheckOutRecord(String type, Long taskId, String mainsiteId);
+            }
         }
 
         return all;
