@@ -108,6 +108,7 @@ public enum StatusString {
         SiteIOType,
         SiteIOApproval,
         ItemSupply,
-        TaskFormProcess
+        TaskFormProcess,
+        SequenceName
     }
 }
