@@ -4,9 +4,11 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.tcsquad.ilogistics.domain.ErrorCode;
 import com.tcsquad.ilogistics.domain.PageResult;
+import com.tcsquad.ilogistics.domain.SequenceName;
 import com.tcsquad.ilogistics.domain.StatusString;
 import com.tcsquad.ilogistics.domain.map.RouteResult;
 import com.tcsquad.ilogistics.domain.order.Order;
+import com.tcsquad.ilogistics.domain.order.OrderItem;
 import com.tcsquad.ilogistics.domain.order.TaskForm;
 import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.response.RouteResp;
@@ -17,7 +19,9 @@ import com.tcsquad.ilogistics.exception.BusinessErrorException;
 import com.tcsquad.ilogistics.mapper.order.OrderItemMapper;
 import com.tcsquad.ilogistics.mapper.order.TaskFormMapper;
 import com.tcsquad.ilogistics.mapper.storage.SiteMapper;
+import com.tcsquad.ilogistics.service.interf.SiteIOService;
 import com.tcsquad.ilogistics.service.interf.WarehouseService;
+import com.tcsquad.ilogistics.util.IDSequenceUtil;
 import com.tcsquad.ilogistics.util.PageUtil;
 import com.tcsquad.ilogistics.util.StockOutMsgUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -47,6 +52,11 @@ public class TaskFormService {
 
     @Autowired
     WarehouseService warehouseService;
+
+    @Autowired IDSequenceUtil idSequenceUtil;
+
+    @Autowired
+    SiteIOService siteIOService;
 
     public TaskForm getTaskForm(Long taskFormId) {
         if (taskFormId != null)
@@ -100,9 +110,20 @@ public class TaskFormService {
         checkPageRequest(pageRequest);
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
         var result = taskFormMapper.getTaskFormsBySubsiteAndStatus(subSiteId, status);
+
         var vo = toTaskFormLogs(result);
         return PageUtil.getPageResult(pageRequest,new PageInfo<>(vo));
     }
+
+//    private void getOrderItems(TaskForm taskForm){
+//        taskForm.setOrderItems(taskFormMapper.getTaskItemsByTaskId(taskForm.getTaskId()));
+//    }
+//
+//    private void getOrderItems(List<TaskForm> taskForms) {
+//        for(var taskForm :taskForms) {
+//            getOrderItems(taskForm);
+//        }
+//    }
 
     public List<StatusStatisticsResp> countStatusOfAllTaskForms() {
         var result = new ArrayList<StatusStatisticsResp>();
@@ -118,7 +139,7 @@ public class TaskFormService {
         return result;
     }
 
-    public RouteResp getRoute(Long taskFormId) {
+    public RouteResp getRoute(Long taskFormId) {//todo：statusMessage
         if (taskFormId == null)
             throw new BusinessErrorException("任务单id不能为空", ErrorCode.MISS_PARAMS.getCode());
         var taskForm = taskFormMapper.getTaskForm(taskFormId);
@@ -166,68 +187,101 @@ public class TaskFormService {
      *
      * @param order      订单
      * @param mainSiteId 主站id
-     * @return 任务单列表
      */
-    public List<TaskForm> generateTaskForms(Order order, String mainSiteId) {
-        //获取商品列表
-        var items = orderItemMapper.getOrderItemsByOrderId(order.getOrderId());
-
+    public void generateTaskForms(Order order, String mainSiteId) {
         //计算最近配送站
         var subsites = siteMapper.getSubSiteListByMainSiteId(mainSiteId);
         var subsitesPositions  = new ArrayList<Pair<Double,Double>>();
-        var destination = addressService.getPosition(order.getBillPro() + order.getBillCity() + order.getBillDistrict() + order.getBillAddr(), order.getBillCity());
         for(SubSite subSite:subsites) {
             subsitesPositions.add(Pair.of(subSite.getLatitude().doubleValue(),subSite.getLongitude().doubleValue()));
         }
-        var distance = addressService.distance(Pair.of(destination.getLat(),destination.getLng()),subsitesPositions);
-        int closest = 0;
-        double closestValue = distance.get(0).getDistance().getValue();
-        for(int i = 1;i<distance.size();i++){
-            double tmp = distance.get(i).getDistance().getValue();
-            if(tmp < closestValue) {
-                closest = i;
-                closestValue = tmp;
-            }
-        }
+        var destination = addressService.getPosition(order.getBillPro() + order.getBillCity() + order.getBillDistrict() + order.getBillAddr(), order.getBillCity());
+        var destinationPoint = Pair.of(destination.getLat(),destination.getLng());
+        int closest = addressService.closest(destinationPoint,subsitesPositions);
         String subSiteId = subsites.get(closest).getSubsiteId();
 
-        var inStock = preGenerateTaskForm(order,subSiteId);
-        inStock.setStatus(StatusString.T_UNSENT.getValue());
-        var outStocks = new ArrayList<TaskForm>();
+        //获取商品列表
+        var items = orderItemMapper.getOrderItemsByOrderId(order.getOrderId());
+
+        //生成任务单
+        var inStockList = new ArrayList<OrderItem>();
         for (var item : items) {
             //TODO: 调用LogicalInventoryService方法扣除逻辑库存
             //if(decreaseLogicalInventory(item.getItemId(), mainSiteId, item.getItemNum()))
             if (warehouseService.getItemInventoryByMainSiteAndItemId(item.getItemId(),mainSiteId) >= item.getItemNum()) { // in stock TODO 判断
                 warehouseService.decreaseItemInventoryByMainSiteAndItemId(item.getItemId(),mainSiteId,item.getItemNum());
-                item.setStatus(StatusString.ITEM_PREPARED.getValue());
-                inStock.getOrderItems().add(item);
+
+                inStockList.add(item);
             } else {
+                var taskForm = preGenerateTaskForm(order,subSiteId);
+
                 item.setStatus(StatusString.ITEM_STOCK_OUT.getValue());
-                var form = preGenerateTaskForm(order,subSiteId);
-                form.setStatus(StatusString.T_WAITING.getValue());
-                form.getOrderItems().add(item);
-                outStocks.add(form);
-            }
-        }
-        for (var form : outStocks)
-            taskFormMapper.insertTaskForm(form);
-        if (inStock.getOrderItems() != null && !inStock.getOrderItems().isEmpty())
-            taskFormMapper.insertTaskForm(inStock);
+                item.setTaskId(taskForm.getTaskId());
+                orderItemMapper.updateOrderItemTaskId(item);
+                orderItemMapper.updateOrderItemStatus(item);
 
-        var all = taskFormMapper.getTaskFormsByOrderId(order.getOrderId());
-        for (var form : all) {
-            if (form.getStatus().equals(StatusString.T_WAITING.getValue())){
-                stockOutMsgUtil.insertStockOutMessage(mainSiteId,form.getOrderItems().get(0));
+                taskForm.setStatus(StatusString.T_WAITING.getValue());
+                taskForm.setOrderItems(List.of(item));
+                taskFormMapper.insertTaskForm(taskForm);
+
                 //TODO:生成调货单
-            }
-            else if(form.getStatus().equals(StatusString.T_UNSENT.getValue())){
-                //TODO: 发送出库消息
-                //type: SHIP_OUT
-                //insertCheckOutRecord(String type, Long taskId, String mainsiteId);
+                stockOutMsgUtil.insertStockOutMessage(mainSiteId,taskForm.getOrderItems().get(0));
             }
         }
+        if(!inStockList.isEmpty()) {
+            var taskForm = preGenerateTaskForm(order,subSiteId);
+            for (var item: inStockList) {
+                item.setStatus(StatusString.ITEM_PREPARED.getValue());
+                item.setTaskId(taskForm.getTaskId());
+                orderItemMapper.updateOrderItemTaskId(item);
+                orderItemMapper.updateOrderItemStatus(item);
+            }
 
-        return all;
+            taskForm.setStatus(StatusString.T_UNSENT.getValue());
+            taskForm.setOrderItems(inStockList);
+            taskFormMapper.insertTaskForm(taskForm);
+
+            sendTaskForm(taskForm.getTaskId(),mainSiteId,"张三","10086");//TODO:发货人信息
+        }
+    }
+
+    /**
+     * 发送任务单（按主站确认发货地）
+     * @param taskFormId 任务单id
+     * @param shipName 发货人姓名
+     * @param shipTel 发货人电话
+     * @param mainSiteId 主站id
+     */
+    public void sendTaskForm(long taskFormId,String mainSiteId,String shipName,String shipTel) {
+        var mainSite = siteMapper.getMainSiteById(mainSiteId);
+        sendTaskForm(taskFormId, shipName, shipTel, mainSite.getProvince(),mainSite.getCity(),mainSite.getDistrict(),mainSite.getAddr());
+    }
+
+    /**
+     * 发送任务单
+     * @param taskFormId 任务单id
+     * @param shipName 发货人姓名
+     * @param shipTel 发货人电话
+     * @param shipPro 发货省份
+     * @param shipCity 发货城市
+     * @param shipDis 发货地区县
+     * @param shipAddr 发货地详细地址
+     */
+    public void sendTaskForm(long taskFormId,String shipName,String shipTel,String shipPro,String shipCity,String shipDis,String shipAddr) {
+        var taskForm = taskFormMapper.getTaskForm(taskFormId);
+        taskForm.setDeliveryDateTime(new Date());
+        taskForm.setShipName(shipName);
+        taskForm.setShipTel(shipTel);
+        taskForm.setShipPro(shipPro);
+        taskForm.setShipCity(shipCity);
+        taskForm.setShipDis(shipDis);
+        taskForm.setShipAddr(shipAddr);
+        taskForm.setStatus(StatusString.T_ON_THE_WAY.getValue());
+        taskFormMapper.updateTaskForm(taskForm);
+
+        //TODO: 发送出库消息
+        //type: SHIP_OUT
+        //siteIOService.insertCheckOutRecord(String type, Long taskId, String mainsiteId);
     }
 
     private void checkPageRequest(PageRequest pageRequest) {
@@ -240,15 +294,16 @@ public class TaskFormService {
             throw new BusinessErrorException("order不能为空", ErrorCode.MISS_PARAMS.getCode());
 
         var taskForm = new TaskForm();
+        taskForm.setTaskId(idSequenceUtil.getNextFormIdByName(SequenceName.TASK_FORM.getValue()));
         taskForm.setOrderId(order.getOrderId());
         taskForm.setBillName(order.getBillName());
+//        taskForm.setBillTel(order.get);
         taskForm.setBillPro(order.getBillPro());
         taskForm.setBillCity(order.getBillCity());
         taskForm.setBillDis(order.getBillDistrict());
         taskForm.setBillAddr(order.getBillAddr());
         taskForm.setTotalPrice(order.getTotalPrice());
         taskForm.setNote(order.getNote());
-        taskForm.setOrderItems(new ArrayList<>());
         taskForm.setSubSiteId(subSiteId);
 
         return taskForm;
@@ -262,6 +317,7 @@ public class TaskFormService {
         result.setTaskFormId(taskForm.getTaskId());
         result.setSubSiteId(taskForm.getSubSiteId());
         result.setStatus(taskForm.getStatus());
+//        result.setStatusMessage(getStatusMessage(taskForm,mainSiteId));
         result.setShipTime(taskForm.getDeliveryDateTime());
         result.setReceiverName(taskForm.getBillName());
         result.setReceiverTel(taskForm.getBillTel());
@@ -278,5 +334,24 @@ public class TaskFormService {
             result.add(toTaskFormLog(taskForm));
         }
         return result;
+    }
+
+    private String getStatusMessage(TaskForm taskForm, String mainSiteId) {
+        var mainSite = siteMapper.getMainSiteById(mainSiteId);
+        var subSite = siteMapper.getSubSiteById(taskForm.getSubSiteId());
+        switch (taskForm.getStatus()){
+            case "W":
+                return "商品 "+taskForm.getOrderItems().get(0).getItem().getName() + " 缺货, 调货中";
+            case "U":
+                return "待发货";
+            case "O":
+                return mainSite.getCity()+mainSite.getDistrict()+" 站已发出";
+            case "N":
+                return "已到达 " + subSite.getDistrict() + " 站,配送中";
+            case "Y":
+                return "商品已签收, 感谢您的使用";
+            default:
+                return "状态信息有误";
+        }
     }
 }

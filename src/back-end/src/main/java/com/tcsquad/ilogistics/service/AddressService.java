@@ -140,6 +140,45 @@ public class AddressService {
     }
 
     /**
+     * 查找最近的点
+     * @param one 纬度,经度
+     * @param many 纬度,经度
+     * @param byTime true:按时间排; false:按距离排
+     * @return
+     */
+    public int closest(Pair<Double, Double> one, List<Pair<Double, Double>> many, boolean byTime) {
+        if (many == null || many .isEmpty())
+            throw new BusinessErrorException("计算距离的列表不能为空",ErrorCode.MISS_PARAMS.getCode());
+
+        var distance = distance(one,many);
+
+        int result = 0;
+        double closestValue = distance.get(0).getDistance().getValue();
+        if(byTime)
+            closestValue = distance.get(0).getDuration().getValue();
+
+        for(int i = 1;i<distance.size();i++){
+            var tmp = distance.get(i);
+            double value = byTime ? tmp.getDuration().getValue() : tmp.getDistance().getValue();
+            if(value < closestValue) {
+                result = i;
+                closestValue = value;
+            }
+        }
+        return result;
+    }
+
+    /**
+     *  查找最近的点,按距离排序
+     * @param one 纬度,经度
+     * @param many 纬度,经度
+     * @return
+     */
+    public int closest(Pair<Double, Double> one, List<Pair<Double, Double>> many) {
+        return closest(one, many ,false);
+    }
+
+    /**
      * @param from         起始坐标(纬度,经度)
      * @param to           结束坐标(纬度,经度)
      * @param waypoints    途径坐标串 （小于18个）(纬度,经度)

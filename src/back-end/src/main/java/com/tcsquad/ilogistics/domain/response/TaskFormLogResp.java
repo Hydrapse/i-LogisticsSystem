@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 public class TaskFormLogResp {
+    private long orderId;
     private long taskFormId;
     private String subSiteId;
     private String status;
@@ -14,6 +15,14 @@ public class TaskFormLogResp {
     private String receiverTel;
     private String receiverAddress;
     private List<OrderItem> orderItems;
+
+    public long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
+    }
 
     public long getTaskFormId() {
         return taskFormId;
