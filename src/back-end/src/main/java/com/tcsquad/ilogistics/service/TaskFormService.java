@@ -18,6 +18,7 @@ import com.tcsquad.ilogistics.mapper.order.TaskFormMapper;
 import com.tcsquad.ilogistics.mapper.storage.SiteMapper;
 import com.tcsquad.ilogistics.service.interf.WarehouseService;
 import com.tcsquad.ilogistics.util.PageUtil;
+import com.tcsquad.ilogistics.util.StockOutMsgUtil;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -39,7 +40,7 @@ public class TaskFormService {
     AddressService addressService;
 
     @Autowired
-    AmqpTemplate amqpTemplate;
+    StockOutMsgUtil stockOutMsgUtil;
 
     @Autowired
     SiteMapper siteMapper;
@@ -205,8 +206,8 @@ public class TaskFormService {
 
         var all = taskFormMapper.getTaskFormsByOrderId(order.getOrderId());
         for (var form : all) {
-            if (form.getStatus().equals("W"))
-                amqpTemplate.convertAndSend("lack item", form.getOrderItems().get(0).getItemId(), form.getTaskId());
+            if (form.getStatus().equals(StatusString.T_WAITING.getValue()))
+                stockOutMsgUtil.insertStockOutMessage(mainSiteId,form.getOrderItems().get(0));
         }
 
         return all;
