@@ -8,6 +8,7 @@ import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.response.ItemInventoryDetailResp;
 import com.tcsquad.ilogistics.domain.storage.Item;
 import com.tcsquad.ilogistics.exception.BusinessErrorException;
+import com.tcsquad.ilogistics.exception.NotFoundException;
 import com.tcsquad.ilogistics.service.GoodsService;
 import com.tcsquad.ilogistics.util.IDSequenceUtil;
 import io.swagger.annotations.Api;
@@ -79,5 +80,37 @@ public class GoodsController {
             throw new BusinessErrorException("业务逻辑异常, 传入值包含非法值",
                     ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
         }
+    }
+
+    @ApiOperation("更新商品信息,如果不上传图片默认不修改图片")
+    @PutMapping("/items/{itemId}")
+    public void updateItem(@PathVariable("itemId")String itemId,
+                           Item item,MultipartFile imgFile){
+        //如果字符串为空直接报错
+        if(StringUtils.isEmpty(itemId)){
+            throw new BusinessErrorException("业务逻辑异常, 传入productId为空",
+                    ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
+        }
+        else if(StringUtils.isEmpty(item.getName())){
+            throw new BusinessErrorException("业务逻辑异常, item名称为空",
+                    ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
+        }
+
+        //检验itemId是否正确
+        Item preItem = goodsService.getItemById(itemId);
+        if(preItem == null){
+            throw new NotFoundException("找不到对应item",
+                    ErrorCode.PARAMS_ERROR.getCode());
+        }
+
+        //更新商品
+        item.setImgUrl(preItem.getImgUrl()); //先将原imgUrl传入
+        goodsService.setItemImage(item, imgFile); //若imgFile不为空则插入
+        Item rtnItem = goodsService.updateItem(item);
+        if(rtnItem == null){
+            throw new BusinessErrorException("业务逻辑异常, item名称为空",
+                    ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
+        }
+
     }
 }

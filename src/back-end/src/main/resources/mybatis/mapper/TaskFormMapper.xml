@@ -21,7 +21,8 @@
             courier,
             totalprice,
             status,
-            note
+            note,
+            shiptime as deliveryDateTime
         from taskform
         where orderid = #{orderId}
     </select>
@@ -43,7 +44,8 @@
             courier,
             totalprice,
             status,
-            note
+            note,
+            shiptime as deliveryDateTime
         from taskform
         where taskid = #{taskId}
     </select>
@@ -66,7 +68,8 @@
             courier,
             totalprice,
             status,
-            note
+            note,
+            shiptime as deliveryDateTime
         from taskform
         where subsiteid = #{subsiteId}
     </select>
@@ -89,7 +92,8 @@
             courier,
             totalprice,
             status,
-            note
+            note,
+            shiptime as deliveryDateTime
         from taskform
     </select>
 
@@ -111,14 +115,15 @@
             courier,
             totalprice,
             status,
-            note
+            note,
+            shiptime as deliveryDateTime
         from taskform
         where
             1 = 1
             <if test="keyword != null and keyword.length > 0">
             and
                 <foreach collection="keyword" item="keyword" open="(" close=")" separator="or">
-                    concat(taskid,',',orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',status, ifnull(note,''))
+                    concat(taskid,',',orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',status, ifnull(note,''),','ifnull(shiptime,''))
                     like concat ('%', #{keyword},'%')
                 </foreach>
 
@@ -144,7 +149,8 @@
             courier,
             totalprice,
             status,
-            note
+            note,
+            shiptime as deliveryDateTime
         from taskform
         where status = #{status}
     </select>
@@ -167,7 +173,8 @@
             courier,
             totalprice,
             status,
-            note
+            note,
+            shiptime as deliveryDateTime
         from taskform
         where subsiteid = #{subSiteId}
               and
@@ -192,13 +199,14 @@
             courier,
             totalprice,
             status,
-            note
+            note,
+            shiptime as deliveryDateTime
         from taskform
         where subsiteid = #{subSiteId}
             <if test="keyword != null and keyword.length > 0">
                 and
                  <foreach collection="keyword" item="keyword" open="(" close=")" separator="or">
-                     concat(taskid,',',orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',status, ifnull(note,''))
+                     concat(taskid,',',orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',status, ifnull(note,''),','ifnull(shiptime,''))
                      like concat ('%', #{keyword},'%')
                  </foreach>
             </if>
@@ -213,11 +221,11 @@
     <insert id="insertTaskForm" parameterType="TaskForm">
         insert into taskform
            (taskid, orderid, subsiteid, shipname, shiptel, shippro, shipcity, shipdis, shipaddr, billname,
-            billtel, billpro, billcity, billdis, billaddr, courier, totalprice, status, note)
+            billtel, billpro, billcity, billdis, billaddr, courier, totalprice, status, note, shiptime)
         values
            (#{taskId}, #{orderId}, #{subSiteId}, #{shipName}, #{shipTel}, #{shipPro}, #{shipCity},
             #{shipDis}, #{shipAddr}, #{billName}, #{billTel}, #{billPro}, #{billCity}, #{billDis},
-            #{billAddr}, #{courier}, #{totalPrice}, #{status}, #{note})
+            #{billAddr}, #{courier}, #{totalPrice}, #{status}, #{note}, #{deliveryDateTime})
     </insert>
 
     <update id="updateTaskFormStatus">
@@ -234,5 +242,20 @@
         delete from taskform
         where orderid = #{orderId}
     </delete>
-
+    <update id="insertTaskId" parameterType="java.util.List">
+        <if test="list!= null">
+            <foreach collection="list" item="orderItem" index= "index" open="(" close=")" separator =";">
+                update orderitem
+                set
+                    taskid = #{orderItem.taskId}
+                where orderid = #{orderItem.orderId} and itemid = #{orderItem.itemId}
+            </foreach>
+        </if>
+    </update>
+    <select id="getTaskItemsByTaskId" parameterType="Long">
+        select
+            orderid, itemid, taskid, itemnum, status, total
+        from orderitem
+        where taskid = #{taskId}
+    </select>
 </mapper>

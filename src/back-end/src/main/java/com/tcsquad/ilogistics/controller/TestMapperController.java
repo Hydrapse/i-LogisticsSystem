@@ -51,6 +51,7 @@ public class TestMapperController {
         taskForm1.setNote("");
 
         taskFormMapper.insertTaskForm(taskForm1);
+        //taskFormMapper.insertTaskId();
 
         return taskFormMapper.getTaskForms();
 
@@ -83,9 +84,11 @@ public class TestMapperController {
     @GetMapping("/test/deleteTaskForm")
     List<TaskForm> deleteTaskForm(){
         //删除某一任务单时，设置orderItem的taskId为null
-        OrderItem orderItem = orderItemMapper.getOrderItemByTaskId(2020071301);
-        orderItem.setTaskId(null);
-        orderItemMapper.updateOrderItemTaskId(orderItem);
+        List<OrderItem> orderItems = orderItemMapper.getOrderItemsByTaskId(2020071301);
+        for(OrderItem orderItem:orderItems){
+            orderItem.setTaskId(null);
+            orderItemMapper.updateOrderItemTaskId(orderItem);
+        }
         taskFormMapper.deleteTaskForm(2020071301);
         return taskFormMapper.getTaskForms();
     }
@@ -127,6 +130,5 @@ public class TestMapperController {
     int countTaskFormsByStatus(){
         return taskFormMapper.countTaskFormsByStatus("Y");
     }
-
 
 }

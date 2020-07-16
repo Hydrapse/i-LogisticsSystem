@@ -1,5 +1,6 @@
 package com.tcsquad.ilogistics.mapper.order;
 
+import com.tcsquad.ilogistics.domain.order.OrderItem;
 import com.tcsquad.ilogistics.domain.order.TaskForm;
 import com.tcsquad.ilogistics.domain.storage.SubSite;
 import org.apache.ibatis.annotations.Param;
@@ -12,6 +13,9 @@ public interface TaskFormMapper {
 
     //通过订单Id查询该订单对应的任务单
     List<TaskForm> getTaskFormsByOrderId(long orderId);
+
+    //查询任务单时获取任务单的任务商品列表
+    List<OrderItem> getTaskItemsByTaskId(long taskId);
 
     //通过配送站Id查询该订单对应的任务单
     List<TaskForm> getTaskFormsBySubSiteId(String subsiteId); //DONE
@@ -40,11 +44,14 @@ public interface TaskFormMapper {
 
     void insertTaskForm(TaskForm taskForm);
 
+    void insertTaskId(List<OrderItem> taskItemList);//插入任务单时，同时给任务单的任务商品设置任务单编号
+
     void updateTaskFormStatus(String status,long taskId);
 
     void deleteTaskForm(long taskId);
 
     //删除某一订单对应的任务单
     void deleteTaskFormsByOrderId(long orderId);
+
 
 }

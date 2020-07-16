@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 
@@ -22,6 +23,7 @@ public class IDSequenceUtil {
     private static String SUPPLIER_PREFIX = "SUP-";
 
     //使用该接口时应从SequenceName中获取name
+    @Transactional
     public Long getNextFormIdByName(String name){
         if(SequenceName.isInGroup(name, SequenceName.Group.FormName)){
             Long nextId = sequenceMapper.getFormNextIdByName(name);
@@ -32,6 +34,7 @@ public class IDSequenceUtil {
             return null;
     }
 
+    @Transactional
     public String getNextSubsiteId(){
         long nextSequence = sequenceMapper.getFormNextIdByName(SequenceName.SUBSITEID.getValue());
         sequenceMapper.increaseSequenceByName(SequenceName.SUBSITEID.getValue(),nextSequence+1);
@@ -43,6 +46,7 @@ public class IDSequenceUtil {
         return nextId;
     }
 
+    @Transactional
     public String getNextMainsiteId(){
         long nextSequence = sequenceMapper.getFormNextIdByName(SequenceName.MAINSITEID.getValue());
         sequenceMapper.increaseSequenceByName(SequenceName.MAINSITEID.getValue(),nextSequence+1);
@@ -54,6 +58,7 @@ public class IDSequenceUtil {
         return nextId;
     }
 
+    @Transactional
     public String getNextSupplierId(){
         long nextSequence = sequenceMapper.getFormNextIdByName(SequenceName.SUPPLIERID.getValue());
         sequenceMapper.increaseSequenceByName(SequenceName.SUPPLIERID.getValue(),nextSequence+1);
@@ -65,6 +70,7 @@ public class IDSequenceUtil {
         return nextId;
     }
 
+    @Transactional
     public String getNextWarehouseId(){
         long nextSequence = sequenceMapper.getFormNextIdByName(SequenceName.WAREHOUSEID.getValue());
         sequenceMapper.increaseSequenceByName(SequenceName.WAREHOUSEID.getValue(),nextSequence+1);
@@ -76,6 +82,7 @@ public class IDSequenceUtil {
         return nextId;
     }
 
+    @Transactional
     public String getNextItemId(String categoryId){
         if(!SequenceName.isInGroup(categoryId,SequenceName.Group.CategoryId)){
             return null;
