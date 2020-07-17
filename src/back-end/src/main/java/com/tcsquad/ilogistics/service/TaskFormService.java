@@ -181,7 +181,7 @@ public class TaskFormService {
             result[i].setSteps(list);
         }
 
-        return new RouteResp(result[0],result[1],null);
+        return new RouteResp(result[0],result[1],taskForm.getStatus(),mainSite.getMainsiteId(),subSite.getSubsiteId());
     }
 
     /**
