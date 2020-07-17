@@ -43,6 +43,8 @@ dependencies {
     testImplementation 'org.springframework.amqp:spring-rabbit-test'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 configurations {
