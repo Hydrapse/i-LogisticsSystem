@@ -6,6 +6,7 @@ import com.tcsquad.ilogistics.domain.ErrorCode;
 import com.tcsquad.ilogistics.domain.SequenceName;
 import com.tcsquad.ilogistics.domain.StatusString;
 import com.tcsquad.ilogistics.domain.clientele.Supplier;
+import com.tcsquad.ilogistics.domain.clientele.SupplyIO;
 import com.tcsquad.ilogistics.domain.order.Order;
 import com.tcsquad.ilogistics.domain.order.OrderItem;
 import com.tcsquad.ilogistics.domain.order.ReturnForm;
@@ -157,7 +158,7 @@ public class SiteIOServiceImpl implements SiteIOService {
             //Todo:确认出库对其他模块的影响
             if(siteIO.getType().equals(StatusString.SHIP_OUT.getValue())){
                 //--修改任务单状态
-                taskFormMapper.updateTaskFormStatus(StatusString.T_ACCEPTED.getValue(),siteIO.getFormId());
+                taskFormMapper.updateTaskFormStatus(StatusString.T_ON_THE_WAY.getValue(),siteIO.getFormId());
             }
             else if(siteIO.getType().equals(StatusString.ADJUST_OUT.getValue())){
                 //--改变调货单的状态,改成已处理
@@ -348,43 +349,77 @@ public class SiteIOServiceImpl implements SiteIOService {
 
         //修改库房编号
         siteIOMapper.updateSiteIOWarehouseId(recordId,warehouseId);
-
     }
 
     @Override
     @Transactional
     public void insertCheckOutRecord(String type, Long formId, String mainsiteId) {
         List<SiteIO> siteIOList = new ArrayList<>();
-        if(type.equals(StatusString.SUPPLY_OUT)){
+        if(type.equals(StatusString.SUPPLY_OUT.getValue())){
+            SiteIO siteIO = new SiteIO();
+            SupplyIO supplyIO = supplyIOMapper.getSupplyIOByRecordId(formId);
+            if(supplyIO == null){
+                throw new BusinessErrorException("业务逻辑异常, 该供应商退订录不存在",
+                        ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
+            }
+            siteIO.setFormId(formId);
+            siteIO.setItemId(supplyIO.getItemId());
+            siteIO.setQty(supplyIO.getQty());
+            siteIO.setType(StatusString.SUPPLY_OUT.getValue());
+
+            siteIOList.add(siteIO);
+            //Todo :改变供应商退订货单的状态
 
         }
         else if(type.equals(StatusString.ADJUST_OUT.getValue())){
+            AdjustForm adjustForm = adjustFormMapper.getAdjustForm(formId);
+            if(adjustForm == null){
+                throw new BusinessErrorException("业务逻辑异常, 该调货单订录不存在",
+                        ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
+            }
+            adjustForm.setAdjustStatus(StatusString.A_PROCESSED.getValue());
+            adjustFormMapper.updateAdjustFormStatus(adjustForm);
 
+            SiteIO siteIO = new SiteIO();
+            siteIO.setType(StatusString.ADJUST_OUT.getValue());
+            siteIO.setFormId(formId);
+            siteIO.setItemId(adjustForm.getItemId());
+            siteIO.setQty(adjustForm.getItemNum());
+
+            siteIOList.add(siteIO);
         }
         else if(type.equals(StatusString.SHIP_OUT.getValue())){
             List<OrderItem> orderItems = taskFormMapper.getTaskItemsByTaskId(formId);
+            if(orderItems==null || orderItems.isEmpty()){
+                throw new BusinessErrorException("业务逻辑异常, 该任务单订录不存在",
+                        ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
+            }
+
             for(OrderItem orderItem:orderItems){
                 SiteIO shipOut = new SiteIO();
                 shipOut.setFormId(orderItem.getOrderId());
                 shipOut.setItemId(orderItem.getItemId());
                 shipOut.setQty(orderItem.getItemNum());
                 shipOut.setType(type);
-
-                //Todo:这里应该需要增加一些策略
-                //此处默认选第一个
-                List<String> warehouseOptions = warehouseMapper.getWarehouseOptionsToCheckout(orderItem.getItemId(),orderItem.getItemNum(),mainsiteId);
-                shipOut.setWarehouseId(warehouseOptions.get(0));
-
-                Long nextId = idSequenceUtil.getNextFormIdByName(SequenceName.MAINSITEIO_FORM.getValue());
-                shipOut.setRecordId(nextId);
-
+                siteIOList.add(shipOut);
             }
+
+            //修改任务单的状态
+            taskFormMapper.updateTaskFormStatus(StatusString.T_UNSENT.getValue(),formId);
         }
 
         for(SiteIO siteIO:siteIOList){
             siteIO.setApprovalStatus(StatusString.WAITING.getValue());
             siteIO.setTimeStamp(new Date());
             siteIO.setApprover("Auto");
+
+            //Todo:这里应该需要增加一些策略
+            //此处默认选第一个
+            List<String> warehouseOptions = warehouseMapper.getWarehouseOptionsToCheckout(siteIO.getItemId(),siteIO.getQty(),mainsiteId);
+            siteIO.setWarehouseId(warehouseOptions.get(0));
+
+            Long nextId = idSequenceUtil.getNextFormIdByName(SequenceName.MAINSITEIO_FORM.getValue());
+            siteIO.setRecordId(nextId);
             siteIOMapper.insertSiteIORecord(siteIO);
 
             ItemCheckoutResp itemCheckoutResp = getItemCheckoutRespByRecordId(siteIO.getRecordId());
