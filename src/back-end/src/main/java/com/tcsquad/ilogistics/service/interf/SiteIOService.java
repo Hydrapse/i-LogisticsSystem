@@ -47,6 +47,9 @@ public interface SiteIOService {
     //发送入库消息
     void sendItemCheckinMessage(ItemCheckinResp itemCheckinResp);
 
+    //发送出库请求
+    void sendItemCheckoutMessage(ItemCheckoutResp itemCheckoutResp);
+
     //是否需要审核
     boolean isCheckNeeded(SiteIOAddReq siteIOAddReq);
 }

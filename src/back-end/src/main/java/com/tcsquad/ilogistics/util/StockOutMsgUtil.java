@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.tcsquad.ilogistics.domain.order.OrderItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.List;
  * @description: 缺货信息处理Redis工具类
  */
 @Component
+@Transactional
 public class StockOutMsgUtil {
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd:HH");
 
@@ -88,7 +90,9 @@ public class StockOutMsgUtil {
 
         if (maxSize < msgThroughput){
             rtnList = redisUtil.lGet(listKey, 0, maxSize-1);
+            redisUtil.lRemove(listKey, msgThroughput);
             redisUtil.del(listKey);
+//            redisUtil.lRemove(listKey, maxSize);
         }
         else {
             rtnList = redisUtil.lGet(listKey, 0, msgThroughput-1);
