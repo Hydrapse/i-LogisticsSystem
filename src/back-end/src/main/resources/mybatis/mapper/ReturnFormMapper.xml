@@ -5,7 +5,7 @@
 <mapper namespace="com.tcsquad.ilogistics.mapper.order.ReturnFormMapper">
     <select id="getReturnForms" resultType="ReturnForm">
         select
-              rfid as returnFormId,
+              rfid as formId,
               orderid as orderId,
               itemid as itemId,
               itemnum as itemNum,
@@ -20,7 +20,7 @@
     </select>
     <select id="getChangeForms" resultType="ReturnForm">
         select
-              rfid as returnFormId,
+              rfid as formId,
               orderid as orderId,
               itemid as itemId,
               itemnum as itemNum,
@@ -34,7 +34,7 @@
     </select>
     <select id="getReturnFormByFormId" resultType="ReturnForm">
         select
-              rfid as returnFormId,
+              rfid as formId,
               orderid as orderId,
               itemid as itemId,
               itemnum as itemNum,
@@ -49,22 +49,31 @@
     </select>
     <select id="getReturnFormByOrderId" resultType="ReturnForm">
         select
-              rfid as returnFormId,
+              rfid as formId,
               orderid as orderId,
-              itemid as itemId,
+              returnform.itemid as itemId,
               itemnum as itemNum,
               returnmoney as returnMoney,
               applytime as applyTime,
               processtime as processTime,
               reason,
-              status
-        from returnform
-        where orderid = #{orderId} and ischange = 0
+              returnform.status as processStatus,
+
+            item.itemid as "item.itemId",
+            cid as "item.categoryId",
+            name as "item.name",
+            unitcost as "item.unitCost",
+            listprice as "item.listPrice",
+            descn as "item.descn",
+            img as "item.imgUrl",
+            item.status as "item.status"
+        from returnform, item
+        where orderid = #{orderId} and returnform.itemid=item.itemid and ischange = 0
         order by applytime
     </select>
     <select id="getChangeFormByFormId" resultType="ReturnForm">
         select
-              rfid as returnFormId,
+              rfid as formId,
               orderid as orderId,
               itemid as itemId,
               itemnum as itemNum,
@@ -78,16 +87,26 @@
     </select>
     <select id="getChangeFormByOrderId" resultType="ReturnForm">
         select
-              rfid as returnFormId,
+              rfid as formId,
               orderid as orderId,
-              itemid as itemId,
+              returnform.itemid as itemId,
               itemnum as itemNum,
+              returnmoney as returnMoney,
               applytime as applyTime,
               processtime as processTime,
               reason,
-              status
-        from returnform
-        where rfid = #{orderId} and ischange = 1
+              returnform.status as processStatus,
+
+            item.itemid as "item.itemId",
+            cid as "item.categoryId",
+            name as "item.name",
+            unitcost as "item.unitCost",
+            listprice as "item.listPrice",
+            descn as "item.descn",
+            img as "item.imgUrl",
+            item.status as "item.status"
+        from returnform, item
+        where orderid = #{orderId} and returnform.itemid=item.itemid and ischange = 1
         order by applytime
     </select>
     <insert id="insertReturnForm">

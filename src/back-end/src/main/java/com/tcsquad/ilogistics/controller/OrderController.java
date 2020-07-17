@@ -1,12 +1,18 @@
 package com.tcsquad.ilogistics.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.tcsquad.ilogistics.domain.ErrorCode;
 import com.tcsquad.ilogistics.domain.PageResult;
 import com.tcsquad.ilogistics.domain.StatusString;
 import com.tcsquad.ilogistics.domain.order.Order;
+import com.tcsquad.ilogistics.domain.order.OrderItem;
+import com.tcsquad.ilogistics.domain.order.ReturnForm;
+import com.tcsquad.ilogistics.domain.order.TaskForm;
 import com.tcsquad.ilogistics.domain.request.OrderAddReq;
 import com.tcsquad.ilogistics.domain.request.OrderSelectReq;
 import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.response.OrderDetailResp;
+import com.tcsquad.ilogistics.exception.NotFoundException;
 import com.tcsquad.ilogistics.service.OrderService;
 import com.tcsquad.ilogistics.service.TaskFormService;
 import io.swagger.annotations.Api;
@@ -16,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author Hydra
@@ -94,7 +102,37 @@ public class OrderController {
         pageRequest.initialValidate(1, 7);
         PageResult resp = orderService.selectOrders(orderSelectReq, pageRequest);
 
-        return resp.getContent();
+        return resp;
+    }
+
+    @ApiOperation("查询订单详情")
+    @GetMapping("/orders/{orderId}")
+    public Object getOrderDetail(@PathVariable("orderId")Long orderId){
+        Order order = orderService.getOrderById(orderId);
+        if(order == null){
+            throw new NotFoundException("该订单不存在",
+                    ErrorCode.USER_NOT_FOUND.getCode());
+        }
+        List<OrderItem> orderItemList = orderService.getOrderItemListByOrderId(orderId);
+        JSONObject orderDetail = new JSONObject();
+        orderDetail.put("order",order);
+        orderDetail.put("orderItemList",orderItemList);
+
+        return orderDetail;
+    }
+
+    @ApiOperation("根据订单Id查询任务单列表")
+    @GetMapping("/orders/{orderId}/taskforms")
+    public List getTaskformsByOrderId(@PathVariable("orderId")Long orderId){
+        List<TaskForm> taskForms = orderService.getTaskformListByOrderId(orderId);
+        return taskForms;
+    }
+
+    @ApiOperation("根据订单Id查询退货单列表")
+    @GetMapping("/orders/{orderId}/returnforms")
+    public List getReturnformsByOrderId(@PathVariable("orderId")Long orderId){
+        List<ReturnForm> returnForms = orderService.getReturnformListByOrderId(orderId);
+        return returnForms;
     }
 
 }
