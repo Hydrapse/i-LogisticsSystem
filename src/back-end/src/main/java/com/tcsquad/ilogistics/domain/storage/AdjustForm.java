@@ -5,6 +5,7 @@ public class AdjustForm {
     private String itemId;
     private Item item;               //调货商品
     private int itemNum;             //调货数量
+    private int remainNum;           //可供缺货数量
     private String toMainSiteId;     //处理调货主站编号
     private String fromMainSiteId;   //请求调货主站编号
     private String adjustStatus;     //调货单处理状态
@@ -40,6 +41,14 @@ public class AdjustForm {
 
     public void setItemNum(int itemNum) {
         this.itemNum = itemNum;
+    }
+
+    public int getRemainNum() {
+        return remainNum;
+    }
+
+    public void setRemainNum(int remainNum) {
+        this.remainNum = remainNum;
     }
 
     public String getToMainSiteId() {

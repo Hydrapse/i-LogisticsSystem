@@ -4,29 +4,29 @@
 <mapper namespace="com.tcsquad.ilogistics.mapper.storage.AdjustFormMapper">
     <select id="getAdjustFormsByFromId" parameterType="String" resultType="AdjustForm">
         select adjustid, itemid, itemnum, fromid as fromMainSiteId, toid as toMainSiteId,
-               ajstatus as adjustStatus
+               ajstatus as adjustStatus,remainnum
         from adjustform
         where fromid = #{fromMainSiteId}
     </select>
 
     <select id="getAdjustFormByItemId" parameterType="String" resultType="AdjustForm">
         select adjustid, itemid, itemnum, fromid as fromMainSiteId, toid as toMainSiteId,
-               ajstatus as adjustStatus
+               ajstatus as adjustStatus, remainnum
         from adjustform
         where itemid = #{itemId}
     </select>
 
     <select id="getAdjustForm" resultType="AdjustForm">
         select adjustid, itemid, itemnum, fromid as fromMainSiteId, toid as toMainSiteId,
-               ajstatus as adjustStatus
+               ajstatus as adjustStatus,remainnum
         from adjustform
         where adjustid = #{adjustId}
     </select>
 
     <insert id="insertAdjustForm" parameterType="AdjustForm">
-        insert into adjustform(adjustid,itemid,itemnum,fromid,toid,ajstatus)
+        insert into adjustform(adjustid,itemid,itemnum,fromid,toid,ajstatus,remainnum)
         values (#{adjustId}, #{itemId}, #{itemNum}, #{fromMainSiteId}, #{toMainSiteId},
-                #{adjustStatus})
+                #{adjustStatus},#{itemNum})
     </insert>
     
     <update id="updateAdjustFormStatus" parameterType="AdjustForm">
