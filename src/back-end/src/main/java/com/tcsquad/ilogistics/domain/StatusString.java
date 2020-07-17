@@ -73,6 +73,24 @@ public enum StatusString {
     T_ON_THE_WAY("O",Group.TaskFormProcess),
     T_NOT_DELIVERED("N",Group.TaskFormProcess),
     T_ACCEPTED("Y",Group.TaskFormProcess),
+
+
+    /**
+     * 调货单的status说明
+     * to未处理（N）to已处理（D）已到达（R）
+     */
+    A_UNPROCESSED("N",Group.AdjustForm),
+    A_PROCESSED("D",Group.AdjustForm),
+    A_REACH("R",Group.AdjustForm),
+
+    /**
+     * 退货单的status说明
+     * 未处理（N）已处理（P）进行中（I ing）退/换货成功（Y）
+     */
+    R_UNPROCESSED("N",Group.ReturnForm),
+    R_PROCESSED("P",Group.ReturnForm),
+    R_PROCESSING("I",Group.ReturnForm),
+    R_SUCCESS("Y",Group.ReturnForm),
     ;
 
     private String value;
@@ -109,6 +127,7 @@ public enum StatusString {
         SiteIOApproval,
         ItemSupply,
         TaskFormProcess,
-        SequenceName
+        AdjustForm,
+        ReturnForm
     }
 }
