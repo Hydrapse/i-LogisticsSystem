@@ -71,17 +71,18 @@ public class TestMapperController {
     }
     @GetMapping("/test/getTaskForm")
     TaskForm getTaskForm(){
-        TaskForm taskForm = taskFormMapper.getTaskForm(2020071301);
-        System.out.println(taskForm.getSubSiteId());
-        return taskFormMapper.getTaskForm(2020071301);
+        TaskForm taskForm = taskFormMapper.getTaskForm(10000000);
+        //System.out.println(taskForm.getSubSiteId());
+        return taskFormMapper.getTaskForm(10000000);
     }
     @GetMapping("/test/selectTaskFormBySubsiteId")
     List<TaskForm> getTaskFormByssid(){
-        List<TaskForm> taskFormList = taskFormMapper.getTaskFormsBySubSiteId("SUB-S-002");
-        System.out.println(taskFormList.size());
-        return taskFormMapper.getTaskFormsBySubSiteId("SUB-S-002");
+        List<TaskForm> taskFormList = taskFormMapper.getTaskFormsBySubSiteId("SUB-005");
+        //System.out.println(taskFormList.size());
+        return taskFormMapper.getTaskFormsBySubSiteId("SUB-005");
     }
-    @GetMapping("/test/getTaskFormByOrderId")
+
+    @GetMapping("/test/getTaskFormsByOrderId")
     List<TaskForm> getTaskFormsByOrderId(){
         List<TaskForm> taskFormList1 = taskFormMapper.getTaskFormsByOrderId(10000000);
         System.out.println(taskFormList1.size());
@@ -90,8 +91,8 @@ public class TestMapperController {
 
     @GetMapping("/test/updateTaskFormStatus")
       TaskForm updateTaskFormStatus(){
-        taskFormMapper.updateTaskFormStatus("W",2020071301);
-        return taskFormMapper.getTaskForm(2020071301);
+        taskFormMapper.updateTaskFormStatus("U",10000000);
+        return taskFormMapper.getTaskForm(10000000);
     }
 
     @GetMapping("/test/deleteTaskForm")
@@ -126,14 +127,15 @@ public class TestMapperController {
     @GetMapping("/test/getTaskFormsBySubsiteAndStatus")
     List<TaskForm> getTaskFormsBySubsiteAndStatusAndKeyword(){
         //SubSite subSite = siteMapper.getSubSiteById("SUB-H-002");
-        return taskFormMapper.getTaskFormsBySubsiteAndStatus("SUB-H-002","Y");
+        return taskFormMapper.getTaskFormsBySubsiteAndStatus("SUB-005","Y");
     }
 
     @GetMapping("/test/getTaskFormsBySubsiteAndKeyword")
     List<TaskForm> getTaskFormsBySubsiteAndKeyword(){
         //SubSite subSite = siteMapper.getSubSiteById("SUB-H-002");
-        return taskFormMapper.getTaskFormsBySubsiteAndKeyword("SUB-H-002",new String[]{"2020070602"});
+        return taskFormMapper.getTaskFormsBySubsiteAndKeyword("SUB-005",new String[]{"2020070602"});
     }
+    
     @GetMapping("/test/searchTaskForms")
     List<TaskForm> searchTaskForms(){
         String[] keyword = {"杨林","陕西省"};
@@ -186,9 +188,6 @@ public class TestMapperController {
     List<AdjustForm> getAdjustFormByItemId(){
         return adjustFormMapper.getAdjustFormByItemId("A-001");
     }
-
-
-
 
 
 

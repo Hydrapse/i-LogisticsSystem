@@ -38,216 +38,76 @@
                 <result column="unitcost" property="unitCost"/>
                 <result column="listprice" property="listPrice"/>
                 <result column="descn" property="descn"/>
-                <result column="img" property="img"/>
+                <result column="img" property="imgUrl"/>
                 <result column="status" property="status"/>
             </association>
         </collection>
     </resultMap>
     
-    <select id="getTaskFormsByOrderId" resultType="TaskForm">
-        select
-            taskid,
-            orderid,
-            subsiteid,
-            shipname,
-            shiptel,
-            shippro,
-            shipcity,
-            shipdis,
-            billname,
-            billtel,
-            billpro,
-            billcity,
-            billdis,
-            courier,
-            totalprice,
-            status,
-            note,
-            shiptime as deliveryDateTime
-        from taskform
-        where orderid = #{orderId}
+    <select id="getTaskFormsByOrderId" resultMap="taskFormResult">
+        select *
+        from taskform, orderitem, item
+        where taskform.orderid = #{orderId} and taskform.taskid = orderitem.taskid and orderitem.itemid = item.itemid
     </select>
-    <select id="getTaskForm" resultType="TaskForm">
-        select
-            taskid,
-            orderid,
-            subsiteid,
-            shipname,
-            shiptel,
-            shippro,
-            shipcity,
-            shipdis,
-            billname,
-            billtel,
-            billpro,
-            billcity,
-            billdis,
-            courier,
-            totalprice,
-            status,
-            note,
-            shiptime as deliveryDateTime
-        from taskform
-        where taskid = #{taskId}
+    <select id="getTaskForm" resultMap="taskFormResult">
+        select *
+        from taskform, orderitem, item
+        where taskform.taskid = #{taskId} and taskform.taskid = orderitem.taskid and orderitem.itemid = item.itemid
     </select>
 
-    <select id="getTaskFormsBySubSiteId" parameterType="String" resultType="TaskForm">
-        select
-            taskid,
-            orderid,
-            subsiteid,
-            shipname,
-            shiptel,
-            shippro,
-            shipcity,
-            shipdis,
-            billname,
-            billtel,
-            billpro,
-            billcity,
-            billdis,
-            courier,
-            totalprice,
-            status,
-            note,
-            shiptime as deliveryDateTime
-        from taskform
-        where subsiteid = #{subsiteId}
+    <select id="getTaskFormsBySubSiteId" parameterType="String" resultMap="taskFormResult">
+        select *
+        from taskform, orderitem, item
+        where taskform.subsiteid = #{subsiteId} and taskform.taskid = orderitem.taskid and orderitem.itemid = item.itemid
     </select>
 
-    <select id="getTaskForms" resultType="TaskForm">
-        select
-            taskid,
-            orderid,
-            subsiteid,
-            shipname,
-            shiptel,
-            shippro,
-            shipcity,
-            shipdis,
-            billname,
-            billtel,
-            billpro,
-            billcity,
-            billdis,
-            courier,
-            totalprice,
-            status,
-            note,
-            shiptime as deliveryDateTime
-        from taskform
+    <select id="getTaskForms" resultMap="taskFormResult">
+        select *
+        from taskform, orderitem, item
+        where taskform.taskid = orderitem.taskid and orderitem.itemid = item.itemid
     </select>
 
-    <select id="searchTaskForms" resultType="TaskForm">
-        select
-            taskid,
-            orderid,
-            subsiteid,
-            shipname,
-            shiptel,
-            shippro,
-            shipcity,
-            shipdis,
-            billname,
-            billtel,
-            billpro,
-            billcity,
-            billdis,
-            courier,
-            totalprice,
-            status,
-            note,
-            shiptime as deliveryDateTime
-        from taskform
+    <select id="searchTaskForms" resultMap="taskFormResult">
+        select *
+        from taskform, orderitem, item
         where
             1 = 1
+            and taskform.taskid = orderitem.taskid and orderitem.itemid = item.itemid
             <if test="keyword != null and keyword.length > 0">
             and
                 <foreach collection="keyword" item="keyword" open="(" close=")" separator="or">
-                    concat(taskid,',',orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',status, ifnull(note,''),','ifnull(shiptime,''))
+                    concat(taskform.taskid,',',taskform.orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',taskform.status)
                     like concat ('%', #{keyword},'%')
                 </foreach>
 
             </if>
-
     </select>
 
-    <select id="getTaskFormsByStatus" parameterType="String" resultType="TaskForm">
-        select
-            taskid,
-            orderid,
-            subsiteid,
-            shipname,
-            shiptel,
-            shippro,
-            shipcity,
-            shipdis,
-            billname,
-            billtel,
-            billpro,
-            billcity,
-            billdis,
-            courier,
-            totalprice,
-            status,
-            note,
-            shiptime as deliveryDateTime
-        from taskform
-        where status = #{status}
+    <select id="getTaskFormsByStatus" parameterType="String" resultMap="taskFormResult">
+        select *
+        from taskform, orderitem, item
+        where taskform.status = #{status} and taskform.taskid = orderitem.taskid and orderitem.itemid = item.itemid
     </select>
 
-    <select id="getTaskFormsBySubsiteAndStatus" resultType="TaskForm">
-         select
-            taskid,
-            orderid,
-            subsiteid,
-            shipname,
-            shiptel,
-            shippro,
-            shipcity,
-            shipdis,
-            billname,
-            billtel,
-            billpro,
-            billcity,
-            billdis,
-            courier,
-            totalprice,
-            status,
-            note,
-            shiptime as deliveryDateTime
-        from taskform
-        where subsiteid = #{subSiteId}
-              and
-              status = #{status}
+    <select id="getTaskFormsBySubsiteAndStatus" resultMap="taskFormResult">
+        select *
+        from taskform, orderitem, item
+        where
+             taskform.taskid = orderitem.taskid and orderitem.itemid = item.itemid
+              and taskform.subsiteid = #{subSiteId} and taskform.status = #{status}
     </select>
 
-    <select id="getTaskFormsBySubsiteAndKeyword" resultType="TaskForm">
-        select
-            taskid,
-            orderid,
-            subsiteid,
-            shipname,
-            shiptel,
-            shippro,
-            shipcity,
-            shipdis,
-            billname,
-            billtel,
-            billpro,
-            billcity,
-            billdis,
-            courier,
-            totalprice,
-            status,
-            note,
-            shiptime as deliveryDateTime
-        from taskform
-        where subsiteid = #{subSiteId}
+    <select id="getTaskFormsBySubsiteAndKeyword" resultMap="taskFormResult">
+        select *
+        from taskform, orderitem, item
+        where
+            taskform.subsiteid = #{subSiteId}
+            and taskform.taskid = orderitem.taskid
+            and orderitem.itemid = item.itemid
             <if test="keyword != null and keyword.length > 0">
                 and
                  <foreach collection="keyword" item="keyword" open="(" close=")" separator="or">
-                     concat(taskid,',',orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',status, ifnull(note,''),','ifnull(shiptime,''))
+                     concat(taskform.taskid,',',taskform.orderid,',',subsiteid,',',shipname,',',shiptel,',',shippro,',',shipcity,',',shipdis,',',billname,',',billtel,',',billpro,',',billcity,',',billdis,',',courier,',',totalprice,',',taskform.status)
                      like concat ('%', #{keyword},'%')
                  </foreach>
             </if>
