@@ -3,6 +3,47 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tcsquad.ilogistics.mapper.order.TaskFormMapper">
+    <resultMap id="taskFormResult" type="TaskForm">
+        <id column="taskid" property="taskId"/>
+        <result column="orderid" property="orderId"/>
+        <result column="subsiteid" property="subSiteId"/>
+        <result column="shiptime" property="deliveryDateTime"/>
+        <result column="shipname" property="shipName"/>
+        <result column="shiptel" property="shipTel"/>
+        <result column="shippro" property="shipPro"/>
+        <result column="shipcity" property="shipCity"/>
+        <result column="shipdis" property="shipDis"/>
+        <result column="shipaddr" property="shipAddr"/>
+        <result column="billname" property="billName"/>
+        <result column="billtel" property="billTel"/>
+        <result column="billpro" property="billPro"/>
+        <result column="billcity" property="billCity"/>
+        <result column="billdis" property="billDis"/>
+        <result column="billaddr" property="billAddr"/>
+        <result column="courier" property="courier"/>
+        <result column="totalprice" property="totalPrice"/>
+        <result column="status" property="status"/>
+        <result column="note" property="note"/>
+        <collection property="orderItems" javaType="list" ofType="OrderItem">
+            <id column="orderid" property="orderId"/>
+            <id column="taskid" property="taskId"/>
+            <id column="itemid" property="itemId"/>
+            <result column="itemnum" property="itemNum"/>
+            <result column="status" property="status"/>
+            <result column="total" property="total"/>
+            <association property="item" javaType="Item">
+                <id column="itemid" property="itemId"/>
+                <id column="cid" property="categoryId"/>
+                <result column="name" property="name"/>
+                <result column="unitcost" property="unitCost"/>
+                <result column="listprice" property="listPrice"/>
+                <result column="descn" property="descn"/>
+                <result column="img" property="img"/>
+                <result column="status" property="status"/>
+            </association>
+        </collection>
+    </resultMap>
+    
     <select id="getTaskFormsByOrderId" resultType="TaskForm">
         select
             taskid,

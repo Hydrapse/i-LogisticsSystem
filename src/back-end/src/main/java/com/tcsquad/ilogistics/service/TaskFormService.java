@@ -264,7 +264,7 @@ public class TaskFormService {
      */
     public void sendTaskForm(long taskFormId,String mainSiteId,String shipName,String shipTel) {
         var mainSite = siteMapper.getMainSiteById(mainSiteId);
-        sendTaskForm(taskFormId, shipName, shipTel, mainSite.getProvince(),mainSite.getCity(),mainSite.getDistrict(),mainSite.getAddr());
+        sendTaskForm(taskFormId,mainSiteId, shipName, shipTel, mainSite.getProvince(),mainSite.getCity(),mainSite.getDistrict(),mainSite.getAddr());
     }
 
     /**
@@ -277,7 +277,7 @@ public class TaskFormService {
      * @param shipDis 发货地区县
      * @param shipAddr 发货地详细地址
      */
-    public void sendTaskForm(long taskFormId,String shipName,String shipTel,String shipPro,String shipCity,String shipDis,String shipAddr) {
+    public void sendTaskForm(long taskFormId,String mainSiteId,String shipName,String shipTel,String shipPro,String shipCity,String shipDis,String shipAddr) {
         var taskForm = taskFormMapper.getTaskForm(taskFormId);
         taskForm.setDeliveryDateTime(new Date());
         taskForm.setShipName(shipName);
@@ -289,9 +289,8 @@ public class TaskFormService {
         taskForm.setStatus(StatusString.T_ON_THE_WAY.getValue());
         taskFormMapper.updateTaskForm(taskForm);
 
-        //TODO: 发送出库消息
-        //type: SHIP_OUT
-        //siteIOService.insertCheckOutRecord(String type, Long taskId, String mainsiteId);
+        //发送出库消息
+        siteIOService.insertCheckOutRecord(StatusString.SHIP_OUT.getValue(),taskFormId,mainSiteId);
     }
 
     private void checkPageRequest(PageRequest pageRequest) {

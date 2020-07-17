@@ -109,6 +109,10 @@ public class SiteIOServiceImpl implements SiteIOService {
 
     }
 
+    /**
+     * 功能描述:<br>
+     * 确认出入库单记录 重要!!
+     */
     @Override
     @Transactional
     public void confirmSiteIORecord(Long recordId,boolean isCheckin) {
@@ -231,7 +235,6 @@ public class SiteIOServiceImpl implements SiteIOService {
         msg.put("itemId", itemCheckinResp.getItemId());
         msg.put("itemNum",itemCheckinResp.getItemNum());
         msg.put("recordId",itemCheckinResp.getRecordId());
-
 
         //向待审核入库消息队列发送消息unreviewed item in
 //        amqpTemplate.convertAndSend("unreviewed order", orderMsg.toJSONString());

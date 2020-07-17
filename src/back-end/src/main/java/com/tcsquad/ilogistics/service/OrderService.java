@@ -1,15 +1,20 @@
 package com.tcsquad.ilogistics.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.tcsquad.ilogistics.domain.ErrorCode;
+import com.tcsquad.ilogistics.domain.PageResult;
 import com.tcsquad.ilogistics.domain.StatusString;
 import com.tcsquad.ilogistics.domain.order.Order;
 import com.tcsquad.ilogistics.domain.order.OrderItem;
 import com.tcsquad.ilogistics.domain.request.OrderAddReq;
+import com.tcsquad.ilogistics.domain.request.OrderSelectReq;
+import com.tcsquad.ilogistics.domain.request.PageRequest;
+import com.tcsquad.ilogistics.domain.response.OrderBriefResp;
 import com.tcsquad.ilogistics.domain.response.OrderDetailResp;
 import com.tcsquad.ilogistics.domain.storage.Item;
 import com.tcsquad.ilogistics.domain.storage.MainSite;
-import com.tcsquad.ilogistics.domain.storage.SubSite;
 import com.tcsquad.ilogistics.exception.BusinessErrorException;
 import com.tcsquad.ilogistics.exception.NotFoundException;
 import com.tcsquad.ilogistics.mapper.order.OrderItemMapper;
@@ -17,6 +22,7 @@ import com.tcsquad.ilogistics.mapper.order.OrderMapper;
 import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.mapper.storage.SiteMapper;
 import com.tcsquad.ilogistics.settings.OrderSetting;
+import com.tcsquad.ilogistics.util.PageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -29,6 +35,7 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -239,5 +246,25 @@ public class OrderService {
      */
     public void updateProcessStatus(Order order){
         orderMapper.updateProcessStatus(order);
+    }
+
+    public PageResult selectOrders(OrderSelectReq orderSelectReq, PageRequest pageRequest) {
+        //如果dateTo为空, 则填入当前时间
+        String dateTo = orderSelectReq.getDateTo();
+        if(StringUtils.isEmpty(dateTo)){
+            dateTo = dateFormat.format(new Date());
+            orderSelectReq.setDateTo(dateTo);
+        }
+
+        //分页设置
+        int pageNum = pageRequest.getPageNum();
+        int pageSize = pageRequest.getPageSize();
+
+        //必须紧挨着查询语句
+        PageHelper.startPage(pageNum, pageSize);
+        List<OrderBriefResp> respList = orderMapper.getOrderBriefsByReq(orderSelectReq);
+
+        return PageUtil.getPageResult(pageRequest, new PageInfo<>(respList));
+
     }
 }

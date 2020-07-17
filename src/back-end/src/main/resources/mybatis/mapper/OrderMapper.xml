@@ -19,7 +19,7 @@
             shippingcost,
             paymethod,
             note,
-            status
+            processstatus
         from orders,orderstatus
         where orders.orderid = orderstatus.orderid
         order by createdate
@@ -89,5 +89,27 @@
         select count(*)
         from orders
         where orderid = #{orderId}
+    </select>
+
+    <select id="getOrderBriefsByReq" resultType="OrderBriefResp">
+         select
+            orders.orderid,
+            createdate as "createDateTime",
+            billname,
+            totalprice,
+            processstatus
+        from orders,orderstatus
+        where orders.orderid = orderstatus.orderid
+        and date(createdate) between #{dateFrom} and #{dateTo}
+        <if test="billName != null and billName != ''">
+            and billname like '%${billName}%'
+        </if>
+        <if test="processStatus != null and processStatus != ''">
+            and processstatus = UPPER(#{processStatus})
+        </if>
+        <if test="orderId != null and orderId != ''">
+            and orders.orderId = #{orderId}
+        </if>
+        order by createdate
     </select>
 </mapper>

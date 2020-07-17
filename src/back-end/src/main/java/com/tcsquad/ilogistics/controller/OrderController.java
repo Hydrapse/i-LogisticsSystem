@@ -1,8 +1,11 @@
 package com.tcsquad.ilogistics.controller;
 
+import com.tcsquad.ilogistics.domain.PageResult;
 import com.tcsquad.ilogistics.domain.StatusString;
 import com.tcsquad.ilogistics.domain.order.Order;
 import com.tcsquad.ilogistics.domain.request.OrderAddReq;
+import com.tcsquad.ilogistics.domain.request.OrderSelectReq;
+import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.response.OrderDetailResp;
 import com.tcsquad.ilogistics.service.OrderService;
 import com.tcsquad.ilogistics.service.TaskFormService;
@@ -83,6 +86,15 @@ public class OrderController {
 
         //传递order,mainsiteId给任务单生成模块
 //        taskFormService.generateTaskForms(order, mainsiteId);
+    }
+
+    @ApiOperation("查询Order列表")
+    @GetMapping("/orders")
+    public Object getOrderList(OrderSelectReq orderSelectReq, PageRequest pageRequest){
+        pageRequest.initialValidate(1, 7);
+        PageResult resp = orderService.selectOrders(orderSelectReq, pageRequest);
+
+        return resp.getContent();
     }
 
 }

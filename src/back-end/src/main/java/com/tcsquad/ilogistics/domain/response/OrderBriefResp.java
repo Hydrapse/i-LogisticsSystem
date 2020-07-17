@@ -5,9 +5,10 @@ import java.util.Date;
 
 public class OrderBriefResp {
     Long orderId;
-    String billname;
+    String billName;
     Date createDateTime;
     BigDecimal totalPrice;
+    String processStatus;
 
     public Long getOrderId() {
         return orderId;
@@ -17,12 +18,12 @@ public class OrderBriefResp {
         this.orderId = orderId;
     }
 
-    public String getBillname() {
-        return billname;
+    public String getBillName() {
+        return billName;
     }
 
-    public void setBillname(String billname) {
-        this.billname = billname;
+    public void setBillName(String billName) {
+        this.billName = billName;
     }
 
     public Date getCreateDateTime() {
@@ -39,5 +40,13 @@ public class OrderBriefResp {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getProcessStatus() {
+        return processStatus;
+    }
+
+    public void setProcessStatus(String processStatus) {
+        this.processStatus = processStatus;
     }
 }

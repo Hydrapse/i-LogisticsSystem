@@ -35,6 +35,8 @@
         <typeAlias type="com.tcsquad.ilogistics.domain.storage.MainsiteInventory" alias="MainsiteInventory"/>
         <typeAlias type="com.tcsquad.ilogistics.domain.request.CustomerReq" alias="CustomerReq"/>
         <typeAlias type="com.tcsquad.ilogistics.domain.request.ItemInventoryGetReq" alias="ItemInventoryGetReq"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.request.OrderSelectReq" alias="OrderSelectReq"/>
+        <typeAlias type="com.tcsquad.ilogistics.domain.response.OrderBriefResp" alias="OrderBriefResp"/>
     </typeAliases>
 
     <!--
