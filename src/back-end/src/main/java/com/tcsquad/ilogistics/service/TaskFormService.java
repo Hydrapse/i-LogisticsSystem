@@ -50,9 +50,6 @@ public class TaskFormService {
     @Autowired
     SiteMapper siteMapper;
 
-    @Autowired
-    WarehouseService warehouseService;
-
     @Autowired IDSequenceUtil idSequenceUtil;
 
     @Autowired
@@ -60,6 +57,9 @@ public class TaskFormService {
 
     @Autowired
     LogicalInventoryService logicalInventoryService;
+
+    @Autowired
+    TransferGoodsService transferGoodsService;
 
     public TaskForm getTaskForm(Long taskFormId) {
         if (taskFormId != null)
@@ -209,10 +209,7 @@ public class TaskFormService {
         //生成任务单
         var inStockList = new ArrayList<OrderItem>();
         for (var item : items) {
-
-            if(logicalInventoryService.decreaseLogicInventory
-                    (mainsiteId, item.getItemId(), item.getItemNum())) {
-                //TODO: 扣除逻辑库存成功后
+            if(logicalInventoryService.decreaseLogicInventory(mainsiteId,item.getItemId(),item.getItemNum())) {// in stock
                 inStockList.add(item);
             } else {
                 var taskForm = preGenerateTaskForm(order,subSiteId);
@@ -226,8 +223,8 @@ public class TaskFormService {
                 taskForm.setOrderItems(List.of(item));
                 taskFormMapper.insertTaskForm(taskForm);
 
-                //TODO:生成调货单
-                stockOutMsgUtil.insertStockOutMessage(mainsiteId,taskForm.getOrderItems().get(0));
+                stockOutMsgUtil.insertStockOutMessage(mainsiteId,taskForm.getOrderItems().get(0)); //缺货消息
+                transferGoodsService.generateTransfer(mainsiteId,taskForm); //调货请求
             }
         }
         if(!inStockList.isEmpty()) {
@@ -245,6 +242,17 @@ public class TaskFormService {
 
             sendTaskForm(taskForm.getTaskId(),mainsiteId,"张三","10086");//TODO:发货人信息
         }
+    }
+
+    /**
+     * 发送任务单（按配送站确定主站并确定发货地）
+     * @param taskFormId 任务单id
+     * @param shipName 发货人姓名
+     * @param shipTel 发货人电话
+     */
+    public void sendTaskForm(long taskFormId,String shipName,String shipTel) {
+        var mainSiteId = siteMapper.getSubSiteById(taskFormMapper.getTaskForm(taskFormId).getSubSiteId()).getMainsiteId();
+        sendTaskForm(taskFormId, mainSiteId, shipName, shipTel);
     }
 
     /**

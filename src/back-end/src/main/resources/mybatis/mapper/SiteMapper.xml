@@ -25,6 +25,19 @@
         where mainsid = #{mainsiteId}
     </select>
 
+    <select id="getMainsiteByWarehouseId" resultType="MainSite">
+        select mainsid as mainsiteId,
+               province,
+               city,
+               district,
+               addr,
+               longitude,
+               latitude
+        from mainsite,warehouse
+        where warehouseid = #{warehouseId} and mainsite.mainsid=warehouse.mainsiteid
+    </select>
+
+
     <select id="getSubSiteById" resultType="SubSite">
         select subsid as subsiteId,
                mainsid as mainsiteId,
