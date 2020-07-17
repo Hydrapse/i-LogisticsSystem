@@ -33,6 +33,9 @@ public class LogicalInventoryService {
     @Autowired
     LogicInventoryMapper logicInventoryMapper;
 
+    @Autowired
+    TaskFormService taskFormService;
+
     /**
      * 前置条件:<br>
      *     WarehouseService中确认入库消息, 真实库存与逻辑库存增加完毕, 进入缺货信息处理阶段
@@ -88,6 +91,7 @@ public class LogicalInventoryService {
 
                     //TODO: 处理任务单taskId的发货任务
                     logger.info("处理任务单 " + taskId + " 的发货任务");
+                    taskFormService.sendTaskForm(taskId, mainsiteId, "邓港大", "18923777768");
                 }
                 else {
                     logger.info("缺货消息需要库存数大于现有库存数, 该缺货消息未被处理: " + msg.toString());

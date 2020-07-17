@@ -142,7 +142,7 @@ public class TaskFormService {
         return result;
     }
 
-    public RouteResp getRoute(Long taskFormId) {//todo：statusMessage
+    public RouteResp getRoute(Long taskFormId) {
         if (taskFormId == null)
             throw new BusinessErrorException("任务单id不能为空", ErrorCode.MISS_PARAMS.getCode());
         var taskForm = taskFormMapper.getTaskForm(taskFormId);
@@ -181,7 +181,7 @@ public class TaskFormService {
             result[i].setSteps(list);
         }
 
-        return new RouteResp(result[0],result[1]);
+        return new RouteResp(result[0],result[1],null);
     }
 
     /**
@@ -214,14 +214,14 @@ public class TaskFormService {
             } else {
                 var taskForm = preGenerateTaskForm(order,subSiteId);
 
+                taskForm.setStatus(StatusString.T_WAITING.getValue());
+                taskForm.setOrderItems(List.of(item));
+                taskFormMapper.insertTaskForm(taskForm);
+
                 item.setStatus(StatusString.ITEM_STOCK_OUT.getValue());
                 item.setTaskId(taskForm.getTaskId());
                 orderItemMapper.updateOrderItemTaskId(item);
                 orderItemMapper.updateOrderItemStatus(item);
-
-                taskForm.setStatus(StatusString.T_WAITING.getValue());
-                taskForm.setOrderItems(List.of(item));
-                taskFormMapper.insertTaskForm(taskForm);
 
                 stockOutMsgUtil.insertStockOutMessage(mainsiteId,taskForm.getOrderItems().get(0)); //缺货消息
                 transferGoodsService.generateTransfer(mainsiteId,taskForm); //调货请求
@@ -229,16 +229,15 @@ public class TaskFormService {
         }
         if(!inStockList.isEmpty()) {
             var taskForm = preGenerateTaskForm(order,subSiteId);
+            taskForm.setStatus(StatusString.T_UNSENT.getValue());
+            taskForm.setOrderItems(inStockList);
+            taskFormMapper.insertTaskForm(taskForm);
             for (var item: inStockList) {
                 item.setStatus(StatusString.ITEM_PREPARED.getValue());
                 item.setTaskId(taskForm.getTaskId());
                 orderItemMapper.updateOrderItemTaskId(item);
                 orderItemMapper.updateOrderItemStatus(item);
             }
-
-            taskForm.setStatus(StatusString.T_UNSENT.getValue());
-            taskForm.setOrderItems(inStockList);
-            taskFormMapper.insertTaskForm(taskForm);
 
             sendTaskForm(taskForm.getTaskId(),mainsiteId,"张三","10086");//TODO:发货人信息
         }

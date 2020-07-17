@@ -7,6 +7,8 @@ import com.tcsquad.ilogistics.domain.map.DistanceResult;
 import com.tcsquad.ilogistics.domain.map.GeoCodingResult;
 import com.tcsquad.ilogistics.domain.map.RouteResult;
 import com.tcsquad.ilogistics.exception.BusinessErrorException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,9 @@ import reactor.util.annotation.Nullable;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -44,10 +49,14 @@ public class AddressService {
 
     private HttpResponse<String> send(String uri) {
         try {
-            return httpClient.send(HttpRequest.newBuilder().uri(URI.create(uri)).build(), HttpResponse.BodyHandlers.ofString());
+            var url = new URL(uri);
+            var encodedUri = new URI(url.getProtocol(),url.getHost(),url.getPath(),url.getQuery(),null);
+            return httpClient.send(HttpRequest.newBuilder().uri(encodedUri).build(), HttpResponse.BodyHandlers.ofString());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
         return null;

@@ -8,6 +8,8 @@ import com.tcsquad.ilogistics.domain.PageResult;
 import com.tcsquad.ilogistics.domain.StatusString;
 import com.tcsquad.ilogistics.domain.order.Order;
 import com.tcsquad.ilogistics.domain.order.OrderItem;
+import com.tcsquad.ilogistics.domain.order.ReturnForm;
+import com.tcsquad.ilogistics.domain.order.TaskForm;
 import com.tcsquad.ilogistics.domain.request.OrderAddReq;
 import com.tcsquad.ilogistics.domain.request.OrderSelectReq;
 import com.tcsquad.ilogistics.domain.request.PageRequest;
@@ -19,6 +21,8 @@ import com.tcsquad.ilogistics.exception.BusinessErrorException;
 import com.tcsquad.ilogistics.exception.NotFoundException;
 import com.tcsquad.ilogistics.mapper.order.OrderItemMapper;
 import com.tcsquad.ilogistics.mapper.order.OrderMapper;
+import com.tcsquad.ilogistics.mapper.order.ReturnFormMapper;
+import com.tcsquad.ilogistics.mapper.order.TaskFormMapper;
 import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.mapper.storage.SiteMapper;
 import com.tcsquad.ilogistics.settings.OrderSetting;
@@ -60,6 +64,12 @@ public class OrderService {
 
     @Autowired
     ItemMapper itemMapper;
+
+    @Autowired
+    TaskFormMapper taskFormMapper;
+
+    @Autowired
+    ReturnFormMapper returnFormMapper;
 
     @Autowired
     AmqpTemplate amqpTemplate;
@@ -266,5 +276,49 @@ public class OrderService {
 
         return PageUtil.getPageResult(pageRequest, new PageInfo<>(respList));
 
+    }
+
+    /**
+     * 功能描述:<br>
+     * 获取订单信息
+     */
+    public Order getOrderById(Long orderId){
+        return orderMapper.getOrder(orderId);
+    }
+
+    /**
+     * 功能描述:<br>
+     * 获取订单项商品列表
+     */
+    public List getOrderItemListByOrderId(Long orderId){
+        return orderItemMapper.getOrderItemsByOrderId(orderId);
+    }
+
+    public List getTaskformListByOrderId(Long orderId){
+        List<TaskForm> taskFormList = taskFormMapper.getTaskFormsByOrderId(orderId);
+        if(taskFormList == null || taskFormList.isEmpty()){
+            return null;
+        }
+
+        for (TaskForm taskForm:taskFormList){
+            List<OrderItem> orderItems = taskFormMapper.getTaskItemsByTaskId(taskForm.getTaskId());
+            taskForm.setOrderItems(orderItems);
+        }
+
+        return taskFormList;
+    }
+
+    public List getReturnformListByOrderId(Long orderId){
+        List<ReturnForm> forms = new ArrayList<>();
+        List<ReturnForm> returnForms = returnFormMapper.getReturnFormByOrderId(orderId);
+        for (ReturnForm r:returnForms){
+            forms.add(r);
+        }
+        List<ReturnForm> changeForms = returnFormMapper.getChangeFormByOrderId(orderId);
+        for (ReturnForm c:changeForms){
+            forms.add(c);
+        }
+
+        return forms;
     }
 }

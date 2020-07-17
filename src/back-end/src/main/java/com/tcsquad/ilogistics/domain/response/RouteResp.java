@@ -10,6 +10,7 @@ import java.util.List;
 public class RouteResp {
     private Result first;
     private Result second;
+    private String statusMessage;
 
     @Data
     public static class Result{

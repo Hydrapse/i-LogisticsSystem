@@ -15,13 +15,14 @@ public interface ReturnFormMapper {
 
     //查询某一退货单详细记录
     ReturnForm getReturnFormByFormId(long formId);
+
     //根据订单号查询退货单
-    ReturnForm getReturnFormByOrderId(long orderId);
+    List<ReturnForm> getReturnFormByOrderId(long orderId);
 
     //查询某一换货单详细记录
     ReturnForm getChangeFormByFormId(long formId);
     //根据订单号查询换货单
-    ReturnForm getChangeFormByOrderId(long orderId);
+    List<ReturnForm> getChangeFormByOrderId(long orderId);
 
     void insertReturnForm(ReturnForm returnForm);
 

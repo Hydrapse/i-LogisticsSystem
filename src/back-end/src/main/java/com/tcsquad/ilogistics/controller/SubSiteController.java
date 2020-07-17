@@ -4,6 +4,8 @@ import com.tcsquad.ilogistics.domain.PageResult;
 import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.request.SubSiteTaskFormReq;
 import com.tcsquad.ilogistics.domain.response.TaskFormLogResp;
+import com.tcsquad.ilogistics.domain.storage.SubSite;
+import com.tcsquad.ilogistics.service.SubSiteService;
 import com.tcsquad.ilogistics.service.TaskFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,14 @@ import java.util.List;
 public class SubSiteController {
     @Autowired
     TaskFormService taskFormService;
+
+    @Autowired
+    SubSiteService subSiteService;
+
+    @GetMapping("")
+    public List<String> getAllSubSitesIds() {
+        return subSiteService.getAllSubSite();
+    }
 
     @GetMapping("/{subSiteId}/taskforms")
     public PageResult getTaskForms(@PathVariable String subSiteId, SubSiteTaskFormReq subSiteTaskFormReq, PageRequest pageRequest) {
