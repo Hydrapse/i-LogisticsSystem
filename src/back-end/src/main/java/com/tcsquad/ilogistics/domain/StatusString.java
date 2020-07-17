@@ -73,6 +73,15 @@ public enum StatusString {
     T_ON_THE_WAY("O",Group.TaskFormProcess),
     T_NOT_DELIVERED("N",Group.TaskFormProcess),
     T_ACCEPTED("Y",Group.TaskFormProcess),
+
+
+    /**
+     * 调货单status
+     * to未处理（N）to已处理（D）已到达（R）
+     */
+    ADJUST_FORM_TODO("N",Group.AdjustForm),
+    ADJUST_FORM_DONE("D",Group.AdjustForm),
+    ADJUST_FORM_ARRIVED("R",Group.AdjustForm),
     ;
 
     private String value;
@@ -109,6 +118,7 @@ public enum StatusString {
         SiteIOApproval,
         ItemSupply,
         TaskFormProcess,
-        SequenceName
+        SequenceName,
+        AdjustForm
     }
 }
