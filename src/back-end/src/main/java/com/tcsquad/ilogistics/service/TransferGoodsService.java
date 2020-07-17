@@ -31,36 +31,43 @@ public class TransferGoodsService {
     @Autowired
     LogicalInventoryService logicalInventoryService;
 
+    @Autowired
+    SiteIOService siteIOService;
+
     /**
      * 生成调货信息
-     * @param mainSiteId 被调入主站
+     * @param lackGoodsMainSiteId 被调入主站
      * @param taskForm 任务单
      */
     @Transactional
-    void generateTransfer(String mainSiteId, TaskForm  taskForm) {
+    void generateTransfer(String lackGoodsMainSiteId, TaskForm  taskForm) {
         var orderItem = taskForm.getOrderItems().get(0);
-        var adjustforms = adjustFormMapper.getAdjustFormsByFromId(mainSiteId);
+        var adjustforms = adjustFormMapper.getAdjustFormsByFromId(lackGoodsMainSiteId);
         int remain = 0 ;
         int require = orderItem.getItemNum();
         for(var adjustform:adjustforms) {
-            if(adjustform.getItemId().equals(orderItem.getItemId()))
+            if(adjustform.getItemId().equals(orderItem.getItemId())
+                    && !adjustform.getAdjustStatus().equals(StatusString.A_REACH.getValue())) {
                 remain += adjustform.getRemainNum();
+            }
         }
 
         if(remain >= require) { //所有调货单可用数量可供补货
             int index = 0;
             while(require > 0) {
-                if(adjustforms.get(index).getItemId().equals(orderItem.getItemId())) {
+                if(adjustforms.get(index).getItemId().equals(orderItem.getItemId())
+                        && !adjustforms.get(index).getAdjustStatus().equals(StatusString.A_REACH.getValue())) {
                     int tmp = Math.min(require,adjustforms.get(index).getRemainNum());
                     require -= tmp;
                     adjustforms.get(index).setItemNum(adjustforms.get(index).getRemainNum() - tmp);
-                    //adjustFormMapper.updateAdjustForm();//todo
+                    adjustFormMapper.updateAdjustFormRemainNum(adjustforms.get(index));//更新逻辑调货数
                 }
                 index ++;
             }
         } else { //需要新增调货单
             var mainSites = siteMapper.getAllMainSite();
             var num = require * 2;
+            //从特定的一个主站调取商品
             for(var mainSite: mainSites) {
                 if(logicalInventoryService.decreaseLogicInventory(mainSite.getMainsiteId(),orderItem.getItemId(),num)) { //判断并减少库存
                     var adjustForm = new AdjustForm();
@@ -69,10 +76,11 @@ public class TransferGoodsService {
 //                    adjustForm.setRemainNum();
                     adjustForm.setAdjustStatus(StatusString.A_UNPROCESSED.getValue());
                     adjustForm.setAdjustId(idSequenceUtil.getNextFormIdByName(SequenceName.ADJUST_FORM.getValue()));
+                    adjustForm.setFromMainSiteId(lackGoodsMainSiteId);
                     adjustForm.setToMainSiteId(mainSite.getMainsiteId());
-                    adjustForm.setFromMainSiteId(mainSiteId);
                     adjustForm.setItemId(orderItem.getItemId());
                     adjustFormMapper.insertAdjustForm(adjustForm);
+                    siteIOService.insertCheckOutRecord(StatusString.ADJUST_OUT.getValue(),adjustForm.getAdjustId(),mainSite.getMainsiteId());//出库
                     break;
                 }
             }
