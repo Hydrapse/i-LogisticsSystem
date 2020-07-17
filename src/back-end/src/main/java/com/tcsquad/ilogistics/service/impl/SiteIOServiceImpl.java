@@ -1,7 +1,6 @@
 package com.tcsquad.ilogistics.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.sun.tools.javac.Main;
 import com.tcsquad.ilogistics.domain.ErrorCode;
 import com.tcsquad.ilogistics.domain.SequenceName;
 import com.tcsquad.ilogistics.domain.StatusString;
@@ -10,7 +9,6 @@ import com.tcsquad.ilogistics.domain.clientele.SupplyIO;
 import com.tcsquad.ilogistics.domain.order.Order;
 import com.tcsquad.ilogistics.domain.order.OrderItem;
 import com.tcsquad.ilogistics.domain.order.ReturnForm;
-import com.tcsquad.ilogistics.domain.order.TaskForm;
 import com.tcsquad.ilogistics.domain.request.SiteIOAddReq;
 import com.tcsquad.ilogistics.domain.response.ItemCheckinResp;
 import com.tcsquad.ilogistics.domain.response.ItemCheckoutResp;
@@ -25,10 +23,6 @@ import com.tcsquad.ilogistics.mapper.order.TaskFormMapper;
 import com.tcsquad.ilogistics.mapper.storage.*;
 import com.tcsquad.ilogistics.service.LogicalInventoryService;
 import com.tcsquad.ilogistics.service.OrderService;
-import com.tcsquad.ilogistics.mapper.storage.AdjustFormMapper;
-import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
-import com.tcsquad.ilogistics.mapper.storage.SiteIOMapper;
-import com.tcsquad.ilogistics.mapper.storage.WarehouseMapper;
 import com.tcsquad.ilogistics.service.interf.SiteIOService;
 import com.tcsquad.ilogistics.service.interf.WarehouseService;
 import com.tcsquad.ilogistics.util.IDSequenceUtil;
@@ -426,14 +420,17 @@ public class SiteIOServiceImpl implements SiteIOService {
             siteIOMapper.insertSiteIORecord(siteIO);
 
             ItemCheckoutResp itemCheckoutResp = getItemCheckoutRespByRecordId(siteIO.getRecordId());
-            sendItemCheckoutMessage(itemCheckoutResp);
 
-            //if(isCheckNeeded()){
-            //  Todo:发送消息
-            // return;
-            //}
+            //判断是否需要审核, 如果需要发送消息
+            //boolean flag = isCheckNeeded();
+            boolean flag = true; //测试中全部都需要审核
+            if(flag){
+                sendItemCheckoutMessage(itemCheckoutResp);
+             return;
+            }
 
-            //Todo: confirmSiteIORecord()
+            //TODO: 正常情况取消掉注释
+            //confirmSiteIORecord(); //审核结束后的出口
         }
 
     }
