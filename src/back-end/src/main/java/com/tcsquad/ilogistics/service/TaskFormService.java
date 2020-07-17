@@ -58,6 +58,9 @@ public class TaskFormService {
     @Autowired
     SiteIOService siteIOService;
 
+    @Autowired
+    LogicalInventoryService logicalInventoryService;
+
     public TaskForm getTaskForm(Long taskFormId) {
         if (taskFormId != null)
             return taskFormMapper.getTaskForm(taskFormId);
@@ -206,11 +209,10 @@ public class TaskFormService {
         //生成任务单
         var inStockList = new ArrayList<OrderItem>();
         for (var item : items) {
-            //TODO: 调用LogicalInventoryService方法扣除逻辑库存
-            //if(decreaseLogicInventory(mainsiteId, item.getItemId(), item.getItemNum))
-            if (warehouseService.getItemInventoryByMainSiteAndItemId(item.getItemId(),mainsiteId) >= item.getItemNum()) { // in stock TODO 判断
-                warehouseService.decreaseItemInventoryByMainSiteAndItemId(item.getItemId(),mainsiteId,item.getItemNum());
 
+            if(logicalInventoryService.decreaseLogicInventory
+                    (mainsiteId, item.getItemId(), item.getItemNum())) {
+                //TODO: 扣除逻辑库存成功后
                 inStockList.add(item);
             } else {
                 var taskForm = preGenerateTaskForm(order,subSiteId);

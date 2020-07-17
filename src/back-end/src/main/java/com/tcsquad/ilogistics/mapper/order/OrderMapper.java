@@ -1,6 +1,8 @@
 package com.tcsquad.ilogistics.mapper.order;
 
 import com.tcsquad.ilogistics.domain.order.Order;
+import com.tcsquad.ilogistics.domain.request.OrderSelectReq;
+import com.tcsquad.ilogistics.domain.response.OrderBriefResp;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,4 +30,6 @@ public interface OrderMapper {
     void updateShippingCost(Order order);
 
     boolean hasOrder(Long orderId);
+
+    List<OrderBriefResp> getOrderBriefsByReq(OrderSelectReq orderSelectReq);
 }
