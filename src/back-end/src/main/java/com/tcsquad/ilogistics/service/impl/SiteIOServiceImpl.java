@@ -63,7 +63,13 @@ public class SiteIOServiceImpl implements SiteIOService {
     @Autowired
     TaskFormMapper taskFormMapper;
     @Autowired
+    LogicInventoryMapper logicInventoryMapper;
+    @Autowired
+    SiteMapper siteMapper;
+    @Autowired
     WarehouseService warehouseService;
+    @Autowired
+    LogicalInventoryService logicalInventoryService;
     @Autowired
     AmqpTemplate amqpTemplate;
     @Autowired
@@ -73,7 +79,7 @@ public class SiteIOServiceImpl implements SiteIOService {
     @Transactional
     public void cancelSiteIOStatus(Long recordId,boolean isCheckin) {
         if(isCheckin){
-            //Todo:取消入库对其他模块的影响？？？
+            //Todo:取消入库对其他模块的影响(类似无影响)
         }
         else {
             //取消出库,则将逻辑库存加上itemNum
@@ -83,7 +89,20 @@ public class SiteIOServiceImpl implements SiteIOService {
             inventory.setLogicInventory(num);
             warehouseMapper.updateInventoryByWarehouseIdAndItemId(inventory);
 
-            //Todo:取消出库对其他模块的影响？？？
+            //取消出库对其他模块的影响
+            if(siteIO.getType().equals(StatusString.SHIP_OUT.getValue())){
+                //Todo:让任务单处理中心重新进行调度
+            }
+            else if(siteIO.getType().equals(StatusString.ADJUST_OUT.getValue())){
+                //TODO: 调货单重新调度
+            }
+            else if(siteIO.getType().equals(StatusString.SUPPLY_OUT.getValue())){
+                //Todo: 改变供应商退订记录的状态
+            }
+
+            //Todo: 更新逻辑库存, 会自动检查缺货消息,并处理缺货订单
+            MainSite mainSite = siteMapper.getMainsiteByWarehouseId(siteIO.getWarehouseId());
+            //increaseLogicalInventory(mainSite.getMainsiteId(), siteIO.getItemId(), siteIO.getQty());
         }
         siteIOMapper.updateSiteIOStatus(recordId, StatusString.INVALID.getValue());
 
@@ -96,14 +115,30 @@ public class SiteIOServiceImpl implements SiteIOService {
         if(isCheckin){
             //更新出入库单
             siteIOMapper.updateSiteIOStatus(recordId,StatusString.CONFIRM.getValue());
-
             //更新真实库存
             warehouseService.addItemToWarehouse(siteIO.getWarehouseId(),siteIO.getItemId(),siteIO.getQty());
 
-            //更新逻辑库存, 会自动检查缺货消息,并处理缺货订单
-            //increaseLogicalInventory(mainsiteId, itemId, increment);
+            MainSite mainSite = siteMapper.getMainsiteByWarehouseId(siteIO.getWarehouseId());
+            //TODO：更新逻辑库存, 会自动检查缺货消息,并处理缺货订单
+            //increaseLogicalInventory(mainSite.getMainsiteId(), siteIO.getItemId(), siteIO.getQty());
 
-            //Todo: 确认入库对其他模块的影响
+            //确认入库对其他模块的影响
+            if(siteIO.getType().equals(StatusString.SUPPLY_IN.getValue())){
+                //TODO: 改变供应商退订记录的状态，并向供应商发送已收到货的邮箱
+
+            }
+            else if(siteIO.getType().equals(StatusString.ADJUST_IN.getValue())){
+                //改变调货单的状态
+                AdjustForm preAdjustForm = adjustFormMapper.getAdjustForm(siteIO.getFormId());
+                preAdjustForm.setAdjustStatus(StatusString.A_REACH.getValue());
+                adjustFormMapper.updateAdjustFormStatus(preAdjustForm);
+            }
+            else if(siteIO.getType().equals(StatusString.RETURN_IN)){
+                //改变退货单记录的状态
+                returnFormMapper.updateReturnFormStatus(StatusString.R_SUCCESS.getValue(),siteIO.getFormId());
+                //Todo:发送退货成功的消息给上游系统
+            }
+
         }
         else {
             //确认出库，将真实库存减掉itemNum
@@ -115,13 +150,25 @@ public class SiteIOServiceImpl implements SiteIOService {
                 siteIOMapper.updateSiteIOStatus(recordId,StatusString.CONFIRM.getValue());
             }
             else {
-                //Todo:Error
-
+                throw new BusinessErrorException("业务逻辑异常, 库房中该商品库存不足，无法出库",
+                        ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
             }
 
             //Todo:确认出库对其他模块的影响
-            //Todo:修改任务单、调货单、与供应商的退订单
-
+            if(siteIO.getType().equals(StatusString.SHIP_OUT.getValue())){
+                //--修改任务单状态
+                taskFormMapper.updateTaskFormStatus(StatusString.T_ACCEPTED.getValue(),siteIO.getFormId());
+            }
+            else if(siteIO.getType().equals(StatusString.ADJUST_OUT.getValue())){
+                //--改变调货单的状态,改成已处理
+                AdjustForm preAdjustForm = adjustFormMapper.getAdjustForm(siteIO.getFormId());
+                preAdjustForm.setAdjustStatus(StatusString.A_PROCESSED.getValue());
+                adjustFormMapper.updateAdjustFormStatus(preAdjustForm);
+            }
+            else if(siteIO.getType().equals(StatusString.SUPPLY_OUT.getValue())){
+                //Todo: 改变供应商退订记录的状态
+                //Todo: 向供应商发送已到货邮件
+            }
         }
 
     }
@@ -330,6 +377,7 @@ public class SiteIOServiceImpl implements SiteIOService {
 
                 Long nextId = idSequenceUtil.getNextFormIdByName(SequenceName.MAINSITEIO_FORM.getValue());
                 shipOut.setRecordId(nextId);
+
             }
         }
 
@@ -339,25 +387,35 @@ public class SiteIOServiceImpl implements SiteIOService {
             siteIO.setApprover("Auto");
             siteIOMapper.insertSiteIORecord(siteIO);
 
-            //发送出库消息
             ItemCheckoutResp itemCheckoutResp = getItemCheckoutRespByRecordId(siteIO.getRecordId());
             sendItemCheckoutMessage(itemCheckoutResp);
+
+            //if(isCheckNeeded()){
+            //  Todo:发送消息
+            // return;
+            //}
+
+            //Todo: confirmSiteIORecord()
         }
 
-        //List<String> warehouseOptions = warehouseMapper.getWarehouseOptionsToCheckout(siteIO.getItemId(),siteIO.getQty(),mainsiteId);
+    }
 
-        //Todo:这里应该需要增加一些策略
-        //此处默认选第一个
-//        siteIO.setWarehouseId(warehouseOptions.get(0));
+    @Override
+    public void sendItemCheckoutMessage(ItemCheckoutResp itemCheckoutResp) {
+        JSONObject msg = new JSONObject();
+
+        msg.put("type", itemCheckoutResp.getType());
+        msg.put("typeDesc", itemCheckoutResp.getTypeDesc());
+        msg.put("formId", itemCheckoutResp.getFormId());
+        msg.put("itemId", itemCheckoutResp.getItemId());
+        msg.put("itemNum",itemCheckoutResp.getItemNum());
+        msg.put("recordId",itemCheckoutResp.getRecordId());
 
 
-        //if(isCheckNeeded()){
-        //  Todo:发送消息
-        // return;
-        //}
+        //向待审核出库消息队列发送消息unreviewed item out
+        amqpTemplate.convertAndSend("unreviewed item out", msg.toJSONString());
 
-        //Todo: confirmSiteIORecord()
-
+        logger.info("成功发送出库消息: " + msg.toJSONString());
     }
 
     @Override
@@ -432,24 +490,6 @@ public class SiteIOServiceImpl implements SiteIOService {
     public boolean isCheckNeeded(SiteIOAddReq siteIOAddReq) {
         //Todo: 调用一些策略
         return true;
-    }
-
-    @Override
-    public void sendItemCheckoutMessage(ItemCheckoutResp itemCheckoutResp) {
-        JSONObject msg = new JSONObject();
-
-        msg.put("type", itemCheckoutResp.getType());
-        msg.put("typeDesc", itemCheckoutResp.getTypeDesc());
-        msg.put("formId", itemCheckoutResp.getFormId());
-        msg.put("itemId", itemCheckoutResp.getItemId());
-        msg.put("itemNum",itemCheckoutResp.getItemNum());
-        msg.put("recordId",itemCheckoutResp.getRecordId());
-
-
-        //向待审核出库消息队列发送消息unreviewed item out
-        amqpTemplate.convertAndSend("unreviewed item out", msg.toJSONString());
-
-        logger.info("成功发送出库消息: " + msg.toJSONString());
     }
 
     @Override
