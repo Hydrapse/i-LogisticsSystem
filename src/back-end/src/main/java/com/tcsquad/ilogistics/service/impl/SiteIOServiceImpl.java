@@ -330,7 +330,6 @@ public class SiteIOServiceImpl implements SiteIOService {
 
                 Long nextId = idSequenceUtil.getNextFormIdByName(SequenceName.MAINSITEIO_FORM.getValue());
                 shipOut.setRecordId(nextId);
-
             }
         }
 
@@ -340,8 +339,9 @@ public class SiteIOServiceImpl implements SiteIOService {
             siteIO.setApprover("Auto");
             siteIOMapper.insertSiteIORecord(siteIO);
 
+            //发送出库消息
             ItemCheckoutResp itemCheckoutResp = getItemCheckoutRespByRecordId(siteIO.getRecordId());
-
+            sendItemCheckoutMessage(itemCheckoutResp);
         }
 
         //List<String> warehouseOptions = warehouseMapper.getWarehouseOptionsToCheckout(siteIO.getItemId(),siteIO.getQty(),mainsiteId);
@@ -432,6 +432,24 @@ public class SiteIOServiceImpl implements SiteIOService {
     public boolean isCheckNeeded(SiteIOAddReq siteIOAddReq) {
         //Todo: 调用一些策略
         return true;
+    }
+
+    @Override
+    public void sendItemCheckoutMessage(ItemCheckoutResp itemCheckoutResp) {
+        JSONObject msg = new JSONObject();
+
+        msg.put("type", itemCheckoutResp.getType());
+        msg.put("typeDesc", itemCheckoutResp.getTypeDesc());
+        msg.put("formId", itemCheckoutResp.getFormId());
+        msg.put("itemId", itemCheckoutResp.getItemId());
+        msg.put("itemNum",itemCheckoutResp.getItemNum());
+        msg.put("recordId",itemCheckoutResp.getRecordId());
+
+
+        //向待审核出库消息队列发送消息unreviewed item out
+        amqpTemplate.convertAndSend("unreviewed item out", msg.toJSONString());
+
+        logger.info("成功发送出库消息: " + msg.toJSONString());
     }
 
     @Override

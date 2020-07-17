@@ -67,7 +67,7 @@ public class TransferGoodsService {
                     adjustForm.setItem(orderItem.getItem());
                     adjustForm.setItemNum(num);
 //                    adjustForm.setRemainNum();
-                    adjustForm.setAdjustStatus(StatusString.ADJUST_FORM_TODO.getValue());
+                    adjustForm.setAdjustStatus(StatusString.A_UNPROCESSED.getValue());
                     adjustForm.setAdjustId(idSequenceUtil.getNextFormIdByName(SequenceName.ADJUST_FORM.getValue()));
                     adjustForm.setToMainSiteId(mainSite.getMainsiteId());
                     adjustForm.setFromMainSiteId(mainSiteId);
