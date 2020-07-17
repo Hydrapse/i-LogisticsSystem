@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.tcsquad.ilogistics.domain.ErrorCode;
 import com.tcsquad.ilogistics.domain.PageResult;
 import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.response.ItemInventoryDetailResp;
 import com.tcsquad.ilogistics.domain.storage.Category;
 import com.tcsquad.ilogistics.domain.storage.Item;
 import com.tcsquad.ilogistics.domain.storage.MainsiteInventory;
+import com.tcsquad.ilogistics.exception.BusinessErrorException;
 import com.tcsquad.ilogistics.mapper.storage.CategoryMapper;
 import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.mapper.storage.WarehouseMapper;
@@ -138,6 +140,11 @@ public class GoodsService {
 
     public Item createItem(Item item){
         String itemId = idSequenceUtil.getNextItemId(item.getCategoryId());
+        if(StringUtil.isNullOrEmpty(itemId)){
+            logger.warn("传入的CategoryId不存在");
+            throw new BusinessErrorException("业务逻辑异常, 传入的CategoryId不存在",
+                    ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
+        }
         item.setStatus("P");
         item.setItemId(itemId);
         logger.info(JSON.toJSONString(item));
@@ -152,7 +159,10 @@ public class GoodsService {
 
     public Item updateItem(Item item){
         //更新item
+        Item preItem = itemMapper.getItem(item.getItemId());
+        item.setCategoryId(preItem.getCategoryId());
         logger.info("更新item: " + item.toString());
+
         if(itemMapper.updateItem(item)){
             logger.info(item.getItemId() + " 更新成功");
             return item;

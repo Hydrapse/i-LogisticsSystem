@@ -9,10 +9,7 @@ import com.tcsquad.ilogistics.domain.storage.SiteIO;
 
 public interface SiteIOService {
     //新增出库记录: 其他模块调用该接口来生成出库请求
-    void insertCheckOutRecord(SiteIO siteIO,String mainsiteId);
-
-
-
+    void insertCheckOutRecord(String type, Long formId, String mainsiteId);
 
     //取消出入库记录（将status置为'F'）
     void cancelSiteIOStatus(Long recordId,boolean isCheckin);
@@ -38,9 +35,6 @@ public interface SiteIOService {
     //修改出库库房
     void updateWarehouseToCheckout(Long recordId,String warehouseId);
 
-
-
-
     //获取出库消息
     ItemCheckoutResp getItemCheckoutRespByRecordId(Long recordId);
 
@@ -49,4 +43,10 @@ public interface SiteIOService {
 
     //查询出库商品的出处
     String getItemCheckoutDest(Long formId,int type);
+
+    //发送入库消息
+    void sendItemCheckinMessage(ItemCheckinResp itemCheckinResp);
+
+    //是否需要审核
+    boolean isCheckNeeded(SiteIOAddReq siteIOAddReq);
 }

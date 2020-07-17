@@ -57,8 +57,11 @@
         update item
         set
            listprice = #{listPrice},
+           unitcost = #{unitCost},
            descn = #{descn},
-           img = #{imgUrl}
+           img = #{imgUrl},
+           cid = #{categoryId},
+           name =#{name}
         where itemid = #{itemId}
     </update>
 

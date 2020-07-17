@@ -16,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Api(tags = "主站管理模块API接口")
 @RestController
@@ -38,22 +36,24 @@ public class MainsiteController {
                                     @RequestBody SiteIOAddReq siteIOAddReq){
         List<String> warehouseList = warehouseService.getWarehouseOptionsToCheckin(siteIOAddReq.getItemId(),siteIOAddReq.getItemNum(),mainsiteId);
         if(warehouseList.isEmpty()){
-            //根据itemId和mainsiteId未能找到相匹配库房，入库请求失败
-            //Todo: Error
+            //Todo: 根据itemId和mainsiteId未能找到相匹配的单个库房，需要将入库商品存放在多个库房中
 
-            return;
         }
+
         //这里将该商品存放在第一个仓库
         //Todo:之后应该要加上一些策略配置
         siteIOAddReq.setWarehouseId(warehouseList.get(0));
         Long newRecordId = siteIOService.insertCheckinRecord(siteIOAddReq);
+        ItemCheckinResp itemCheckinResp = siteIOService.getItemCheckinRespByRecordId(newRecordId);
 
-        //if(isCheckNeeded()){
-        //  Todo:向消息队列推送消息
-        // return;
-        //}
+        if(siteIOService.isCheckNeeded(siteIOAddReq)){
+            //需要审核则发送出库消息
+            siteIOService.sendItemCheckinMessage(itemCheckinResp);
+            return;
+        }
 
-        //Todo: confirmSiteIORecord()
+        //不需要审核则直接确认入库
+        siteIOService.confirmSiteIORecord(newRecordId,true);
 
     }
 

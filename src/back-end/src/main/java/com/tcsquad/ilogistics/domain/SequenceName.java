@@ -11,6 +11,9 @@ public enum SequenceName {
     TASK_FORM("taskid", Group.FormName),
     RETURN_FORM("returnfid",Group.FormName),
     ADJUST_FORM("adjustid",Group.FormName),
+    MAINSITEIO_FORM("mainsioid",Group.FormName),
+    SUBSITEIO_FORM("subsioid",Group.FormName),
+
 
     /**
      * 昵称：配送员(courierid)

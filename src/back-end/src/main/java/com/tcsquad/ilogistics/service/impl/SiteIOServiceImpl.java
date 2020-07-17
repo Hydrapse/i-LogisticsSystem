@@ -1,8 +1,11 @@
 package com.tcsquad.ilogistics.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.tcsquad.ilogistics.domain.SequenceName;
 import com.tcsquad.ilogistics.domain.StatusString;
 import com.tcsquad.ilogistics.domain.clientele.Supplier;
 import com.tcsquad.ilogistics.domain.order.Order;
+import com.tcsquad.ilogistics.domain.order.OrderItem;
 import com.tcsquad.ilogistics.domain.order.ReturnForm;
 import com.tcsquad.ilogistics.domain.request.SiteIOAddReq;
 import com.tcsquad.ilogistics.domain.response.ItemCheckinResp;
@@ -16,21 +19,30 @@ import com.tcsquad.ilogistics.domain.storage.SiteIO;
 import com.tcsquad.ilogistics.mapper.clientele.SupplyIOMapper;
 import com.tcsquad.ilogistics.mapper.order.OrderMapper;
 import com.tcsquad.ilogistics.mapper.order.ReturnFormMapper;
+import com.tcsquad.ilogistics.mapper.order.TaskFormMapper;
 import com.tcsquad.ilogistics.mapper.storage.AdjustFormMapper;
 import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.mapper.storage.SiteIOMapper;
 import com.tcsquad.ilogistics.mapper.storage.WarehouseMapper;
+import com.tcsquad.ilogistics.service.OrderService;
 import com.tcsquad.ilogistics.service.interf.SiteIOService;
 import com.tcsquad.ilogistics.service.interf.WarehouseService;
+import com.tcsquad.ilogistics.util.IDSequenceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class SiteIOServiceImpl implements SiteIOService {
+    private static Logger logger = LoggerFactory.getLogger(OrderService.class);
+
     @Autowired
     SiteIOMapper siteIOMapper;
     @Autowired
@@ -46,7 +58,13 @@ public class SiteIOServiceImpl implements SiteIOService {
     @Autowired
     OrderMapper orderMapper;
     @Autowired
+    TaskFormMapper taskFormMapper;
+    @Autowired
     WarehouseService warehouseService;
+    @Autowired
+    AmqpTemplate amqpTemplate;
+    @Autowired
+    IDSequenceUtil idSequenceUtil;
 
     @Override
     @Transactional
@@ -135,13 +153,13 @@ public class SiteIOServiceImpl implements SiteIOService {
             siteIO.setApprovalStatus(StatusString.WAITING.getValue());
             siteIO.setApprover("Auto");                //"Auto"表示为程序根据请求自动出入库
 
-//            //第一次添加
-//            siteIO.setRecordId(10000000);
+            Long nextId = idSequenceUtil.getNextFormIdByName(SequenceName.MAINSITEIO_FORM.getValue());
+            siteIO.setRecordId(nextId);
             siteIOMapper.insertSiteIORecord(siteIO);
 
             //查询本次入库请求的recordId
-            Long recordId = siteIOMapper.getSiteIORecordIdByFormIdAndItemId(siteIO.getType(),siteIO.getFormId(),siteIO.getItemId());
-            return recordId;
+            //Long recordId = siteIOMapper.getSiteIORecordIdByFormIdAndItemId(siteIO.getType(),siteIO.getFormId(),siteIO.getItemId());
+            return nextId;
         }
         else {
             //出错
@@ -150,6 +168,25 @@ public class SiteIOServiceImpl implements SiteIOService {
 
         return null;
 
+    }
+
+    @Override
+    public void sendItemCheckinMessage(ItemCheckinResp itemCheckinResp) {
+        JSONObject msg = new JSONObject();
+
+        msg.put("type", itemCheckinResp.getType());
+        msg.put("typeDesc", itemCheckinResp.getTypeDesc());
+        msg.put("formId", itemCheckinResp.getFormId());
+        msg.put("itemId", itemCheckinResp.getItemId());
+        msg.put("itemNum",itemCheckinResp.getItemNum());
+        msg.put("recordId",itemCheckinResp.getRecordId());
+
+
+        //向待审核入库消息队列发送消息unreviewed item in
+//        amqpTemplate.convertAndSend("unreviewed order", orderMsg.toJSONString());
+        amqpTemplate.convertAndSend("unreviewed item in", msg.toJSONString());
+
+        logger.info("成功发送入库消息: " + msg.toJSONString());
     }
 
     @Override
@@ -266,16 +303,50 @@ public class SiteIOServiceImpl implements SiteIOService {
 
     @Override
     @Transactional
-    public void insertCheckOutRecord(SiteIO siteIO,String mainsiteId) {
-        siteIO.setApprovalStatus(StatusString.WAITING.getValue());
-        siteIO.setTimeStamp(new Date());
-        siteIO.setApprover("Auto");
-        List<String> warehouseOptions = warehouseMapper.getWarehouseOptionsToCheckout(siteIO.getItemId(),siteIO.getQty(),mainsiteId);
+    public void insertCheckOutRecord(String type, Long formId, String mainsiteId) {
+        List<SiteIO> siteIOList = new ArrayList<>();
+        if(type.equals(StatusString.SUPPLY_OUT)){
+
+        }
+        else if(type.equals(StatusString.ADJUST_OUT.getValue())){
+
+        }
+        else if(type.equals(StatusString.SHIP_OUT.getValue())){
+            List<OrderItem> orderItems = taskFormMapper.getTaskItemsByTaskId(formId);
+            for(OrderItem orderItem:orderItems){
+                SiteIO shipOut = new SiteIO();
+                shipOut.setFormId(orderItem.getOrderId());
+                shipOut.setItemId(orderItem.getItemId());
+                shipOut.setQty(orderItem.getItemNum());
+                shipOut.setType(type);
+
+                //Todo:这里应该需要增加一些策略
+                //此处默认选第一个
+                List<String> warehouseOptions = warehouseMapper.getWarehouseOptionsToCheckout(orderItem.getItemId(),orderItem.getItemNum(),mainsiteId);
+                shipOut.setWarehouseId(warehouseOptions.get(0));
+
+                Long nextId = idSequenceUtil.getNextFormIdByName(SequenceName.MAINSITEIO_FORM.getValue());
+                shipOut.setRecordId(nextId);
+
+            }
+        }
+
+        for(SiteIO siteIO:siteIOList){
+            siteIO.setApprovalStatus(StatusString.WAITING.getValue());
+            siteIO.setTimeStamp(new Date());
+            siteIO.setApprover("Auto");
+            siteIOMapper.insertSiteIORecord(siteIO);
+
+            ItemCheckoutResp itemCheckoutResp = getItemCheckoutRespByRecordId(siteIO.getRecordId());
+
+        }
+
+        //List<String> warehouseOptions = warehouseMapper.getWarehouseOptionsToCheckout(siteIO.getItemId(),siteIO.getQty(),mainsiteId);
 
         //Todo:这里应该需要增加一些策略
         //此处默认选第一个
-        siteIO.setWarehouseId(warehouseOptions.get(0));
-        siteIOMapper.insertSiteIORecord(siteIO);
+//        siteIO.setWarehouseId(warehouseOptions.get(0));
+
 
         //if(isCheckNeeded()){
         //  Todo:发送消息
@@ -352,6 +423,12 @@ public class SiteIOServiceImpl implements SiteIOService {
         checkoutResp.setWarehouseOptionalList(warehousesOptional);
         return checkoutResp;
 
+    }
+
+    @Override
+    public boolean isCheckNeeded(SiteIOAddReq siteIOAddReq) {
+        //Todo: 调用一些策略
+        return true;
     }
 
     @Override
