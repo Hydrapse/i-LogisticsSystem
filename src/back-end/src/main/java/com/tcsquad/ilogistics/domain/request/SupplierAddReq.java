@@ -7,7 +7,7 @@ import java.util.List;
 
 public class SupplierAddReq {
     private Supplier supplier;
-    private List<Item> itemSupplyList;
+    private List<String> itemSupplyList;
 
     public Supplier getSupplier() {
         return supplier;
@@ -17,11 +17,11 @@ public class SupplierAddReq {
         this.supplier = supplier;
     }
 
-    public List<Item> getItemSupplyList() {
+    public List<String> getItemSupplyList() {
         return itemSupplyList;
     }
 
-    public void setItemSupplyList(List<Item> itemSupplyList) {
+    public void setItemSupplyList(List<String> itemSupplyList) {
         this.itemSupplyList = itemSupplyList;
     }
 }

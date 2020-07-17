@@ -81,13 +81,13 @@ ClienteleService {
 
         //若不存在插入供应商
         Supplier supplier = supplierAddReq.getSupplier();
-        List<Item> itemSupplyList = supplierAddReq.getItemSupplyList();
+        List<String> itemSupplyList = supplierAddReq.getItemSupplyList();
 
         supplierMapper.insertSupplier(supplier);
 
         //插入商品供应信息
-        for (Item item : itemSupplyList){
-            item = itemMapper.getItem(item.getItemId());
+        for (String itemid : itemSupplyList){
+            Item item = itemMapper.getItem(itemid);
             item.setStatus(StatusString.ITEM_SUPPLY_NORMAL.getValue());
             supplierMapper.insertItemSupply(supplierId,item);
         }

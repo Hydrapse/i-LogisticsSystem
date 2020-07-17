@@ -3,24 +3,48 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tcsquad.ilogistics.mapper.storage.AdjustFormMapper">
     <select id="getAdjustFormsByFromId" parameterType="String" resultType="AdjustForm">
-        select adjustid, itemid, itemnum, fromid as fromMainSiteId, toid as toMainSiteId,
-               ajstatus as adjustStatus,remainnum
-        from adjustform
-        where fromid = #{fromMainSiteId}
+        select adjustid, adjustform.itemid, itemnum, fromid as fromMainSiteId, toid as toMainSiteId,
+               ajstatus as adjustStatus,remainnum,
+               item.itemid      as "item.itemId",
+               cid         as "item.categoryId",
+               name        as "item.name",
+               unitcost    as "item.unitCost",
+               listprice   as "item.listPrice",
+               descn       as "item.descn",
+               img         as "item.imgUrl",
+               status      as "item.status"
+        from adjustform,item
+        where fromid = #{fromMainSiteId} and adjustform.itemid = item.itemid
     </select>
 
     <select id="getAdjustFormByItemId" parameterType="String" resultType="AdjustForm">
-        select adjustid, itemid, itemnum, fromid as fromMainSiteId, toid as toMainSiteId,
-               ajstatus as adjustStatus, remainnum
-        from adjustform
-        where itemid = #{itemId}
+        select adjustid, adjustform.itemid, itemnum, fromid as fromMainSiteId, toid as toMainSiteId,
+               ajstatus as adjustStatus, remainnum,
+               item.itemid      as "item.itemId",
+               cid         as "item.categoryId",
+               name        as "item.name",
+               unitcost    as "item.unitCost",
+               listprice   as "item.listPrice",
+               descn       as "item.descn",
+               img         as "item.imgUrl",
+               status      as "item.status"
+        from adjustform,item
+        where adjustform.itemid = #{itemId} and adjustform.itemid = item.itemid
     </select>
 
     <select id="getAdjustForm" resultType="AdjustForm">
-        select adjustid, itemid, itemnum, fromid as fromMainSiteId, toid as toMainSiteId,
-               ajstatus as adjustStatus,remainnum
-        from adjustform
-        where adjustid = #{adjustId}
+        select adjustid, adjustform.itemid, itemnum, fromid as fromMainSiteId, toid as toMainSiteId,
+               ajstatus as adjustStatus,remainnum,
+               item.itemid      as "item.itemId",
+               cid         as "item.categoryId",
+               name        as "item.name",
+               unitcost    as "item.unitCost",
+               listprice   as "item.listPrice",
+               descn       as "item.descn",
+               img         as "item.imgUrl",
+               status      as "item.status"
+        from adjustform,item
+        where adjustid = #{adjustId} and adjustform.itemid = item.itemid
     </select>
 
     <insert id="insertAdjustForm" parameterType="AdjustForm">
@@ -34,4 +58,25 @@
         set ajstatus = #{adjustStatus}
         where adjustid = #{adjustId}
     </update>
+
+    <update id="updateAdjustFormRemainNum" parameterType="AdjustForm">
+        update adjustform
+        set remainnum = #{remainNum}
+        where adjustid = #{adjustId}
+    </update>
+
+    <select id="getAdjustForms" resultType="AdjustForm">
+        select adjustid, adjustform.itemid, itemnum, fromid as fromMainSiteId, toid as toMainSiteId,
+               ajstatus as adjustStatus,remainnum,
+               item.itemid      as "item.itemId",
+               cid         as "item.categoryId",
+               name        as "item.name",
+               unitcost    as "item.unitCost",
+               listprice   as "item.listPrice",
+               descn       as "item.descn",
+               img         as "item.imgUrl",
+               status      as "item.status"
+        from adjustform,item
+        where adjustform.itemid = item.itemid
+    </select>
 </mapper>
