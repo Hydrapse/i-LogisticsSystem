@@ -24,7 +24,6 @@ import com.tcsquad.ilogistics.mapper.storage.AdjustFormMapper;
 import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.mapper.storage.SiteIOMapper;
 import com.tcsquad.ilogistics.mapper.storage.WarehouseMapper;
-import com.tcsquad.ilogistics.service.OrderService;
 import com.tcsquad.ilogistics.service.interf.SiteIOService;
 import com.tcsquad.ilogistics.service.interf.WarehouseService;
 import com.tcsquad.ilogistics.util.IDSequenceUtil;
@@ -41,7 +40,7 @@ import java.util.List;
 
 @Service
 public class SiteIOServiceImpl implements SiteIOService {
-    private static Logger logger = LoggerFactory.getLogger(OrderService.class);
+    private static Logger logger = LoggerFactory.getLogger(SiteIOServiceImpl.class);
 
     @Autowired
     SiteIOMapper siteIOMapper;
@@ -98,7 +97,7 @@ public class SiteIOServiceImpl implements SiteIOService {
             warehouseService.addItemToWarehouse(siteIO.getWarehouseId(),siteIO.getItemId(),siteIO.getQty());
 
             //更新逻辑库存, 会自动检查缺货消息,并处理缺货订单
-            //increaseLogicalInventory(mainsiteId, itemId, increment);
+            //handleIncrease(String mainsiteId, String itemId, int increment);
 
             //Todo: 确认入库对其他模块的影响
         }

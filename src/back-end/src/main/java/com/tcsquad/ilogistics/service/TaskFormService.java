@@ -186,11 +186,11 @@ public class TaskFormService {
      * 缺少shipxxx信息和配送员信息
      *
      * @param order      订单
-     * @param mainSiteId 主站id
+     * @param mainsiteId 主站id
      */
-    public void generateTaskForms(Order order, String mainSiteId) {
+    public void generateTaskForms(Order order, String mainsiteId) {
         //计算最近配送站
-        var subsites = siteMapper.getSubSiteListByMainSiteId(mainSiteId);
+        var subsites = siteMapper.getSubSiteListByMainSiteId(mainsiteId);
         var subsitesPositions  = new ArrayList<Pair<Double,Double>>();
         for(SubSite subSite:subsites) {
             subsitesPositions.add(Pair.of(subSite.getLatitude().doubleValue(),subSite.getLongitude().doubleValue()));
@@ -207,9 +207,9 @@ public class TaskFormService {
         var inStockList = new ArrayList<OrderItem>();
         for (var item : items) {
             //TODO: 调用LogicalInventoryService方法扣除逻辑库存
-            //if(decreaseLogicalInventory(item.getItemId(), mainSiteId, item.getItemNum()))
-            if (warehouseService.getItemInventoryByMainSiteAndItemId(item.getItemId(),mainSiteId) >= item.getItemNum()) { // in stock TODO 判断
-                warehouseService.decreaseItemInventoryByMainSiteAndItemId(item.getItemId(),mainSiteId,item.getItemNum());
+            //if(decreaseLogicInventory(mainsiteId, item.getItemId(), item.getItemNum))
+            if (warehouseService.getItemInventoryByMainSiteAndItemId(item.getItemId(),mainsiteId) >= item.getItemNum()) { // in stock TODO 判断
+                warehouseService.decreaseItemInventoryByMainSiteAndItemId(item.getItemId(),mainsiteId,item.getItemNum());
 
                 inStockList.add(item);
             } else {
@@ -225,7 +225,7 @@ public class TaskFormService {
                 taskFormMapper.insertTaskForm(taskForm);
 
                 //TODO:生成调货单
-                stockOutMsgUtil.insertStockOutMessage(mainSiteId,taskForm.getOrderItems().get(0));
+                stockOutMsgUtil.insertStockOutMessage(mainsiteId,taskForm.getOrderItems().get(0));
             }
         }
         if(!inStockList.isEmpty()) {
@@ -241,7 +241,7 @@ public class TaskFormService {
             taskForm.setOrderItems(inStockList);
             taskFormMapper.insertTaskForm(taskForm);
 
-            sendTaskForm(taskForm.getTaskId(),mainSiteId,"张三","10086");//TODO:发货人信息
+            sendTaskForm(taskForm.getTaskId(),mainsiteId,"张三","10086");//TODO:发货人信息
         }
     }
 

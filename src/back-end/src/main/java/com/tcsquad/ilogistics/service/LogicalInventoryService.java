@@ -2,8 +2,7 @@ package com.tcsquad.ilogistics.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.tcsquad.ilogistics.domain.storage.Inventory;
-import com.tcsquad.ilogistics.mapper.storage.WarehouseMapper;
+import com.tcsquad.ilogistics.mapper.storage.LogicInventoryMapper;
 import com.tcsquad.ilogistics.util.RedisUtil;
 import com.tcsquad.ilogistics.util.StockOutMsgUtil;
 import org.slf4j.Logger;
@@ -32,7 +31,7 @@ public class LogicalInventoryService {
     RedisUtil redisUtil;
 
     @Autowired
-    WarehouseMapper warehouseMapper;
+    LogicInventoryMapper logicInventoryMapper;
 
     /**
      * 前置条件:<br>
@@ -47,17 +46,20 @@ public class LogicalInventoryService {
      * @return 返回处理完缺货后的剩余数量
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void handleStockOut(String mainsiteId, String itemId){
-        //Redis索引键
-        String key = stockOutMsgUtil.keyConcat(mainsiteId, itemId);
+    public void handleIncrease(String mainsiteId, String itemId, int increment){
+        String key = stockOutMsgUtil.keyConcat(mainsiteId, itemId); //Redis索引键
 
-        //如果不含缺货队列, 则直接退出
-        if(!redisUtil.hasKey(key)) return;
+        if(!redisUtil.hasKey(key) ) { //如果不含缺货队列, 则直接退出
+            logger.info("键 " + key + " 不存在缺货信息");
+            return;
+        }
+        else if (increment <= 0){
+            logger.info("increment小于等于0, 退出缺货消息处理");
+        }
 
         //qty为当前逻辑库存数量
-        Inventory inventory = warehouseMapper
-                .getInventoryByItemIdAndWarehouseId(mainsiteId, itemId);
-        int qty = inventory.getLogicInventory();
+        int qty = logicInventoryMapper.getLogicInventoryByMainsiteAndItemId(mainsiteId, itemId);
+        qty += increment; //原逻辑库存加上现有入库数
 
         //缺货消息处理循环
         boolean flag = qty > 0; //控制是否继续循环
@@ -65,25 +67,32 @@ public class LogicalInventoryService {
             //缺货消息列表
             List list = stockOutMsgUtil.consumeStockOutMessage(key);
             int listSize = list.size();
+            if (listSize < stockOutMsgUtil.getMsgThroughput()){
+                logger.info("键 " + key + " 所有缺货消息预计可被消费完毕");
+                flag = false;
+            }
 
             //消息列表的下标, 指向下一个要处理的元素
             int index = 0;
 
             for(Object msg : list){
-                JSONObject jsonObject = (JSONObject) JSON.toJSON(msg);
-                long orderId = (long) jsonObject.get("oid");
-                long taskId = (long) jsonObject.get("tid");
+                JSONObject jsonObject = JSON.parseObject(msg.toString());
+                long orderId = (int) jsonObject.get("oid");
+                long taskId = (int) jsonObject.get("tid");
                 int itemNum = (int) jsonObject.get("num");
 
                 if(qty >= itemNum){ //库存足够处理当前缺货消息
+                    logger.info("消费缺货消息" + msg.toString());
                     qty -= itemNum;
                     ++index; //移动下标
 
                     //TODO: 处理任务单taskId的发货任务
                     logger.info("处理任务单 " + taskId + " 的发货任务");
-                    //...
                 }
-                else break; //库存不足
+                else {
+                    logger.info("缺货消息需要库存数大于现有库存数, 该缺货消息未被处理: " + msg.toString());
+                    break; //库存不足
+                }
             }
 
             //将已处理的缺货消息存入缓存, 并设置过期时间
@@ -98,8 +107,25 @@ public class LogicalInventoryService {
         }
 
         //更新逻辑库存
-        inventory.setLogicInventory(qty);
-        warehouseMapper.updateInventoryByWarehouseIdAndItemId(inventory);
+        logicInventoryMapper.updateLogicInventory(mainsiteId, itemId, qty);
     }
 
+    /**
+     * 功能描述:<br>
+     * @param increment 扣除逻辑库存数量
+     * @return 若扣除成功, 返回true; 若库存不足, 返回false
+     */
+    @Transactional
+    public boolean decreaseLogicInventory(String mainsiteId, String itemId, int increment){
+        int qty = logicInventoryMapper.getLogicInventoryByMainsiteAndItemId(mainsiteId, itemId);
+
+        //库存充足
+        if (increment < qty){
+            qty -= increment;
+            logicInventoryMapper.updateLogicInventory(mainsiteId, itemId, qty);
+            return true;
+        }
+        //库存不足
+        return false;
+    }
 }

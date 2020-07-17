@@ -21,6 +21,10 @@ public class OrderItem {
         this.orderId = orderId;
     }
 
+    public void setOrderId(long orderId){
+        this.orderId = orderId;
+    }
+
     public Long getTaskId() {
         return taskId;
     }
