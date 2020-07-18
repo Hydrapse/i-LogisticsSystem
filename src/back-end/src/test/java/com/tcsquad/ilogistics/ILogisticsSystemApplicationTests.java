@@ -51,20 +51,54 @@ class ILogisticsSystemApplicationTests {
         orderItem.setTaskId(111);
         orderItem.setOrderId(10000000);
         orderItem.setItemId("A-005");
-        stockOutUtil.insertStockOutMessage("MAIN-001", orderItem);
+        stockOutUtil.insertStockOutMessage("MAIN-002", orderItem);
 
         orderItem.setItemNum(2);
         orderItem.setTaskId(222);
         orderItem.setOrderId(10000000);
         orderItem.setItemId("A-005");
-        stockOutUtil.insertStockOutMessage("MAIN-001", orderItem);
+        stockOutUtil.insertStockOutMessage("MAIN-002", orderItem);
 
         orderItem.setItemNum(3);
         orderItem.setTaskId(333);
         orderItem.setOrderId(10000000);
         orderItem.setItemId("A-005");
-        stockOutUtil.insertStockOutMessage("MAIN-001", orderItem);
+        stockOutUtil.insertStockOutMessage("MAIN-002", orderItem);
 
+        orderItem.setItemNum(1);
+        orderItem.setTaskId(444);
+        orderItem.setOrderId(10000000);
+        orderItem.setItemId("A-005");
+        stockOutUtil.insertStockOutMessage("MAIN-002", orderItem);
+
+        orderItem.setItemNum(2);
+        orderItem.setTaskId(555);
+        orderItem.setOrderId(10000000);
+        orderItem.setItemId("A-005");
+        stockOutUtil.insertStockOutMessage("MAIN-002", orderItem);
+
+        orderItem.setItemNum(3);
+        orderItem.setTaskId(666);
+        orderItem.setOrderId(10000001);
+        orderItem.setItemId("A-005");
+        stockOutUtil.insertStockOutMessage("MAIN-002", orderItem);
+        orderItem.setItemNum(1);
+        orderItem.setTaskId(777);
+        orderItem.setOrderId(10000000);
+        orderItem.setItemId("A-005");
+        stockOutUtil.insertStockOutMessage("MAIN-002", orderItem);
+
+        orderItem.setItemNum(2);
+        orderItem.setTaskId(888);
+        orderItem.setOrderId(10000001);
+        orderItem.setItemId("A-005");
+        stockOutUtil.insertStockOutMessage("MAIN-002", orderItem);
+
+        orderItem.setItemNum(3);
+        orderItem.setTaskId(999);
+        orderItem.setOrderId(10000001);
+        orderItem.setItemId("A-005");
+        stockOutUtil.insertStockOutMessage("MAIN-003", orderItem);
 //        orderItem.setItemNum(4);
 //        orderItem.setTaskId(444);
 //        orderItem.setItemId("A-006");
@@ -87,7 +121,7 @@ class ILogisticsSystemApplicationTests {
 
         sshConnection.createSSH();
 
-        logicalInventoryService.handleIncrease("MAIN-001", "A-005", 53);
+        logicalInventoryService.handleIncrease("MAIN-001", "A-005", 3);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.tcsquad.ilogistics.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.tcsquad.ilogistics.domain.ErrorCode;
 import com.tcsquad.ilogistics.domain.PageResult;
@@ -44,6 +45,8 @@ public class OrderController {
     @ApiOperation("新增订单入口")
     @PostMapping("/orders")
     public void newOrder(@RequestBody OrderAddReq orderAddReq){
+        logger.debug(JSON.toJSONString(orderAddReq));
+
         //新增订单
         orderService.insertOrderReq(orderAddReq);
         Order order = orderAddReq.getOrder();
@@ -64,7 +67,8 @@ public class OrderController {
         orderService.updateProcessStatus(order);
 
         //传递order,mainsiteId给任务单生成模块
-//        taskFormService.generateTaskForms(order, mainsiteId);
+        logger.info("订单 " + order.getOrderId() + " 接收成功, 转至任务单生成模块");
+        taskFormService.generateTaskForms(order, mainsiteId);
     }
 
     @ApiOperation("订单审核详情")
@@ -85,15 +89,23 @@ public class OrderController {
         //更新order信息
         Order order = orderService.confirmOrder(orderId, processStatus, shippingCost);
 
-        //若mainsiteId为空, 则重新执行预分拣,查找主站
-        if(StringUtils.isEmpty(mainsiteId)){
-            mainsiteId = orderService.preSlotForMainSite(order).getMainsiteId();
+        //判断该订单是否被取消
+        if(StatusString.ORDER_CLOSE.getValue().equals(processStatus)){
+            logger.info("订单 " + order.getOrderId() + " 已取消, 状态为'订单关闭'");
         }
-        //检查mainsiteId是否正确, 若不正确抛出异常
-        orderService.checkMainSiteId(mainsiteId);
+        //判断是否为确认接收订单
+        if (StatusString.PROCESSING.getValue().equals(processStatus)){
+            //若mainsiteId为空, 则重新执行预分拣,查找主站
+            if(StringUtils.isEmpty(mainsiteId)){
+                mainsiteId = orderService.preSlotForMainSite(order).getMainsiteId();
+            }
+            //检查mainsiteId是否正确, 若不正确抛出异常
+            orderService.checkMainSiteId(mainsiteId);
 
-        //传递order,mainsiteId给任务单生成模块
-//        taskFormService.generateTaskForms(order, mainsiteId);
+            //传递订单给任务单生成模块
+            logger.info("订单 " + order.getOrderId() + " 确认接收, 状态为'正在处理', 转至任务单生成模块");
+            taskFormService.generateTaskForms(order, mainsiteId);
+        }
     }
 
     @ApiOperation("查询Order列表")

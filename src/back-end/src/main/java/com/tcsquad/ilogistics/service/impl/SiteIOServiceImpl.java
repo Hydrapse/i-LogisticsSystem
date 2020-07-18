@@ -97,10 +97,11 @@ public class SiteIOServiceImpl implements SiteIOService {
                 //Todo: 改变供应商退订记录的状态
             }
 
-            //Todo: 更新逻辑库存, 会自动检查缺货消息,并处理缺货订单
-            MainSite mainSite = siteMapper.getMainsiteByWarehouseId(siteIO.getWarehouseId());
-            //increaseLogicalInventory(mainSite.getMainsiteId(), siteIO.getItemId(), siteIO.getQty());
+            //TODO: 取消时 更新逻辑库存, 待定
+//            MainSite mainSite = siteMapper.getMainsiteByWarehouseId(siteIO.getWarehouseId());
+//            logicalInventoryService.handleIncrease(mainSite.getMainsiteId(), siteIO.getItemId(), siteIO.getQty());
         }
+
         siteIOMapper.updateSiteIOStatus(recordId, StatusString.INVALID.getValue());
 
     }
@@ -117,12 +118,14 @@ public class SiteIOServiceImpl implements SiteIOService {
             logger.info("操作员确认入库单" + recordId + "中的商品入库");
             //更新出入库单
             siteIOMapper.updateSiteIOStatus(recordId,StatusString.CONFIRM.getValue());
+
             //更新真实库存
             warehouseService.addItemToWarehouse(siteIO.getWarehouseId(),siteIO.getItemId(),siteIO.getQty());
 
+            //更新逻辑库存, 处理缺货订单
             MainSite mainSite = siteMapper.getMainsiteByWarehouseId(siteIO.getWarehouseId());
-            //TODO：更新逻辑库存, 会自动检查缺货消息,并处理缺货订单
-            //increaseLogicalInventory(mainSite.getMainsiteId(), siteIO.getItemId(), siteIO.getQty());
+            logger.info("更新逻辑库存, 会自动检查缺货消息,并处理缺货订单");
+            logicalInventoryService.handleIncrease(mainSite.getMainsiteId(), siteIO.getItemId(), siteIO.getQty());
 
             //确认入库对其他模块的影响
             if(siteIO.getType().equals(StatusString.SUPPLY_IN.getValue())){

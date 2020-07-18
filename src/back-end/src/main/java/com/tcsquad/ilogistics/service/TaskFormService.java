@@ -6,6 +6,7 @@ import com.tcsquad.ilogistics.domain.ErrorCode;
 import com.tcsquad.ilogistics.domain.PageResult;
 import com.tcsquad.ilogistics.domain.SequenceName;
 import com.tcsquad.ilogistics.domain.StatusString;
+import com.tcsquad.ilogistics.domain.clientele.Customer;
 import com.tcsquad.ilogistics.domain.map.RouteResult;
 import com.tcsquad.ilogistics.domain.order.Order;
 import com.tcsquad.ilogistics.domain.order.OrderItem;
@@ -16,11 +17,11 @@ import com.tcsquad.ilogistics.domain.response.StatusStatisticsResp;
 import com.tcsquad.ilogistics.domain.response.TaskFormLogResp;
 import com.tcsquad.ilogistics.domain.storage.SubSite;
 import com.tcsquad.ilogistics.exception.BusinessErrorException;
+import com.tcsquad.ilogistics.mapper.clientele.CustomerMapper;
 import com.tcsquad.ilogistics.mapper.order.OrderItemMapper;
 import com.tcsquad.ilogistics.mapper.order.TaskFormMapper;
 import com.tcsquad.ilogistics.mapper.storage.SiteMapper;
 import com.tcsquad.ilogistics.service.interf.SiteIOService;
-import com.tcsquad.ilogistics.service.interf.WarehouseService;
 import com.tcsquad.ilogistics.util.IDSequenceUtil;
 import com.tcsquad.ilogistics.util.PageUtil;
 import com.tcsquad.ilogistics.util.StockOutMsgUtil;
@@ -60,6 +61,9 @@ public class TaskFormService {
 
     @Autowired
     TransferGoodsService transferGoodsService;
+
+    @Autowired
+    CustomerMapper customerMapper;
 
     public TaskForm getTaskForm(Long taskFormId) {
         if (taskFormId != null)
@@ -231,6 +235,10 @@ public class TaskFormService {
             var taskForm = preGenerateTaskForm(order,subSiteId);
             taskForm.setStatus(StatusString.T_UNSENT.getValue());
             taskForm.setOrderItems(inStockList);
+
+            //TODO:shipName
+            taskForm.setShipName("配送站" + subSiteId);
+
             taskFormMapper.insertTaskForm(taskForm);
             for (var item: inStockList) {
                 item.setStatus(StatusString.ITEM_PREPARED.getValue());
@@ -301,11 +309,14 @@ public class TaskFormService {
         if (order == null)
             throw new BusinessErrorException("order不能为空", ErrorCode.MISS_PARAMS.getCode());
 
+        //TODO: 临时改变
+        Customer customer = customerMapper.getCustomerByCustomerId(Long.parseLong(order.getCustomerId()));
+
         var taskForm = new TaskForm();
         taskForm.setTaskId(idSequenceUtil.getNextFormIdByName(SequenceName.TASK_FORM.getValue()));
         taskForm.setOrderId(order.getOrderId());
         taskForm.setBillName(order.getBillName());
-//        taskForm.setBillTel(order.get);
+        taskForm.setBillTel(customer.getTel());
         taskForm.setBillPro(order.getBillPro());
         taskForm.setBillCity(order.getBillCity());
         taskForm.setBillDis(order.getBillDistrict());

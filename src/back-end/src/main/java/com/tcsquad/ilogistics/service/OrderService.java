@@ -97,6 +97,10 @@ public class OrderService {
 
         //若不存在插入订单
         Order order = orderAddReq.getOrder();
+        if(StringUtils.isEmpty(order.getBillDistrict())){
+            logger.info("该订单来自直辖市");
+            order.setBillDistrict("直辖市");
+        }
         List<OrderItem> orderItemList = orderAddReq.getOrderItemList();
         order.setLineNum(orderItemList.size()); //设置orderItem个数
 
@@ -189,13 +193,14 @@ public class OrderService {
                 }
             }
             if (orderSetting.isCategoryIdLimit()){
+                List whiteList = orderSetting.getCategoryIdWhiteList();
                 for(OrderItem orderItem : orderAddReq.getOrderItemList()){
                    String categoryId = orderItem.getItem().getCategoryId();
-                   if (orderSetting.getCategoryIdCheckList().contains(categoryId)){
-                       return true; //如果有商品在待审核大类内, 则该订单需要审核
+                   if (!whiteList.contains(categoryId)){
+                       return true; //如果有商品不在大类白名单内, 则该订单需要审核
                    }
                 }
-                return false; //若没有商品在待审核大类内, 则无须审核
+                return false; //若全部商品都在大类白名单内, 则无须审核
             }
         }
 
