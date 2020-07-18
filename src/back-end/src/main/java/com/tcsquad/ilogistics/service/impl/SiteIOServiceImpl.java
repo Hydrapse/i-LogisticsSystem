@@ -39,7 +39,7 @@ import java.util.List;
 
 @Service
 public class SiteIOServiceImpl implements SiteIOService {
-    private static Logger logger = LoggerFactory.getLogger(OrderService.class);
+    private static Logger logger = LoggerFactory.getLogger(SiteIOServiceImpl.class);
 
     @Autowired
     SiteIOMapper siteIOMapper;
@@ -74,9 +74,11 @@ public class SiteIOServiceImpl implements SiteIOService {
     @Transactional
     public void cancelSiteIOStatus(Long recordId,boolean isCheckin) {
         if(isCheckin){
+            logger.info("操作员取消入库单" + recordId + "中的商品入库");
             //Todo:取消入库对其他模块的影响(类似无影响)
         }
         else {
+            logger.info("操作员取消出库单" + recordId + "中的商品出库");
             //取消出库,则将逻辑库存加上itemNum
             SiteIO siteIO = siteIOMapper.getSiteIORecordById(recordId);
             Inventory inventory = warehouseMapper.getInventoryByItemIdAndWarehouseId(siteIO.getWarehouseId(),siteIO.getItemId());
@@ -112,6 +114,7 @@ public class SiteIOServiceImpl implements SiteIOService {
     public void confirmSiteIORecord(Long recordId,boolean isCheckin) {
         SiteIO siteIO = siteIOMapper.getSiteIORecordById(recordId);
         if(isCheckin){
+            logger.info("操作员确认入库单" + recordId + "中的商品入库");
             //更新出入库单
             siteIOMapper.updateSiteIOStatus(recordId,StatusString.CONFIRM.getValue());
             //更新真实库存
@@ -140,6 +143,7 @@ public class SiteIOServiceImpl implements SiteIOService {
 
         }
         else {
+            logger.info("操作员确认出库单" + recordId + "中的商品出库");
             //确认出库，将真实库存减掉itemNum
             Inventory inventory = warehouseMapper.getInventoryByItemIdAndWarehouseId(siteIO.getWarehouseId(),siteIO.getItemId());
             int num = inventory.getItemNum() - siteIO.getQty();
@@ -205,6 +209,7 @@ public class SiteIOServiceImpl implements SiteIOService {
             Long nextId = idSequenceUtil.getNextFormIdByName(SequenceName.MAINSITEIO_FORM.getValue());
             siteIO.setRecordId(nextId);
             siteIOMapper.insertSiteIORecord(siteIO);
+            logger.info("生成入库记录，并保存到数据库，入库单编号为"+ nextId);
 
             //查询本次入库请求的recordId
             //Long recordId = siteIOMapper.getSiteIORecordIdByFormIdAndItemId(siteIO.getType(),siteIO.getFormId(),siteIO.getItemId());
@@ -253,6 +258,7 @@ public class SiteIOServiceImpl implements SiteIOService {
         else {
             itemCheckinResp.setTypeDesc(typeDesc);
         }
+        logger.info("获取入库单" + recordId + "的入库消息");
         return itemCheckinResp;
     }
 
@@ -300,6 +306,7 @@ public class SiteIOServiceImpl implements SiteIOService {
         }
 
         checkInResp.setWarehouseOptionalList(warehousesOptional);
+        logger.info("获取入库单" + recordId + "的详细入库信息");
         return checkInResp;
     }
 
@@ -325,12 +332,14 @@ public class SiteIOServiceImpl implements SiteIOService {
     @Override
     @Transactional
     public void updateWarehouseToCheckin(Long recordId, String warehouseId) {
+        logger.info("入库单" + recordId + "更新入库库房为：" + warehouseId);
         siteIOMapper.updateSiteIOWarehouseId(recordId,warehouseId);
     }
 
     @Override
     @Transactional
     public void updateWarehouseToCheckout(Long recordId, String warehouseId) {
+        logger.info("出库单" + recordId + "更新出库库房为：" + warehouseId);
         SiteIO siteIO = siteIOMapper.getSiteIORecordById(recordId);
         //将原库房的逻辑库存加上itemNum
         Inventory inventory = warehouseMapper.getInventoryByItemIdAndWarehouseId(siteIO.getWarehouseId(),siteIO.getItemId());
@@ -418,6 +427,7 @@ public class SiteIOServiceImpl implements SiteIOService {
             Long nextId = idSequenceUtil.getNextFormIdByName(SequenceName.MAINSITEIO_FORM.getValue());
             siteIO.setRecordId(nextId);
             siteIOMapper.insertSiteIORecord(siteIO);
+            logger.info("生成出库记录，并保存到数据库，出库单编号为"+ nextId);
 
             ItemCheckoutResp itemCheckoutResp = getItemCheckoutRespByRecordId(siteIO.getRecordId());
 
@@ -425,6 +435,7 @@ public class SiteIOServiceImpl implements SiteIOService {
             //boolean flag = isCheckNeeded();
             boolean flag = true; //测试中全部都需要审核
             if(flag){
+                logger.info("出库记录" + nextId + "需要人工审核，下面发送出库消息");
                 sendItemCheckoutMessage(itemCheckoutResp);
              return;
             }
@@ -470,6 +481,8 @@ public class SiteIOServiceImpl implements SiteIOService {
         else {
             itemCheckoutResp.setTypeDesc(typeDesc);
         }
+
+        logger.info("获取出库单" + recordId +"的出库消息");
         return itemCheckoutResp;
     }
 
@@ -517,6 +530,7 @@ public class SiteIOServiceImpl implements SiteIOService {
         }
 
         checkoutResp.setWarehouseOptionalList(warehousesOptional);
+        logger.info("获取出库单"+ recordId+"详细信息");
         return checkoutResp;
 
     }

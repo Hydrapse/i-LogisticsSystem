@@ -12,6 +12,8 @@ import com.tcsquad.ilogistics.service.interf.SiteIOService;
 import com.tcsquad.ilogistics.service.interf.WarehouseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/mainsites")
 public class MainsiteController {
+    private static Logger logger = LoggerFactory.getLogger(MainsiteController.class);
 
     @Autowired
     SiteIOService siteIOService;
@@ -35,6 +38,7 @@ public class MainsiteController {
                                     @RequestBody SiteIOAddReq siteIOAddReq){
         List<String> warehouseList = warehouseService.getWarehouseOptionsToCheckin(siteIOAddReq.getItemId(),siteIOAddReq.getItemNum(),mainsiteId);
         if(warehouseList.isEmpty()){
+            logger.info("无法入库到单个库房，需进行再分拣，将入库商品存放在多个库房中");
             //Todo: 根据itemId和mainsiteId未能找到相匹配的单个库房，需要将入库商品存放在多个库房中
 
         }
@@ -48,14 +52,15 @@ public class MainsiteController {
         //mailUtil.sendMail("1041422509@qq.com","生成入库请求","入库请求");
 
         if(siteIOService.isCheckNeeded(siteIOAddReq)){
-            //需要审核则发送出库消息
+            logger.info("入库记录" +newRecordId + "需要人工审核，下面发送入库消息");
+            //需要审核则发送入库消息
             siteIOService.sendItemCheckinMessage(itemCheckinResp);
             return;
         }
 
         //不需要审核则直接确认入库
+        logger.info("入库记录" + newRecordId + "不需要审核，直接确认入库");
         siteIOService.confirmSiteIORecord(newRecordId,true);
-
     }
 
     @ApiOperation("获取入库消息")
@@ -141,6 +146,7 @@ public class MainsiteController {
     @ApiOperation("查询库房列表")
     @GetMapping("/{mainsiteId}/warehouses")
     public List<WarehouseResp> getWarehouseInfoList(@PathVariable("mainsiteId")String mainsiteId){
+        logger.info("查看主站" + mainsiteId + "的库房概要信息（主站库房列表信息）");
         List<WarehouseResp> warehouseRespList = warehouseService.getAllWarehouseInfo(mainsiteId);
         return warehouseRespList;
     }
@@ -149,6 +155,7 @@ public class MainsiteController {
     @GetMapping("/{mainsiteId}/warehouse/{warehouseId}")
     public WarehouseDetailResp getWarehouseInfoList(@PathVariable("mainsiteId")String mainsiteId,
                                                     @PathVariable("warehouseId")String warehouseId){
+        logger.info("查看主站"+mainsiteId+"中库房"+warehouseId+"的详细信息");
         WarehouseDetailResp warehouseDetailResp = warehouseService.getWarehouseDetail(warehouseId,mainsiteId);
         return warehouseDetailResp;
     }
@@ -156,6 +163,7 @@ public class MainsiteController {
     @ApiOperation("根据限定条件获取库房货物列表")
     @GetMapping("/{mainsiteId}/items")
     public PageResult productList(@PathVariable("mainsiteId")String mainsiteId,ItemInventoryGetReq req, PageRequest pageRequest){
+        logger.info("根据限定条件获取主站"+mainsiteId+"的库房货物列表");
         //初始校验pageRequest
         pageRequest.initialValidate(1, 6);
         req.setMainsiteId(mainsiteId);
@@ -173,10 +181,11 @@ public class MainsiteController {
     public void updateItemInventoryBetweenWarehouses(@PathVariable("mainsiteId")String mainsiteId,
                                                      @PathVariable("itemId")String itemId,
                                                      InventoryUpdateReq inventoryUpdateReq){
+        logger.info("在主站"+ mainsiteId + "下将商品" + itemId + "从库房" + inventoryUpdateReq.getSourceWarehouseId() +
+                "移到库房" + inventoryUpdateReq.getDestWarehouseId() + "，移动数量为：" + inventoryUpdateReq.getItemNum());
         inventoryUpdateReq.setMainsiteId(mainsiteId);
         inventoryUpdateReq.setItemId(itemId);
         warehouseService.updateItemInventoryBetweenWarehouses(inventoryUpdateReq);
-
     }
 
 }
