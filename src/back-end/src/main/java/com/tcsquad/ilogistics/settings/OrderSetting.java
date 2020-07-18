@@ -1,6 +1,7 @@
 package com.tcsquad.ilogistics.settings;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.util.List;
  * @date 2020/7/13
  * @description: 订单配置类
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Component
 public class OrderSetting extends GeneralSetting{
