@@ -17,14 +17,17 @@ import com.tcsquad.ilogistics.mapper.clientele.CustomerMapper;
 import com.tcsquad.ilogistics.mapper.clientele.SupplierMapper;
 import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.util.PageUtil;
+import io.netty.util.internal.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 public class
@@ -129,6 +132,24 @@ ClienteleService {
         }
         return itemSupplyResp;
 
+    }
+
+    //customerId自动补全
+    public List getCustomerIdsByInfix(String infix){
+        if(StringUtil.isNullOrEmpty(infix)){
+            return null;
+        }
+        List<Long> allCustomerIds = customerMapper.getAllCustomerIds();
+        List<String> customerIds = new ArrayList<>();
+        String pattern = ".*"+ infix +".*";
+        for(Long id:allCustomerIds){
+            String idStr = String.valueOf(id);
+            if(Pattern.matches(pattern, idStr)){
+                customerIds.add(idStr);
+            }
+        }
+
+        return customerIds;
     }
 
     private void checkPageRequest(PageRequest pageRequest) {

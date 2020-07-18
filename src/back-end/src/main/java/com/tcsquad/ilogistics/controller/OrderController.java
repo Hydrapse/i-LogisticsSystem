@@ -135,4 +135,18 @@ public class OrderController {
         return returnForms;
     }
 
+    @ApiOperation("根据中缀获取可匹配Id列表")
+    @GetMapping("/orders/Ids")
+    public List getOrderIdListByInfix(String infix){
+        List<String> orderIds = orderService.getOrderIdListByInfix(infix);
+        return orderIds;
+    }
+
+    @ApiOperation("根据中缀获取可匹配收件人列表")
+    @GetMapping("/orders/billNames")
+    public List getBillNamesByInfix(String infix){
+        List<String> billNames = orderService.getBillNameListByInfix(infix);
+        return billNames;
+    }
+
 }

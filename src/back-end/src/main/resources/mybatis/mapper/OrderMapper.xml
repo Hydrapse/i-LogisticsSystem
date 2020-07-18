@@ -112,4 +112,14 @@
         </if>
         order by createdate
     </select>
+
+    <select id="getAllOrderId" resultType="Long">
+        select distinct orderid from orders
+    </select>
+
+    <select id="getBillNameListByInfix" resultType="String">
+        select distinct billname
+        from orders
+        where billname like '%${infix}%'
+    </select>
 </mapper>

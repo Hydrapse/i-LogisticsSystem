@@ -27,6 +27,7 @@ import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.mapper.storage.SiteMapper;
 import com.tcsquad.ilogistics.settings.OrderSetting;
 import com.tcsquad.ilogistics.util.PageUtil;
+import io.netty.util.internal.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -41,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author Hydra
@@ -320,5 +322,31 @@ public class OrderService {
         }
 
         return forms;
+    }
+
+    public List getOrderIdListByInfix(String infix){
+        if(StringUtil.isNullOrEmpty(infix)){
+            return null;
+        }
+        List<Long> allOrderId = orderMapper.getAllOrderId();
+        List<String> orderIds = new ArrayList<>();
+        String pattern = ".*"+ infix +".*";
+        for(Long id:allOrderId){
+            String idStr = String.valueOf(id);
+            if(Pattern.matches(pattern, idStr)){
+                orderIds.add(idStr);
+            }
+        }
+
+        return orderIds;
+    }
+
+
+    public List getBillNameListByInfix(String infix){
+        if(StringUtil.isNullOrEmpty(infix)){
+            return null;
+        }
+        List<String> billNames = orderMapper.getBillNameListByInfix(infix);
+        return billNames;
     }
 }

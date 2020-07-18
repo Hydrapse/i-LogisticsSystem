@@ -32,4 +32,8 @@ public interface OrderMapper {
     boolean hasOrder(Long orderId);
 
     List<OrderBriefResp> getOrderBriefsByReq(OrderSelectReq orderSelectReq);
+
+    List<Long> getAllOrderId();
+
+    List<String> getBillNameListByInfix(String infix);
 }

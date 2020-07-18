@@ -10,6 +10,8 @@ import java.util.List;
 public interface CustomerMapper {
     List<Customer> getCustomers();//买家列表
 
+    List<Long> getAllCustomerIds();
+
     List<Customer> getCustomersByCustomerReq(CustomerReq customerReq);
 
     List<Customer> getCustomersByName(String name);

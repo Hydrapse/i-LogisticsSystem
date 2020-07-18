@@ -88,4 +88,9 @@
         </if>
 
     </select>
+
+    <select id="getAllCustomerIds" resultType="Long">
+        select distinct customerid
+        from customer
+    </select>
 </mapper>

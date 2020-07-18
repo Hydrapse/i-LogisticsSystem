@@ -8,6 +8,7 @@ import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.request.SupplierAddReq;
 import com.tcsquad.ilogistics.domain.response.ItemSupplyResp;
 import com.tcsquad.ilogistics.service.ClienteleService;
+import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +84,11 @@ public class ClienteleController {
         return clienteleService.getSupplierById(supplier.getSupplierId());
     }
 
-
+    @ApiOperation("customerId自动补全")
+    @GetMapping("/clientele/customerIds")
+    public List getCustomerIdsByInfix(String infix){
+        return clienteleService.getCustomerIdsByInfix(infix);
+    }
 
 
 

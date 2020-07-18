@@ -39,6 +39,8 @@ dependencies {
     compile group: 'com.jcraft', name: 'jsch', version: '0.1.55'
     compile group: 'com.aliyun.oss', name: 'aliyun-sdk-oss', version: '3.10.2'
 
+    compile('org.springframework.boot:spring-boot-starter-mail')
+
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     testImplementation 'org.springframework.amqp:spring-rabbit-test'
     compileOnly 'org.projectlombok:lombok'

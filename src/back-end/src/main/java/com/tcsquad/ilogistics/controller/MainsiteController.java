@@ -13,7 +13,6 @@ import com.tcsquad.ilogistics.service.interf.WarehouseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,6 +44,8 @@ public class MainsiteController {
         siteIOAddReq.setWarehouseId(warehouseList.get(0));
         Long newRecordId = siteIOService.insertCheckinRecord(siteIOAddReq);
         ItemCheckinResp itemCheckinResp = siteIOService.getItemCheckinRespByRecordId(newRecordId);
+
+        //mailUtil.sendMail("1041422509@qq.com","生成入库请求","入库请求");
 
         if(siteIOService.isCheckNeeded(siteIOAddReq)){
             //需要审核则发送出库消息
