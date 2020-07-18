@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class SubSiteService {
+public class SiteService {
     @Autowired
     SiteMapper siteMapper;
 
@@ -20,6 +20,15 @@ public class SubSiteService {
             for(var subSite:subSites) {
                 result.add(subSite.getSubsiteId());
             }
+        }
+        return result;
+    }
+
+    public List<String> getAllMainSite() {
+        var result = new ArrayList<String>();
+        var mainSites = siteMapper.getAllMainSite();
+        for(var mainSite:mainSites) {
+            result.add(mainSite.getMainsiteId());
         }
         return result;
     }

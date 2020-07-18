@@ -3,9 +3,7 @@ package com.tcsquad.ilogistics.controller;
 import com.tcsquad.ilogistics.domain.PageResult;
 import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.request.SubSiteTaskFormReq;
-import com.tcsquad.ilogistics.domain.response.TaskFormLogResp;
-import com.tcsquad.ilogistics.domain.storage.SubSite;
-import com.tcsquad.ilogistics.service.SubSiteService;
+import com.tcsquad.ilogistics.service.SiteService;
 import com.tcsquad.ilogistics.service.TaskFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +17,11 @@ public class SubSiteController {
     TaskFormService taskFormService;
 
     @Autowired
-    SubSiteService subSiteService;
+    SiteService siteService;
 
     @GetMapping("")
     public List<String> getAllSubSitesIds() {
-        return subSiteService.getAllSubSite();
+        return siteService.getAllSubSite();
     }
 
     @GetMapping("/{subSiteId}/taskforms")
