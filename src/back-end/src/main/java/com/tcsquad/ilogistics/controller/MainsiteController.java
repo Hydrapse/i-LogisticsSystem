@@ -48,6 +48,7 @@ public class MainsiteController {
         siteIOAddReq.setWarehouseId(warehouseList.get(0));
         Long newRecordId = siteIOService.insertCheckinRecord(siteIOAddReq);
         ItemCheckinResp itemCheckinResp = siteIOService.getItemCheckinRespByRecordId(newRecordId);
+        itemCheckinResp.setMainsiteId(mainsiteId);
 
         //mailUtil.sendMail("1041422509@qq.com","生成入库请求","入库请求");
 
@@ -65,8 +66,9 @@ public class MainsiteController {
 
     @ApiOperation("获取入库消息")
     @GetMapping("/{mainsiteId}/inventory/inmessages")
-    public ItemCheckinResp getItemCheckinResp(Long recordId){
+    public ItemCheckinResp getItemCheckinResp(@PathVariable("mainsiteId")String mainsiteId,Long recordId){
         ItemCheckinResp itemCheckinResp = siteIOService.getItemCheckinRespByRecordId(recordId);
+        itemCheckinResp.setMainsiteId(mainsiteId);
         return itemCheckinResp;
     }
 
@@ -105,8 +107,9 @@ public class MainsiteController {
 
     @ApiOperation("获取出库消息")
     @GetMapping("/{mainsiteId}/inventory/outmessages")
-    public ItemCheckoutResp getItemCheckoutResp(Long recordId){
+    public ItemCheckoutResp getItemCheckoutResp(@PathVariable("mainsiteId")String mainsiteId,Long recordId){
         ItemCheckoutResp itemCheckoutResp = siteIOService.getItemCheckoutRespByRecordId(recordId);
+        itemCheckoutResp.setMainsiteId(mainsiteId);
         return itemCheckoutResp;
     }
 

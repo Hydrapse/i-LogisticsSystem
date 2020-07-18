@@ -7,6 +7,7 @@ public class ItemCheckoutResp {
     String itemId;
     Integer itemNum;
     Long recordId;
+    String mainsiteId;
 
     public Integer getType() {
         return type;
@@ -54,5 +55,13 @@ public class ItemCheckoutResp {
 
     public void setRecordId(Long recordId) {
         this.recordId = recordId;
+    }
+
+    public String getMainsiteId() {
+        return mainsiteId;
+    }
+
+    public void setMainsiteId(String mainsiteId) {
+        this.mainsiteId = mainsiteId;
     }
 }

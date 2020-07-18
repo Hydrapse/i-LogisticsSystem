@@ -237,6 +237,7 @@ public class SiteIOServiceImpl implements SiteIOService {
         msg.put("itemId", itemCheckinResp.getItemId());
         msg.put("itemNum",itemCheckinResp.getItemNum());
         msg.put("recordId",itemCheckinResp.getRecordId());
+        msg.put("mainsiteId",itemCheckinResp.getMainsiteId());
 
         //向待审核入库消息队列发送消息unreviewed item in
 //        amqpTemplate.convertAndSend("unreviewed order", orderMsg.toJSONString());
@@ -433,6 +434,7 @@ public class SiteIOServiceImpl implements SiteIOService {
             logger.info("生成出库记录，并保存到数据库，出库单编号为"+ nextId);
 
             ItemCheckoutResp itemCheckoutResp = getItemCheckoutRespByRecordId(siteIO.getRecordId());
+            itemCheckoutResp.setMainsiteId(mainsiteId);
 
             //判断是否需要审核, 如果需要发送消息
             //boolean flag = isCheckNeeded();
@@ -459,6 +461,7 @@ public class SiteIOServiceImpl implements SiteIOService {
         msg.put("itemId", itemCheckoutResp.getItemId());
         msg.put("itemNum",itemCheckoutResp.getItemNum());
         msg.put("recordId",itemCheckoutResp.getRecordId());
+        msg.put("mainsiteId",itemCheckoutResp.getMainsiteId());
 
 
         //向待审核出库消息队列发送消息unreviewed item out
