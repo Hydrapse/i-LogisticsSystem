@@ -325,11 +325,12 @@ public class OrderService {
     }
 
     public List getOrderIdListByInfix(String infix){
+        List<String> orderIds = new ArrayList<>();
         if(StringUtil.isNullOrEmpty(infix)){
-            return null;
+            return orderIds;
         }
         List<Long> allOrderId = orderMapper.getAllOrderId();
-        List<String> orderIds = new ArrayList<>();
+
         String pattern = ".*"+ infix +".*";
         for(Long id:allOrderId){
             String idStr = String.valueOf(id);
@@ -344,7 +345,7 @@ public class OrderService {
 
     public List getBillNameListByInfix(String infix){
         if(StringUtil.isNullOrEmpty(infix)){
-            return null;
+            return new ArrayList();
         }
         List<String> billNames = orderMapper.getBillNameListByInfix(infix);
         return billNames;

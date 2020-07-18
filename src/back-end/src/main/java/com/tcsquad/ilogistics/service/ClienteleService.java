@@ -136,11 +136,12 @@ ClienteleService {
 
     //customerId自动补全
     public List getCustomerIdsByInfix(String infix){
+        List<String> customerIds = new ArrayList<>();
         if(StringUtil.isNullOrEmpty(infix)){
-            return null;
+            return customerIds;
         }
         List<Long> allCustomerIds = customerMapper.getAllCustomerIds();
-        List<String> customerIds = new ArrayList<>();
+
         String pattern = ".*"+ infix +".*";
         for(Long id:allCustomerIds){
             String idStr = String.valueOf(id);
