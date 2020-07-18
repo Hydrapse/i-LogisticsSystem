@@ -7,6 +7,7 @@ import com.tcsquad.ilogistics.domain.request.ItemInventoryGetReq;
 import com.tcsquad.ilogistics.domain.request.PageRequest;
 import com.tcsquad.ilogistics.domain.request.SiteIOAddReq;
 import com.tcsquad.ilogistics.domain.response.*;
+import com.tcsquad.ilogistics.service.SiteService;
 import com.tcsquad.ilogistics.service.interf.ItemService;
 import com.tcsquad.ilogistics.service.interf.SiteIOService;
 import com.tcsquad.ilogistics.service.interf.WarehouseService;
@@ -32,6 +33,8 @@ public class MainsiteController {
     WarehouseService warehouseService;
     @Autowired
     ItemService itemService;
+    @Autowired
+    SiteService siteService;
 
     @ApiOperation("入库请求")
     @PostMapping("/{mainsiteId}/inventory/inquery")
@@ -190,6 +193,11 @@ public class MainsiteController {
         inventoryUpdateReq.setMainsiteId(mainsiteId);
         inventoryUpdateReq.setItemId(itemId);
         warehouseService.updateItemInventoryBetweenWarehouses(inventoryUpdateReq);
+    }
+
+    @GetMapping("")
+    public List<String> getAllMainSiteIds() {
+        return siteService.getAllMainSite();
     }
 
 }

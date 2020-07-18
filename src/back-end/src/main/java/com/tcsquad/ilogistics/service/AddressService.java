@@ -7,8 +7,10 @@ import com.tcsquad.ilogistics.domain.map.DistanceResult;
 import com.tcsquad.ilogistics.domain.map.GeoCodingResult;
 import com.tcsquad.ilogistics.domain.map.RouteResult;
 import com.tcsquad.ilogistics.exception.BusinessErrorException;
+import com.tcsquad.ilogistics.settings.TransferSetting;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,9 @@ public class AddressService {
 
     @Value("${map.sn}")
     private String sn;
+
+    @Autowired
+    TransferSetting transferSetting;
 
     private HttpClient httpClient = HttpClient.newHttpClient();
 
@@ -152,10 +157,10 @@ public class AddressService {
      * 查找最近的点
      * @param one 纬度,经度
      * @param many 纬度,经度
-     * @param byTime true:按时间排; false:按距离排
-     * @return
+     * @return 最近点index
      */
-    public int closest(Pair<Double, Double> one, List<Pair<Double, Double>> many, boolean byTime) {
+    public int closest(Pair<Double, Double> one, List<Pair<Double, Double>> many) {
+        boolean byTime = transferSetting.isByTime(); //byTime true:按时间排; false:按距离排
         if (many == null || many .isEmpty())
             throw new BusinessErrorException("计算距离的列表不能为空",ErrorCode.MISS_PARAMS.getCode());
 
@@ -175,16 +180,6 @@ public class AddressService {
             }
         }
         return result;
-    }
-
-    /**
-     *  查找最近的点,按距离排序
-     * @param one 纬度,经度
-     * @param many 纬度,经度
-     * @return
-     */
-    public int closest(Pair<Double, Double> one, List<Pair<Double, Double>> many) {
-        return closest(one, many ,false);
     }
 
     /**
