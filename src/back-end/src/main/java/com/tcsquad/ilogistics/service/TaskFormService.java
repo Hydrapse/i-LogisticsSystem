@@ -25,6 +25,8 @@ import com.tcsquad.ilogistics.service.interf.SiteIOService;
 import com.tcsquad.ilogistics.util.IDSequenceUtil;
 import com.tcsquad.ilogistics.util.PageUtil;
 import com.tcsquad.ilogistics.util.StockOutMsgUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ import java.util.List;
 
 @Service
 public class TaskFormService {
+    private static Logger logger = LoggerFactory.getLogger(TaskFormService.class);
 
     @Autowired
     TaskFormMapper taskFormMapper;
@@ -44,9 +47,6 @@ public class TaskFormService {
 
     @Autowired
     AddressService addressService;
-
-    @Autowired
-    StockOutMsgUtil stockOutMsgUtil;
 
     @Autowired
     SiteMapper siteMapper;
@@ -197,6 +197,7 @@ public class TaskFormService {
      */
     public void generateTaskForms(Order order, String mainsiteId) {
         //计算最近配送站
+        logger.debug("开始计算最近配送站");
         var subsites = siteMapper.getSubSiteListByMainSiteId(mainsiteId);
         var subsitesPositions  = new ArrayList<Pair<Double,Double>>();
         for(SubSite subSite:subsites) {
@@ -214,8 +215,10 @@ public class TaskFormService {
         var inStockList = new ArrayList<OrderItem>();
         for (var item : items) {
             if(logicalInventoryService.decreaseLogicInventory(mainsiteId,item.getItemId(),item.getItemNum())) {// in stock
+                logger.info(mainsiteId + " " + item.getItem().getItemId() + " 货物足够, 扣除逻辑库存");
                 inStockList.add(item);
             } else {
+                logger.info(mainsiteId + " " + item.getItem().getItemId() + " 货物不足, 准备进行调货");
                 var taskForm = preGenerateTaskForm(order,subSiteId);
 
                 taskForm.setStatus(StatusString.T_WAITING.getValue());
@@ -227,7 +230,8 @@ public class TaskFormService {
                 orderItemMapper.updateOrderItemTaskId(item);
                 orderItemMapper.updateOrderItemStatus(item);
 
-                stockOutMsgUtil.insertStockOutMessage(mainsiteId,taskForm.getOrderItems().get(0)); //缺货消息
+                //缺货消息
+                logicalInventoryService.handleStockOut(mainsiteId,taskForm.getOrderItems().get(0));
                 transferGoodsService.generateTransfer(mainsiteId,taskForm); //调货请求
             }
         }
@@ -286,7 +290,7 @@ public class TaskFormService {
      */
     public void sendTaskForm(long taskFormId,String mainSiteId,String shipName,String shipTel,String shipPro,String shipCity,String shipDis,String shipAddr) {
         var taskForm = taskFormMapper.getTaskForm(taskFormId);
-        taskForm.setDeliveryDateTime(new Date());
+         taskForm.setDeliveryDateTime(new Date());
         taskForm.setShipName(shipName);
         taskForm.setShipTel(shipTel);
         taskForm.setShipPro(shipPro);

@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -133,12 +132,15 @@ class ILogisticsSystemApplicationTests {
     }
 
     @Test
-    void test(){
-        ArrayList<Object> objects = new ArrayList<>();
-        objects.add(1);
-        objects.add(2);
-        objects.add(3);
-        System.out.println(objects.subList(0,0).size());
+    void insertSingle() throws Throwable {
+        sshConnection.createSSH();
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setItemNum(3);
+        orderItem.setTaskId(111);
+        orderItem.setOrderId(10000000);
+        orderItem.setItemId("A-001");
+        stockOutUtil.insertStockOutMessage("MAIN-001", orderItem);
     }
 
 

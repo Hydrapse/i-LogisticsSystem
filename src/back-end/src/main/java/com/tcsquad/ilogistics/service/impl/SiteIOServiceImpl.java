@@ -22,7 +22,6 @@ import com.tcsquad.ilogistics.mapper.order.ReturnFormMapper;
 import com.tcsquad.ilogistics.mapper.order.TaskFormMapper;
 import com.tcsquad.ilogistics.mapper.storage.*;
 import com.tcsquad.ilogistics.service.LogicalInventoryService;
-import com.tcsquad.ilogistics.service.OrderService;
 import com.tcsquad.ilogistics.service.interf.SiteIOService;
 import com.tcsquad.ilogistics.service.interf.WarehouseService;
 import com.tcsquad.ilogistics.util.IDSequenceUtil;
@@ -124,6 +123,7 @@ public class SiteIOServiceImpl implements SiteIOService {
 
             //更新逻辑库存, 处理缺货订单
             MainSite mainSite = siteMapper.getMainsiteByWarehouseId(siteIO.getWarehouseId());
+            System.out.println();
             logger.info("更新逻辑库存, 会自动检查缺货消息,并处理缺货订单");
             logicalInventoryService.handleIncrease(mainSite.getMainsiteId(), siteIO.getItemId(), siteIO.getQty());
 
@@ -135,8 +135,17 @@ public class SiteIOServiceImpl implements SiteIOService {
             else if(siteIO.getType().equals(StatusString.ADJUST_IN.getValue())){
                 //改变调货单的状态
                 AdjustForm preAdjustForm = adjustFormMapper.getAdjustForm(siteIO.getFormId());
-                preAdjustForm.setAdjustStatus(StatusString.A_REACH.getValue());
-                adjustFormMapper.updateAdjustFormStatus(preAdjustForm);
+                if (preAdjustForm == null){
+                    logger.warn("调货单" + siteIO.getFormId()+ "不存在");
+                }
+                else if (StatusString.A_REACH.getValue().equals(preAdjustForm.getAdjustStatus())){
+                    logger.warn("调货单" + siteIO.getFormId() + "状态已为到达, 不能再重复到达");
+                }
+                else{
+                    preAdjustForm.setAdjustStatus(StatusString.A_REACH.getValue());
+                    adjustFormMapper.updateAdjustFormStatus(preAdjustForm);
+                    logger.info("更新调货单" + siteIO.getFormId() + "状态为已到达");
+                }
             }
             else if(siteIO.getType().equals(StatusString.RETURN_IN)){
                 //改变退货单记录的状态
@@ -195,7 +204,7 @@ public class SiteIOServiceImpl implements SiteIOService {
             case 4:
                 typeValue = StatusString.RETURN_IN.getValue();
             default:
-                System.out.println("type值不合法");
+                logger.warn("type值不合法");
         }
 
         if(typeValue != ""){
@@ -473,7 +482,7 @@ public class SiteIOServiceImpl implements SiteIOService {
     @Override
     public ItemCheckoutResp getItemCheckoutRespByRecordId(Long recordId) {
         SiteIO siteIO = siteIOMapper.getSiteIORecordById(recordId);
-        System.out.println(siteIO.getType());
+        logger.info(siteIO.getType());
         ItemCheckoutResp itemCheckoutResp = new ItemCheckoutResp();
         itemCheckoutResp.setType(checkoutTypeStringToInteger(siteIO.getType()));
         itemCheckoutResp.setFormId(siteIO.getFormId());
@@ -568,8 +577,6 @@ public class SiteIOServiceImpl implements SiteIOService {
     }
 
     int checkinTypeStringToInteger(String typeString){
-        System.out.println(typeString);
-        System.out.println();
         if(typeString.equals(StatusString.SUPPLY_IN.getValue())){
             return 1;
         }

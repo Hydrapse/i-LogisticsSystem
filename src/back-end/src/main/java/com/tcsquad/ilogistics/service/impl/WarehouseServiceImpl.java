@@ -11,6 +11,8 @@ import com.tcsquad.ilogistics.exception.BusinessErrorException;
 import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.mapper.storage.WarehouseMapper;
 import com.tcsquad.ilogistics.service.interf.WarehouseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import java.util.List;
 
 @Service
 public class WarehouseServiceImpl implements WarehouseService {
+    private static Logger logger = LoggerFactory.getLogger(WarehouseServiceImpl.class);
 
     @Autowired
     WarehouseMapper warehouseMapper;
@@ -43,7 +46,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     @Transactional
     public void addItemToWarehouse(String warehouseId, String itemId, int itemNum) {
-        System.out.println("addItemToWarehouse");
+        logger.info("添加货物" +  itemId + "至库房" + warehouseId);
         Inventory inventory = warehouseMapper.getInventoryByItemIdAndWarehouseId(warehouseId,itemId);
         if(inventory == null){
             inventory = new Inventory();

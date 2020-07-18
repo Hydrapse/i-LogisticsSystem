@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -89,7 +90,7 @@ public class MainsiteController {
         1. 修改入库仓库信息
         2. 修改入库状态，其中包含对其他模块的调用（例如调货单状态的修改）
          */
-        if(!warehouseId.equals("") && warehouseId!=null){
+        if(!StringUtils.isEmpty(warehouseId)){
             siteIOService.updateWarehouseToCheckin(recordId,warehouseId);
         }
 

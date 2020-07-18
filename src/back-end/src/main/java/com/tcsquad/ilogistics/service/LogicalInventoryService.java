@@ -2,6 +2,7 @@ package com.tcsquad.ilogistics.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.tcsquad.ilogistics.domain.order.OrderItem;
 import com.tcsquad.ilogistics.mapper.storage.LogicInventoryMapper;
 import com.tcsquad.ilogistics.util.RedisUtil;
 import com.tcsquad.ilogistics.util.StockOutMsgUtil;
@@ -40,7 +41,8 @@ public class LogicalInventoryService {
      * 前置条件:<br>
      *     WarehouseService中确认入库消息, 真实库存与逻辑库存增加完毕, 进入缺货信息处理阶段
      * 功能描述:<br>
-     *     所有货物入站都需要调用这个函数, 会首先判断有无缺货消息,若没有则跳出循环, 否则处理缺货消息
+     *     所有货物入站都需要调用这个函数, 会首先判断有无缺货消息,若没有则跳出循环, 否则处理缺货消息;<br>
+     *     <b>TODO:可设置定时任务,定时执行处理缺货信息, 传参时increment=0</b>
      * 事务描述:<br>
      *     把当前存在的(调用该方法的)事务挂起, 创建一个新事务, 如果发生回滚则缺货消息未完成, 但不会影响
      *     源真实库存与逻辑库存的更新
@@ -50,7 +52,7 @@ public class LogicalInventoryService {
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleIncrease(String mainsiteId, String itemId, int increment){
-        if (increment <= 0){
+        if (increment < 0){
             logger.info("increment小于等于0, 退出缺货消息处理");
             return;
         }
@@ -92,7 +94,7 @@ public class LogicalInventoryService {
 
                     //处理任务单taskId的发货任务
                     logger.info("处理任务单 " + taskId + " 的发货任务");
-                    taskFormService.sendTaskForm(taskId, mainsiteId, "邓港大", "18923777768");
+                    taskFormService.sendTaskForm(taskId, mainsiteId, "主站"+mainsiteId, "18923777768");
                 }
                 else {
                     logger.info("缺货消息需要库存数大于现有库存数, 该缺货消息未被处理: " + msg.toString());
@@ -114,6 +116,15 @@ public class LogicalInventoryService {
         //更新逻辑库存
         logicInventoryMapper.updateLogicInventory(mainsiteId, itemId, qty);
         logger.info("键 " + key + " 逻辑库存更新完毕");
+    }
+
+    /**
+     * 功能描述:<br>
+     * 将缺货记录插入缓存
+     */
+    void handleStockOut(String mainsiteId, OrderItem orderItem){
+        logger.info("将 " + mainsiteId + " " + orderItem.getItemId() + " 缺货记录存入缓存数据库") ;
+        stockOutMsgUtil.insertStockOutMessage(mainsiteId, orderItem);
     }
 
     /**
