@@ -55,7 +55,7 @@ public class TestController {
     String testError(@RequestParam(defaultValue = "-1") Integer id) throws GlobalException {
         switch (id){
             case 404: throw new NotFoundException("NOT_FOUND_EXCEPTION TEST",
-                    ErrorCode.USER_NOT_FOUND.getCode());
+                    ErrorCode.MISS_PARAMS.getCode());
             case 400: throw new BusinessErrorException("业务逻辑异常, 订单重复提交",
                     ErrorCode.ORDER_ALREADY_SUBMIT.getCode());
             case 500: throw new InternalServerErrorException("后端服务器异常, 消息队列服务器宕机",

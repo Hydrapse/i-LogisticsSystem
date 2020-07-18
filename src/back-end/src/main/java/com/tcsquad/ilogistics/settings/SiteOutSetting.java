@@ -16,6 +16,12 @@ public class SiteOutSetting extends GeneralSetting{
     private static final int option2 = 2;
     private static final int option3 = 3;
     private int option;
+    private int threshold;
+
+    public SiteOutSetting(){
+       selectOption1();
+       this.threshold = 0;
+    }
 
     public void selectOption1(){
         option = option1;
@@ -33,5 +39,11 @@ public class SiteOutSetting extends GeneralSetting{
         return option;
     }
 
+    public int getThreshold() {
+        return threshold;
+    }
 
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
+    }
 }
