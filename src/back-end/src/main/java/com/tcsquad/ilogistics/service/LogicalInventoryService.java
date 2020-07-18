@@ -50,15 +50,16 @@ public class LogicalInventoryService {
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleIncrease(String mainsiteId, String itemId, int increment){
-        String key = stockOutMsgUtil.keyConcat(mainsiteId, itemId); //Redis索引键
-
-        if(!redisUtil.hasKey(key) ) { //如果不含缺货队列, 则直接退出
-            logger.info("键 " + key + " 不存在缺货信息");
+        if (increment <= 0){
+            logger.info("increment小于等于0, 退出缺货消息处理");
             return;
         }
-        else if (increment <= 0){
-            logger.info("increment小于等于0, 退出缺货消息处理");
-        }
+
+        //Redis索引键
+        String key = stockOutMsgUtil.keyConcat(mainsiteId, itemId);
+
+        //判断是否包含缺货信息
+        if(!redisUtil.hasKey(key)) logger.info("键 " + key + " 不存在缺货信息");
 
         //qty为当前逻辑库存数量
         int qty = logicInventoryMapper.getLogicInventoryByMainsiteAndItemId(mainsiteId, itemId);
@@ -89,7 +90,7 @@ public class LogicalInventoryService {
                     qty -= itemNum;
                     ++index; //移动下标
 
-                    //TODO: 处理任务单taskId的发货任务
+                    //处理任务单taskId的发货任务
                     logger.info("处理任务单 " + taskId + " 的发货任务");
                     taskFormService.sendTaskForm(taskId, mainsiteId, "邓港大", "18923777768");
                 }
@@ -112,6 +113,7 @@ public class LogicalInventoryService {
 
         //更新逻辑库存
         logicInventoryMapper.updateLogicInventory(mainsiteId, itemId, qty);
+        logger.info("键 " + key + " 逻辑库存更新完毕");
     }
 
     /**
@@ -121,7 +123,12 @@ public class LogicalInventoryService {
      */
     @Transactional
     public boolean decreaseLogicInventory(String mainsiteId, String itemId, int increment){
-        int qty = logicInventoryMapper.getLogicInventoryByMainsiteAndItemId(mainsiteId, itemId);
+        Integer qty = logicInventoryMapper.getLogicInventoryByMainsiteAndItemId(mainsiteId, itemId);
+
+        if (qty == null){
+            logger.info("数据库中没有对应键" + mainsiteId + " " + itemId);
+            return false;
+        }
 
         //库存充足
         if (increment < qty){
