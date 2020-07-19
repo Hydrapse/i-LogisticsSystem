@@ -12,7 +12,7 @@ public class TransferSetting {
     private boolean byTime;
     @Getter
     private int outStockRatio;
-    @Getter@Setter
+    @Getter
     private int transferNum;
     @Getter
     private String transferSite;
@@ -22,6 +22,12 @@ public class TransferSetting {
         this.outStockRatio = 100;
         this.transferNum = 0;
         this.transferSite = "D";
+    }
+
+    public void setTransferNum(int transferNum) {
+        if(transferNum < 0)
+            transferNum = 0;
+        this.transferNum = transferNum;
     }
 
     public void setOutStockRatio(int outStockRatio) {

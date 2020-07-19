@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.tcsquad.ilogistics.domain.ErrorCode;
 import com.tcsquad.ilogistics.domain.request.OrderSettingsReq;
 import com.tcsquad.ilogistics.domain.request.SiteIOSettingsReq;
+import com.tcsquad.ilogistics.domain.request.TransferSettingReq;
 import com.tcsquad.ilogistics.exception.NotFoundException;
 import com.tcsquad.ilogistics.settings.OrderSetting;
 import com.tcsquad.ilogistics.settings.SiteIOSetting;
 import com.tcsquad.ilogistics.settings.SiteOutSetting;
+import com.tcsquad.ilogistics.settings.TransferSetting;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -30,6 +32,8 @@ public class SettingsController {
     SiteIOSetting siteIOSetting;
     @Autowired
     SiteOutSetting siteOutSetting;
+    @Autowired
+    TransferSetting transferSetting;
 
     @ApiOperation("获取出入库审核策略")
     @GetMapping("/siteIOSettings")
@@ -214,5 +218,33 @@ public class SettingsController {
             throw new NotFoundException("修改参数为空，修改失败",
                     ErrorCode.MISS_PARAMS.getCode());
         }
+    }
+
+    @ApiOperation("修改配送策略")
+    @PutMapping("/taskSettings")
+    public void updateTaskSettings(@RequestBody TransferSettingReq transferSettingReq) {
+        logger.info("修改配送策略");
+        if(transferSettingReq.getByTime() != null) {
+            transferSetting.setByTime(transferSettingReq.getByTime());
+        }
+        if(transferSettingReq.getOutStockRatio() != null) {
+            transferSetting.setOutStockRatio(transferSettingReq.getOutStockRatio());
+        }
+        if(transferSettingReq.getTransferNum() != null) {
+            transferSetting.setTransferNum(transferSettingReq.getTransferNum());
+        }
+        if(transferSettingReq.getTransferSite() !=null) {
+            if (transferSettingReq.getTransferSite().equals("D"))
+                transferSetting.setTransferSiteByDistance();
+            else if (transferSettingReq.getTransferSite().equals("N"))
+                transferSetting.setTransferSiteByNum();
+        }
+    }
+
+    @ApiOperation("获取配送策略")
+    @GetMapping("/taskSettings")
+    public TransferSetting getTaskSettings() {
+        logger.info("获取配送策略");
+        return transferSetting;
     }
 }
