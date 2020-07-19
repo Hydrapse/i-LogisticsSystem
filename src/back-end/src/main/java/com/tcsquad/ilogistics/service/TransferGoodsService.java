@@ -101,6 +101,8 @@ public class TransferGoodsService {
             mainSites.removeIf(mainSite -> {return mainSite.getMainsiteId().equals(lackGoodsMainSiteId);});
             var mainSitesIds = mainSites.stream().map(MainSite::getMainsiteId).collect(Collectors.toList());
 
+            //TODO: 调货数量策略
+
             if(transferSetting.getTransferSite().equals("D")) { //距离排序
                 var startSite = siteMapper.getMainSiteById(lackGoodsMainSiteId);
                 var startSitePoint = Pair.of(startSite.getLatitude().doubleValue(),startSite.getLongitude().doubleValue());

@@ -195,7 +195,7 @@ public class OrderService {
                 }
             }
             if(orderSetting.isCustomerIdLimit()){
-                logger.info("顾客ID" + String.valueOf(orderAddReq.getOrder().getCustomerId()));
+                logger.info("顾客ID" + orderAddReq.getOrder().getCustomerId());
                 if(orderSetting.isInCustomerIdWhiteList(String.valueOf(orderAddReq.getOrder().getCustomerId()))){
                     //订单的用户在用户白名单中，则无需审核
                     logger.info("订单的用户在用户白名单中，则无需审核");
