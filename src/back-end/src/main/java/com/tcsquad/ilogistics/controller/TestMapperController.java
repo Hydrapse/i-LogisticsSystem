@@ -1,5 +1,6 @@
 package com.tcsquad.ilogistics.controller;
 
+import com.tcsquad.ilogistics.domain.StatusString;
 import com.tcsquad.ilogistics.domain.order.OrderItem;
 import com.tcsquad.ilogistics.domain.order.TaskForm;
 import com.tcsquad.ilogistics.domain.storage.AdjustForm;
@@ -10,8 +11,10 @@ import com.tcsquad.ilogistics.mapper.storage.AdjustFormMapper;
 import com.tcsquad.ilogistics.mapper.storage.ItemMapper;
 import com.tcsquad.ilogistics.mapper.storage.LogicInventoryMapper;
 import com.tcsquad.ilogistics.mapper.storage.SiteMapper;
+import com.tcsquad.ilogistics.service.interf.SiteIOService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
@@ -36,6 +39,9 @@ public class TestMapperController {
 
     @Autowired
     ItemMapper itemMapper;
+
+    @Autowired
+    SiteIOService siteIOService;
 
     @GetMapping("/test/insertTaskform")
     List<TaskForm> insertTaskForm() {
@@ -188,6 +194,12 @@ public class TestMapperController {
     List<AdjustForm> getAdjustFormByItemId(){
         return adjustFormMapper.getAdjustFormByItemId("A-001");
     }
+
+    @PostMapping("/test/testSiteOut")
+    public void insertSiteOutRecord(String type, Long formId, String mainsiteId){
+        siteIOService.insertCheckOutRecord(StatusString.ADJUST_OUT.getValue(),Long.parseLong("10000003"),"MAIN-002");
+    }
+
 
 
 

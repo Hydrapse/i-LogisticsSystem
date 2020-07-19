@@ -456,6 +456,8 @@ public class SiteIOServiceImpl implements SiteIOService {
             taskFormMapper.updateTaskFormStatus(StatusString.T_UNSENT.getValue(),formId);
         }
 
+        List<SiteIO> realSiteIOList = new ArrayList<>();
+
         //选择库房
         for(SiteIO siteIO:siteIOList){
             //Todo:这里应该需要增加一些策略
@@ -472,59 +474,63 @@ public class SiteIOServiceImpl implements SiteIOService {
                     while (totalNum > 0){
                         Inventory maxInv = inventoryList.get(0);
                         for(Inventory inv:inventoryList){
-                            if(maxInv.getItemNum() < inv.getItemNum() )
+                            if(maxInv.getItemNum() < inv.getItemNum())
                                 maxInv = inv;
                         }
                         SiteIO siteIO1 = new SiteIO();
                         siteIO1.setType(siteIO.getType());
-                        siteIO1.setQty(maxInv.getItemNum());
+                        if(totalNum > maxInv.getItemNum())
+                            siteIO1.setQty(maxInv.getItemNum());
+                        else
+                            siteIO1.setQty(totalNum);
                         siteIO1.setItemId(siteIO.getItemId());
                         siteIO1.setFormId(siteIO.getFormId());
                         siteIO1.setWarehouseId(maxInv.getWarehouseId());
-                        logger.info("额外生成新的出库单，出库商品数量为：" + maxInv.getItemNum());
-                        totalNum = totalNum-maxInv.getItemNum();
+                        totalNum = totalNum-siteIO1.getQty();
                         inventoryList.remove(maxInv);
-                        siteIOList.add(siteIO1);
+                        logger.info("额外生成新的出库单，出库商品数量为：" + siteIO1.getQty());
+                        realSiteIOList.add(siteIO1);
                     }
-                    siteIOList.remove(siteIO);
                 }
 
                 else if(siteOutSetting.getOption() == 2){
 
                 }
 
-
             }
             else {
                 //此处默认选第一个
                 siteIO.setWarehouseId(warehouseOptions.get(0));
+                realSiteIOList.add(siteIO);
             }
         }
 
         //其他选择
-        for(SiteIO siteIO:siteIOList){
-            siteIO.setApprovalStatus(StatusString.WAITING.getValue());
-            siteIO.setTimeStamp(new Date());
-            siteIO.setApprover("Auto");
+        for(SiteIO sIO:realSiteIOList){
+            logger.info("出库单数量为：" + realSiteIOList.size());
+            logger.info(sIO.getWarehouseId());
+            sIO.setApprovalStatus(StatusString.WAITING.getValue());
+            sIO.setTimeStamp(new Date());
+            sIO.setApprover("Auto");
 
             Long nextId = idSequenceUtil.getNextFormIdByName(SequenceName.MAINSITEIO_FORM.getValue());
-            siteIO.setRecordId(nextId);
-            siteIOMapper.insertSiteIORecord(siteIO);
+            sIO.setRecordId(nextId);
+            siteIOMapper.insertSiteIORecord(sIO);
             logger.info("生成出库记录，并保存到数据库，出库单编号为"+ nextId);
 
-            ItemCheckoutResp itemCheckoutResp = getItemCheckoutRespByRecordId(siteIO.getRecordId());
+            ItemCheckoutResp itemCheckoutResp = getItemCheckoutRespByRecordId(sIO.getRecordId());
             itemCheckoutResp.setMainsiteId(mainsiteId);
 
             //判断是否需要审核, 如果需要发送消息
             if(isCheckNeeded_Out(itemCheckoutResp)){
                 logger.info("出库记录" + nextId + "需要人工审核，下面发送出库消息");
                 sendItemCheckoutMessage(itemCheckoutResp);
-                return;
             }
-
-            //不需要审核则直接确认入库
-            logger.info("出库记录" + nextId + "不需要审核，直接确认出库");
-            confirmSiteIORecord(nextId,false);
+            else {
+                //不需要审核则直接确认入库
+                logger.info("出库记录" + nextId + "不需要审核，直接确认出库");
+                confirmSiteIORecord(nextId,false);
+            }
         }
 
     }

@@ -101,14 +101,14 @@
 
     <select id="getInventoryListByItemAndMainsite" resultType="Inventory">
         select  itemid as itemId,
-                warehouseid as warehouseId,
+                inventory.warehouseid as warehouseId,
                 num as itemNum,
                 logicinventory as logicInventory
-        from warehouse,item
+        from inventory,warehouse
         where
-                item.itemid = #{itemId}
-            and item.cid = warehouse.categoryid
-            and mainsiteid = #{warehouseId}
+                inventory.itemid = #{itemId}
+            and inventory.warehouseid = warehouse.warehouseid
+            and mainsiteid = #{mainsiteId}
     </select>
 
 
