@@ -26,6 +26,7 @@ import com.tcsquad.ilogistics.service.LogicalInventoryService;
 import com.tcsquad.ilogistics.service.interf.SiteIOService;
 import com.tcsquad.ilogistics.service.interf.WarehouseService;
 import com.tcsquad.ilogistics.settings.SiteIOSetting;
+import com.tcsquad.ilogistics.settings.SiteOutSetting;
 import com.tcsquad.ilogistics.util.IDSequenceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,8 @@ public class SiteIOServiceImpl implements SiteIOService {
     IDSequenceUtil idSequenceUtil;
     @Autowired
     SiteIOSetting siteIOSetting;
+    @Autowired
+    SiteOutSetting siteOutSetting;
 
     @Override
     @Transactional
@@ -217,14 +220,23 @@ public class SiteIOServiceImpl implements SiteIOService {
             typeValue = StatusString.ADJUST_IN.getValue();
         }
 
-        else if(siteIOAddReq.getType() == 3 || siteIOAddReq.getType() == 4){
+        else if(siteIOAddReq.getType() == 3){
             //退换货入库
             ReturnForm returnForm = returnFormMapper.getReturnFormByFormId(siteIOAddReq.getFormId());
             if(returnForm == null){
-                throw new NotFoundException("入库请求失败，没有对应的退换货单",
+                throw new NotFoundException("入库请求失败，没有对应的退货单",
                         ErrorCode.MISS_PARAMS.getCode());
             }
             typeValue = StatusString.RETURN_IN.getValue();
+        }
+        else if(siteIOAddReq.getType() == 4){
+            //退换货入库
+            ReturnForm changeForm = returnFormMapper.getChangeFormByFormId(siteIOAddReq.getFormId());
+            if(changeForm == null){
+                throw new NotFoundException("入库请求失败，没有对应的换货单",
+                        ErrorCode.MISS_PARAMS.getCode());
+            }
+            typeValue = StatusString.CHANGE_IN.getValue();
         }
         else {
             logger.warn("type值不合法");
@@ -390,6 +402,7 @@ public class SiteIOServiceImpl implements SiteIOService {
     public void insertCheckOutRecord(String type, Long formId, String mainsiteId) {
         List<SiteIO> siteIOList = new ArrayList<>();
         if(type.equals(StatusString.SUPPLY_OUT.getValue())){
+            //向供应商退货
             SiteIO siteIO = new SiteIO();
             SupplyIO supplyIO = supplyIOMapper.getSupplyIOByRecordId(formId);
             if(supplyIO == null){
@@ -406,6 +419,7 @@ public class SiteIOServiceImpl implements SiteIOService {
 
         }
         else if(type.equals(StatusString.ADJUST_OUT.getValue())){
+            //调货出库
             AdjustForm adjustForm = adjustFormMapper.getAdjustForm(formId);
             if(adjustForm == null){
                 throw new BusinessErrorException("业务逻辑异常, 该调货单订录不存在",
@@ -442,15 +456,56 @@ public class SiteIOServiceImpl implements SiteIOService {
             taskFormMapper.updateTaskFormStatus(StatusString.T_UNSENT.getValue(),formId);
         }
 
+        //选择库房
+        for(SiteIO siteIO:siteIOList){
+            //Todo:这里应该需要增加一些策略
+            List<String> warehouseOptions = warehouseMapper.getWarehouseOptionsToCheckout(siteIO.getItemId(),siteIO.getQty(),mainsiteId);
+            if(warehouseOptions == null || warehouseOptions.isEmpty()){
+                logger.info("总商品数量("+siteIO.getQty()+")过多，单个库房无法进行出库，下面使用出库策略");
+                List<Inventory> inventoryList = warehouseMapper.getInventoryListByItemAndMainsite(siteIO.getItemId(),mainsiteId);
+
+                //选择选项一
+                if(siteOutSetting.getOption() == 1){
+                    logger.info("使用选项一进行库房的分配");
+
+                    int totalNum = siteIO.getQty();
+                    while (totalNum > 0){
+                        Inventory maxInv = inventoryList.get(0);
+                        for(Inventory inv:inventoryList){
+                            if(maxInv.getItemNum() < inv.getItemNum() )
+                                maxInv = inv;
+                        }
+                        SiteIO siteIO1 = new SiteIO();
+                        siteIO1.setType(siteIO.getType());
+                        siteIO1.setQty(maxInv.getItemNum());
+                        siteIO1.setItemId(siteIO.getItemId());
+                        siteIO1.setFormId(siteIO.getFormId());
+                        siteIO1.setWarehouseId(maxInv.getWarehouseId());
+                        logger.info("额外生成新的出库单，出库商品数量为：" + maxInv.getItemNum());
+                        totalNum = totalNum-maxInv.getItemNum();
+                        inventoryList.remove(maxInv);
+                        siteIOList.add(siteIO1);
+                    }
+                    siteIOList.remove(siteIO);
+                }
+
+                else if(siteOutSetting.getOption() == 2){
+
+                }
+
+
+            }
+            else {
+                //此处默认选第一个
+                siteIO.setWarehouseId(warehouseOptions.get(0));
+            }
+        }
+
+        //其他选择
         for(SiteIO siteIO:siteIOList){
             siteIO.setApprovalStatus(StatusString.WAITING.getValue());
             siteIO.setTimeStamp(new Date());
             siteIO.setApprover("Auto");
-
-            //Todo:这里应该需要增加一些策略
-            //此处默认选第一个
-            List<String> warehouseOptions = warehouseMapper.getWarehouseOptionsToCheckout(siteIO.getItemId(),siteIO.getQty(),mainsiteId);
-            siteIO.setWarehouseId(warehouseOptions.get(0));
 
             Long nextId = idSequenceUtil.getNextFormIdByName(SequenceName.MAINSITEIO_FORM.getValue());
             siteIO.setRecordId(nextId);

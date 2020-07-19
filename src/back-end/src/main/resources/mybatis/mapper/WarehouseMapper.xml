@@ -99,4 +99,17 @@
         group by warehouse.mainsiteid
     </select>
 
+    <select id="getInventoryListByItemAndMainsite" resultType="Inventory">
+        select  itemid as itemId,
+                warehouseid as warehouseId,
+                num as itemNum,
+                logicinventory as logicInventory
+        from warehouse,item
+        where
+                item.itemid = #{itemId}
+            and item.cid = warehouse.categoryid
+            and mainsiteid = #{warehouseId}
+    </select>
+
+
 </mapper>

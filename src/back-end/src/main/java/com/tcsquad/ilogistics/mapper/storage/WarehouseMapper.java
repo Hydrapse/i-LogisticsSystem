@@ -49,4 +49,6 @@ public interface WarehouseMapper {
     //根据商品编号获取商品在各主站的库存
     List<MainsiteInventory> getMainsiteInventorysByItemId(String itemId);
 
+    List<Inventory> getInventoryListByItemAndMainsite(@Param("itemId")String itemId,@Param("mainsiteId")String mainsiteId);
+
 }
