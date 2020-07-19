@@ -39,5 +39,7 @@ public class OrderSetting extends GeneralSetting{
         totalPriceAmount = new BigDecimal(0);
         categoryIdLimit = false;
         categoryIdWhiteList = new ArrayList<>();
+        customerIdLimit=false;
+        customerIdWhiteList=new ArrayList<>();
     }
 }

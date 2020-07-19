@@ -127,7 +127,7 @@ public class SettingsController {
         settingsObj.put("categoryIdLimit",orderSetting.isCategoryIdLimit());
         settingsObj.put("categoryIdWhiteList",orderSetting.getCategoryIdWhiteList());
         settingsObj.put("customerIdLimit",orderSetting.isCustomerIdLimit());
-        settingsObj.put("categoryIdWhiteList",orderSetting.getCategoryIdWhiteList());
+        settingsObj.put("customerIdWhiteList",orderSetting.getCustomerIdWhiteList());
         return settingsObj;
     }
 
