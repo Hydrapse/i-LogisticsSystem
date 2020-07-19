@@ -188,7 +188,17 @@ public class OrderService {
             Order order = orderAddReq.getOrder();
             if (orderSetting.isTotalPriceLimit()){
                 BigDecimal totalPrice = order.getTotalPrice();
+                //订单价格小于阈值，则不需要审核
                 if (totalPrice.compareTo(orderSetting.getTotalPriceAmount()) == -1){
+                    logger.info("订单价格小于阈值，则不需要审核");
+                    return false;
+                }
+            }
+            if(orderSetting.isCustomerIdLimit()){
+                logger.info("顾客ID" + String.valueOf(orderAddReq.getOrder().getCustomerId()));
+                if(orderSetting.isInCustomerIdWhiteList(String.valueOf(orderAddReq.getOrder().getCustomerId()))){
+                    //订单的用户在用户白名单中，则无需审核
+                    logger.info("订单的用户在用户白名单中，则无需审核");
                     return false;
                 }
             }
@@ -197,14 +207,17 @@ public class OrderService {
                 for(OrderItem orderItem : orderAddReq.getOrderItemList()){
                    String categoryId = orderItem.getItem().getCategoryId();
                    if (!whiteList.contains(categoryId)){
+                       logger.info("有商品不在大类白名单内, 则该订单需要审核");
                        return true; //如果有商品不在大类白名单内, 则该订单需要审核
                    }
                 }
+                logger.info("全部商品都在大类白名单内, 则无须审核");
                 return false; //若全部商品都在大类白名单内, 则无须审核
             }
         }
 
         //如果没有启用配置, 全部订单需要进行审核
+        logger.info("没有启用配置或不符合白名单要求, 该订单需要进行审核");
         return true;
     }
 

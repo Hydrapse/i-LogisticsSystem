@@ -56,7 +56,7 @@ public class MainsiteController {
 
         //mailUtil.sendMail("1041422509@qq.com","生成入库请求","入库请求");
 
-        if(siteIOService.isCheckNeeded(siteIOAddReq)){
+        if(siteIOService.isCheckNeeded_In(siteIOAddReq)){
             logger.info("入库记录" +newRecordId + "需要人工审核，下面发送入库消息");
             //需要审核则发送入库消息
             siteIOService.sendItemCheckinMessage(itemCheckinResp);

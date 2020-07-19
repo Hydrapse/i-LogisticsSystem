@@ -47,6 +47,32 @@ public class SiteIOSetting extends GeneralSetting{
         siteOutTypeWhiteList = new ArrayList<>();
     }
 
+    public boolean isInCategoryIdWhiteList(String cid){
+        for(String categoryId:categoryIdWhiteList){
+            if(categoryId.equals(cid))
+                return true;
+        }
+
+        return false;
+    }
+
+    public boolean isInSiteInTypeWhiteList(String type){
+        for(String t:siteInTypeWhiteList){
+            if(t.equals(type))
+                return true;
+        }
+
+        return false;
+    }
+
+    public boolean isInSiteOutTypeWhiteList(String type){
+        for(String t:siteOutTypeWhiteList){
+            if(t.equals(type))
+                return true;
+        }
+        return false;
+    }
+
     public boolean isTotalPriceLimit() {
         return totalPriceLimit;
     }

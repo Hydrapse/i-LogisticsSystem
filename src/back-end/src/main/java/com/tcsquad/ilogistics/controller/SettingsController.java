@@ -163,7 +163,7 @@ public class SettingsController {
 
             //顾客白名单
             if(orderSettingsReq.getCustomerIdLimit() != null){
-                orderSetting.setCategoryIdLimit(orderSettingsReq.getCustomerIdLimit());
+                orderSetting.setCustomerIdLimit(orderSettingsReq.getCustomerIdLimit());
                 if(orderSettingsReq.getCustomerIdLimit() && orderSettingsReq.getCustomerIdWhiteList() != null){
                     logger.info("修改顾客白名单为："+ orderSettingsReq.getCustomerIdWhiteList().toString());
                     orderSetting.setCustomerIdWhiteList(orderSettingsReq.getCustomerIdWhiteList());

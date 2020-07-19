@@ -16,6 +16,7 @@ import com.tcsquad.ilogistics.domain.response.SiteIOCheckInResp;
 import com.tcsquad.ilogistics.domain.response.SiteIOCheckoutResp;
 import com.tcsquad.ilogistics.domain.storage.*;
 import com.tcsquad.ilogistics.exception.BusinessErrorException;
+import com.tcsquad.ilogistics.exception.NotFoundException;
 import com.tcsquad.ilogistics.mapper.clientele.SupplyIOMapper;
 import com.tcsquad.ilogistics.mapper.order.OrderMapper;
 import com.tcsquad.ilogistics.mapper.order.ReturnFormMapper;
@@ -24,6 +25,7 @@ import com.tcsquad.ilogistics.mapper.storage.*;
 import com.tcsquad.ilogistics.service.LogicalInventoryService;
 import com.tcsquad.ilogistics.service.interf.SiteIOService;
 import com.tcsquad.ilogistics.service.interf.WarehouseService;
+import com.tcsquad.ilogistics.settings.SiteIOSetting;
 import com.tcsquad.ilogistics.util.IDSequenceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,6 +71,8 @@ public class SiteIOServiceImpl implements SiteIOService {
     AmqpTemplate amqpTemplate;
     @Autowired
     IDSequenceUtil idSequenceUtil;
+    @Autowired
+    SiteIOSetting siteIOSetting;
 
     @Override
     @Transactional
@@ -192,48 +197,58 @@ public class SiteIOServiceImpl implements SiteIOService {
     @Override
     @Transactional
     public Long insertCheckinRecord(SiteIOAddReq siteIOAddReq) {
-        SiteIO siteIO = new SiteIO();
         String typeValue = "";
-        switch (siteIOAddReq.getType()){
-            case 1:
-                typeValue = StatusString.SUPPLY_IN.getValue();break;
-            case 2:
-                typeValue = StatusString.ADJUST_IN.getValue();break;
-            case 3:
-                typeValue = StatusString.RETURN_IN.getValue();break;
-            case 4:
-                typeValue = StatusString.RETURN_IN.getValue();
-            default:
-                logger.warn("type值不合法");
+        if(siteIOAddReq.getType() == 1){
+            //补货入库
+            SupplyIO supplyIO = supplyIOMapper.getSupplyIOByRecordId(siteIOAddReq.getFormId());
+            if(supplyIO == null){
+                throw new NotFoundException("入库请求失败，没有对应的补货单",
+                        ErrorCode.MISS_PARAMS.getCode());
+            }
+            typeValue = StatusString.SUPPLY_IN.getValue();
+        }
+        else if(siteIOAddReq.getType() == 2){
+            //调货入库
+            AdjustForm adjustForm = adjustFormMapper.getAdjustForm(siteIOAddReq.getFormId());
+            if(adjustForm == null){
+                throw new NotFoundException("入库请求失败，没有对应的调货单",
+                        ErrorCode.MISS_PARAMS.getCode());
+            }
+            typeValue = StatusString.ADJUST_IN.getValue();
         }
 
-        if(typeValue != ""){
-            Date currentDate = new Date();
-            siteIO.setTimeStamp(currentDate);
-            siteIO.setWarehouseId(siteIOAddReq.getWarehouseId());
-            siteIO.setItemId(siteIOAddReq.getItemId());
-            siteIO.setQty(siteIOAddReq.getItemNum());
-            siteIO.setType(typeValue);
-            siteIO.setFormId(siteIOAddReq.getFormId());
-            siteIO.setApprovalStatus(StatusString.WAITING.getValue());
-            siteIO.setApprover("Auto");                //"Auto"表示为程序根据请求自动出入库
-
-            Long nextId = idSequenceUtil.getNextFormIdByName(SequenceName.MAINSITEIO_FORM.getValue());
-            siteIO.setRecordId(nextId);
-            siteIOMapper.insertSiteIORecord(siteIO);
-            logger.info("生成入库记录，并保存到数据库，入库单编号为"+ nextId);
-
-            //查询本次入库请求的recordId
-            //Long recordId = siteIOMapper.getSiteIORecordIdByFormIdAndItemId(siteIO.getType(),siteIO.getFormId(),siteIO.getItemId());
-            return nextId;
+        else if(siteIOAddReq.getType() == 3 || siteIOAddReq.getType() == 4){
+            //退换货入库
+            ReturnForm returnForm = returnFormMapper.getReturnFormByFormId(siteIOAddReq.getFormId());
+            if(returnForm == null){
+                throw new NotFoundException("入库请求失败，没有对应的退换货单",
+                        ErrorCode.MISS_PARAMS.getCode());
+            }
+            typeValue = StatusString.RETURN_IN.getValue();
         }
         else {
-            //出错
-            //Todo: Error
+            logger.warn("type值不合法");
+            throw new NotFoundException("入库请求失败，入库类型不合法",
+                    ErrorCode.MISS_PARAMS.getCode());
         }
 
-        return null;
+        SiteIO siteIO = new SiteIO();
+        Date currentDate = new Date();
+        siteIO.setTimeStamp(currentDate);
+        siteIO.setWarehouseId(siteIOAddReq.getWarehouseId());
+        siteIO.setItemId(siteIOAddReq.getItemId());
+        siteIO.setQty(siteIOAddReq.getItemNum());
+        siteIO.setType(typeValue);
+        siteIO.setFormId(siteIOAddReq.getFormId());
+        siteIO.setApprovalStatus(StatusString.WAITING.getValue());
+        siteIO.setApprover("Auto");                //"Auto"表示为程序根据请求自动出入库
 
+        Long nextId = idSequenceUtil.getNextFormIdByName(SequenceName.MAINSITEIO_FORM.getValue());
+        siteIO.setRecordId(nextId);
+        siteIOMapper.insertSiteIORecord(siteIO);
+        logger.info("生成入库记录，并保存到数据库，入库单编号为"+ nextId);
+
+        return nextId;
     }
 
     @Override
@@ -446,16 +461,15 @@ public class SiteIOServiceImpl implements SiteIOService {
             itemCheckoutResp.setMainsiteId(mainsiteId);
 
             //判断是否需要审核, 如果需要发送消息
-            //boolean flag = isCheckNeeded();
-            boolean flag = true; //测试中全部都需要审核
-            if(flag){
+            if(isCheckNeeded_Out(itemCheckoutResp)){
                 logger.info("出库记录" + nextId + "需要人工审核，下面发送出库消息");
                 sendItemCheckoutMessage(itemCheckoutResp);
-             return;
+                return;
             }
 
-            //TODO: 正常情况取消掉注释
-            //confirmSiteIORecord(); //审核结束后的出口
+            //不需要审核则直接确认入库
+            logger.info("出库记录" + nextId + "不需要审核，直接确认出库");
+            confirmSiteIORecord(nextId,false);
         }
 
     }
@@ -551,8 +565,70 @@ public class SiteIOServiceImpl implements SiteIOService {
     }
 
     @Override
-    public boolean isCheckNeeded(SiteIOAddReq siteIOAddReq) {
-        //Todo: 调用一些策略
+    public boolean isCheckNeeded_In(SiteIOAddReq siteIOAddReq) {
+        if(siteIOSetting.isAvailable()){
+            if(siteIOSetting.isCategoryIdLimit()){
+                Item item = itemMapper.getItem(siteIOAddReq.getItemId());
+                if(siteIOSetting.isInCategoryIdWhiteList(item.getCategoryId())){
+                    logger.info("入库单商品在大类白名单中，无需人工审核");
+                    return false;
+                }
+            }
+            if(siteIOSetting.isSiteInTypeLimit()
+                    && siteIOSetting.isInSiteInTypeWhiteList(siteIOAddReq.getType().toString())){
+                logger.info("入库单商品在入库类型白名单中，无需人工审核");
+                return false;
+            }
+            if(siteIOSetting.isTotalPriceLimit()){
+                Item item = itemMapper.getItem(siteIOAddReq.getItemId());
+                BigDecimal totalPrice = item.getListPrice().multiply(new BigDecimal(siteIOAddReq.getItemNum()));
+                if(totalPrice.compareTo(siteIOSetting.getTotalPriceAmount()) == -1){
+                    logger.info("入库单商品金额未超过审核价格阈值，无需人工审核");
+                    return false;
+                }
+            }
+            if(siteIOSetting.isTotalNumLimit() && siteIOAddReq.getItemNum() < siteIOSetting.getTotalNum()){
+                logger.info("入库单商品数量未超过审核数量阈值，无需人工审核");
+                return false;
+            }
+        }
+
+        //如果没有启用配置, 全部出入单需要进行审核
+        logger.info("没有启用配置或不符合白名单要求, 该入库单需要进行审核");
+        return true;
+    }
+
+    @Override
+    public boolean isCheckNeeded_Out(ItemCheckoutResp itemCheckoutResp){
+        if(siteIOSetting.isAvailable()){
+            if(siteIOSetting.isCategoryIdLimit()){
+                Item item = itemMapper.getItem(itemCheckoutResp.getItemId());
+                if(siteIOSetting.isInCategoryIdWhiteList(item.getCategoryId())){
+                    logger.info("出库单商品在大类白名单中，无需人工审核");
+                    return false;
+                }
+            }
+            if(siteIOSetting.isSiteOutTypeLimit()
+                    && siteIOSetting.isInSiteOutTypeWhiteList(itemCheckoutResp.getType().toString())){
+                logger.info("出库单商品在出库类型白名单中，无需人工审核");
+                return false;
+            }
+            if(siteIOSetting.isTotalPriceLimit()){
+                Item item = itemMapper.getItem(itemCheckoutResp.getItemId());
+                BigDecimal totalPrice = item.getListPrice().multiply(new BigDecimal(itemCheckoutResp.getItemNum()));
+                if(totalPrice.compareTo(siteIOSetting.getTotalPriceAmount()) == -1){
+                    logger.info("出库单商品金额未超过审核价格阈值，无需人工审核");
+                    return false;
+                }
+            }
+            if(siteIOSetting.isTotalNumLimit() && itemCheckoutResp.getItemNum() < siteIOSetting.getTotalNum()){
+                logger.info("出库单商品数量未超过审核数量阈值，无需人工审核");
+                return false;
+            }
+        }
+
+        //如果没有启用配置, 全部订单需要进行审核
+        logger.info("没有启用配置或不符合白名单要求, 该出库单需要进行审核");
         return true;
     }
 

@@ -50,6 +50,8 @@ public interface SiteIOService {
     //发送出库请求
     void sendItemCheckoutMessage(ItemCheckoutResp itemCheckoutResp);
 
-    //是否需要审核
-    boolean isCheckNeeded(SiteIOAddReq siteIOAddReq);
+    //入库是否需要审核
+    boolean isCheckNeeded_In(SiteIOAddReq siteIOAddReq);
+
+    boolean isCheckNeeded_Out(ItemCheckoutResp itemCheckoutResp);
 }

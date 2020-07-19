@@ -52,11 +52,11 @@ public class OrderController {
         Order order = orderAddReq.getOrder();
 
         //判断订单是否需要被审核
-//        if (orderService.isCheckNeeded(orderAddReq)){
-//            //如果需要, 直接发送消息给队列
-//            orderService.sendOrderMessage(order);
-//            return;
-//        }
+        if (orderService.isCheckNeeded(orderAddReq)){
+            //如果需要, 直接发送消息给队列
+            orderService.sendOrderMessage(order);
+            return;
+        }
 
         //若不需要,直接进行预分拣获取mainsiteId
         //接着传递给任务单生成模块

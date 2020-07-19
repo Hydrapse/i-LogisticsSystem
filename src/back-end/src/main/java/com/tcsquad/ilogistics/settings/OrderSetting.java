@@ -42,4 +42,20 @@ public class OrderSetting extends GeneralSetting{
         customerIdLimit=false;
         customerIdWhiteList=new ArrayList<>();
     }
+
+    public boolean isInCategoryIdWhiteList(String cid){
+        for(String categoryId:categoryIdWhiteList){
+            if(categoryId.equals(cid))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isInCustomerIdWhiteList(String cid){
+        for(String customerId:customerIdWhiteList){
+            if(customerId.equals(cid))
+                return true;
+        }
+        return false;
+    }
 }
