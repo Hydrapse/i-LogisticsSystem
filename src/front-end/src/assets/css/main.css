@@ -1,0 +1,87 @@
+.el-container{
+    height: 100%;
+}
+.el-header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1039;
+}
+.el-aside{
+    /*position: fixed;*/
+    margin-left: -19.5rem;
+    width: 19.5rem !important;
+    z-index: 1038;
+    transition: all .7s;
+}
+.el-main{
+    padding: 1rem;
+    /*transition: all 2s;*/
+}
+
+/*侧边栏滑动动画*/
+#check{
+    display: none;
+}
+label #cancel{
+    position: fixed;
+    cursor: pointer;
+    background: #fefeff;
+    border-radius: 20px;
+
+    z-index: 1300;
+    left: 1rem;
+    top:85px;
+    font-size: 20px;
+    color: #0a5275;
+    padding: 9px 9px;
+    transition: all .8s;
+    background: rgb(249, 251, 255);
+}
+label #cancel:hover{
+    transform: scale(1.2);
+    background: rgba(213, 226, 239, 0.93);
+}
+#check:checked ~ .el-aside{
+    margin-left: 0;
+}
+#check:checked ~ label #btn{
+    left: -18rem;
+    opacity: 0.5;
+    pointer-events: none;
+}
+#check:checked ~ label #cancel{
+    left: 15.7rem;
+}
+#check:checked ~ .el-main{
+    /*margin-left: 300px;*/
+    /*width: 1400px;*/
+    /*width: 100%;*/
+    /*transition: all .5s;*/
+}
+
+/*居中布局*/
+.flex{
+    /*flex 布局*/
+    display: flex;
+    /*实现垂直居中*/
+    align-items: center;
+    /*实现水平居中*/
+    justify-content: center;
+}
+
+/*基础样式*/
+.shadow-down{
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(31, 45, 65, 0.15) !important;
+}
+.shadow-right{
+    box-shadow: 0.15rem 0 1.75rem 0 rgba(31, 45, 65, 0.15);
+}
+
+.bg-white{
+    background-color: #fff !important;
+}
+.bg-blue-gray{
+    background: rgba(239, 243, 249, 1.0);
+}

@@ -32,7 +32,6 @@
     }
 </script>
 
-<style scoped>
-    @import "../../assets/css/sb-admin-2.css";
+<style type="text/css" src="../../assets/css/sb-admin-2.css" scoped>
 
 </style>

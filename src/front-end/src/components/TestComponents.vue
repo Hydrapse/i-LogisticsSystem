@@ -4,7 +4,7 @@
     <el-row :gutter="20">
       <el-col :sm="12" :md="6"><primary-card title="I LOVE U" content="123231"></primary-card></el-col>
       <el-col :sm="12" :md="6"><success-card></success-card></el-col>
-      <el-col :sm="12" :md="6"><progress-card></progress-card></el-col>
+      <el-col :sm="12" :md="6"><progress-card title="Progress" percent="70%"></progress-card></el-col>
       <el-col :sm="12" :md="6"><warning-card></warning-card></el-col>
     </el-row>
     <el-row :gutter="20">
@@ -91,7 +91,7 @@
 
     <el-row>
 
-      <el-col :span="6">
+      <el-col :span="24">
         <!--下拉项-->
         <dropdown-item
                 v-for="item in itemList"

@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import App from './App.vue'
-
-//引入element-ui
 import './plugins/element.js'
+import router from './plugins/router'
+import store from './store'
+import './plugins/baiduMap'
 
 //引入font-awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -20,19 +21,8 @@ Vue.component('font-awesome-layers-text', FontAwesomeLayersText)
 
 Vue.config.productionTip = false
 
-
 new Vue({
+  router,
+  store,
   render: h => h(App),
 }).$mount('#app')
-
-Vue.component('my-container',{
-  template:`
-    <el-row>
-        <el-col :xs="0" :sm="1" :md="2" :lg="3" :xl="4">&nbsp;</el-col>
-        <el-col :xs="24" :sm="22" :md="20" :lg="18" :xl="18">
-            <slot></slot>
-        </el-col>
-        <el-col :xs="0" :sm="1" :md="2" :lg="3" :xl="4">&nbsp;</el-col>
-    </el-row>
-    `
-});
